@@ -10,6 +10,8 @@ import org.newdawn.slick.geom.Circle;
  */
 public interface Entity {
 
+	public void hitEntity(Entity entity);
+	
 	public void setMap(AreaMap map);
 	
 	public void draw(Graphics g);
@@ -17,4 +19,12 @@ public interface Entity {
 	public void update(GameContext context, int delta);
 	
 	public Circle getBounds();
+	
+	public Entity getOwner();
+	
+	public void hitByBullet(Actor source);
+	
+	public float getX();
+	
+	public float getY();
 }

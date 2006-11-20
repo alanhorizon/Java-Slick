@@ -11,7 +11,7 @@ import org.newdawn.slick.geom.Circle;
  *
  * @author kevin
  */
-public class Actor {
+public class Actor extends AbstractEntity implements Entity {
 	private Animation animation;
 	private float x;
 	private float y;
@@ -26,9 +26,13 @@ public class Actor {
 	private int applyDY;
 	private ActorController controller;
 	
-	private Circle bounds;
 	private float speed = 0.1f;
 	private boolean type;
+	private boolean fire;
+	private int fireInterval = 200;
+	private int tilNextFire;
+	
+	private int[] bulletOffsets = new int[] {0, -2, 0, 4, 6, 4};
 	
 	public Actor(float x, float y, PackedSpriteSheet sheet, String ref, boolean type) {
 		this(x,y,sheet,ref,type,null);
@@ -68,6 +72,10 @@ public class Actor {
 		animation.stop();
 	}
 
+	public void setFire(boolean fire) {
+		this.fire = fire;
+	}
+	
 	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
@@ -95,25 +103,6 @@ public class Actor {
 		g.rotate(xp, yp, ang);
 		animation.draw(xp-16,yp-16);
 		g.resetTransform();
-	}
-	
-	private boolean validPosition(float x, float y) {
-		for (int xs=2;xs<=28;xs+=13) {
-			for (int ys=2;ys<=28;ys+=13) {
-				if (map.isBlocked((int) x+xs-16,(int)y+ys-16)) {
-					return false;
-				}
-			}
-		}
-		
-		bounds.setX(x);
-		bounds.setY(y);
-		
-		if (map.intersects(this)) {
-			return false;
-		}
-		
-		return true;
 	}
 	
 	public void applyDirection(int x,int y) {
@@ -147,37 +136,36 @@ public class Actor {
 			x += applyDX * delta * speed * s;
 			y += applyDY * delta * speed * s;
 			
-			//if (validPosition(oldx, oldy)) {
-				if (!validPosition(x,y)) {
-					if (!validPosition(x,oldy)) {
-						if (!validPosition(oldx,y)) {
-							x = oldx;
-							y = oldy;
+			int size = 13;
+			if (!validPosition(map,x,y,size)) {
+				if (!validPosition(map,x,oldy,size)) {
+					if (!validPosition(map,oldx,y,size)) {
+						x = oldx;
+						y = oldy;
+						
+						if (!type) {
+							x -= applyDY * delta * speed * s;
+							y += applyDX * delta * speed * s;
 							
-							if (!type) {
-								x -= applyDY * delta * speed * s;
-								y += applyDX * delta * speed * s;
-								
-								if (!validPosition(x,y)) {
+							if (!validPosition(map,x,y,size)) {
+								x = oldx;
+								y = oldy;
+								x += applyDY * delta * speed * s;
+								y -= applyDX * delta * speed * s;
+
+								if (!validPosition(map,x,y,size)) {
 									x = oldx;
 									y = oldy;
-									x += applyDY * delta * speed * s;
-									y -= applyDX * delta * speed * s;
-
-									if (!validPosition(x,y)) {
-										x = oldx;
-										y = oldy;
-									}
 								}
 							}
-						} else {
-							x = oldx;
 						}
 					} else {
-						y = oldy;
+						x = oldx;
 					}
-				} 
-			//}
+				} else {
+					y = oldy;
+				}
+			} 
 		}
 		
 		if ((olddx != this.dx) || (olddy != this.dy)) {
@@ -194,5 +182,31 @@ public class Actor {
 		
 		bounds.setX(x);
 		bounds.setY(y);
+		
+		if (tilNextFire > 0) {
+			tilNextFire -= delta;
+		}
+		if ((fire) && (tilNextFire <= 0)) {
+			tilNextFire = fireInterval;
+			
+			int index = animation.getFrame();
+			int bulletOffset = bulletOffsets[index];
+			
+			map.addEntity(new BulletEntity(this, x - (bulletOffset*dy),y + (bulletOffset*dx),dx,dy));
+		}
+	}
+
+	/**
+	 * @see virium.Entity#getOwner()
+	 */
+	public Entity getOwner() {
+		return this;
+	}
+	
+	public void hitByBullet(Actor source) {
+		if (!type) {
+			map.addSplat(x,y);
+			map.removeEntity(this);
+		}
 	}
 }

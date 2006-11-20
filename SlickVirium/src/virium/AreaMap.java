@@ -3,9 +3,11 @@ package virium;
 import java.util.ArrayList;
 
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.PackedSpriteSheet;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
+import org.newdawn.slick.particles.ParticleSystem;
 import org.newdawn.slick.tiled.TiledMap;
 
 /**
@@ -16,10 +18,13 @@ import org.newdawn.slick.tiled.TiledMap;
 public class AreaMap extends TiledMap {
 	private boolean blocked[][];
 
-	private ArrayList actors = new ArrayList();
-
 	private ArrayList entities = new ArrayList();
-
+	private ParticleSystem system;
+	private ParticleSystem glowSystem;
+	private BulletEmitter bulletEmitter;
+	private BloodEmitter bloodEmitter;
+	private ArrayList removeMe = new ArrayList();
+	
 	public AreaMap(PackedSpriteSheet sheet, String ref) throws SlickException {
 		super(ref);
 
@@ -47,7 +52,7 @@ public class AreaMap extends TiledMap {
 					String e = getTileProperty(id, "entity", "");
 					if (!e.equals("")) {
 						if (e.equals("alien")) {
-							addActor(new Actor((x * 16) + 8, (y * 16) + 8,
+							addEntity(new Actor((x * 16) + 8, (y * 16) + 8,
 									sheet, "alien1", false,
 									new ZombieActorController()));
 						}
@@ -58,8 +63,24 @@ public class AreaMap extends TiledMap {
 				}
 			}
 		}
+		
+		glowSystem = new ParticleSystem(new Image("res/particle.tga"),200);
+		glowSystem.setBlendingMode(ParticleSystem.BLEND_ADDITIVE);
+		system = new ParticleSystem(new Image("res/splat.tga"),200);
+		bulletEmitter = new BulletEmitter();
+		bloodEmitter = new BloodEmitter();
+		glowSystem.addEmitter(bulletEmitter);
+		system.addEmitter(bloodEmitter);
 	}
 
+	public void addSplat(float x, float y) {
+		bloodEmitter.addSplat(x,y);
+	}
+	
+	public void addBulletParticle(float x, float y) {
+		bulletEmitter.add(x,y);
+	}
+	
 	public boolean isBlocked(int x, int y) {
 		x /= 16;
 		y /= 16;
@@ -71,34 +92,23 @@ public class AreaMap extends TiledMap {
 		return blocked[x][y];
 	}
 
-	public boolean intersects(Actor against) {
+	public boolean intersects(Entity against) {
 		Circle sourceBounds = against.getBounds();
 
-		for (int i = 0; i < actors.size(); i++) {
-			Actor current = (Actor) actors.get(i);
-			if (current != against) {
+		for (int i = 0; i < entities.size(); i++) {
+			Entity current = (Entity) entities.get(i);
+			
+			if ((current != against) && 
+					(current.getOwner() != against.getOwner()) && 
+					(against.getOwner() != current.getOwner())) {
 				if (sourceBounds.intersects(current.getBounds())) {
+					against.hitEntity(current);
 					return true;
 				}
 			}
 		}
-		for (int i = 0; i < entities.size(); i++) {
-			Entity current = (Entity) entities.get(i);
-			if (sourceBounds.intersects(current.getBounds())) {
-				return true;
-			}
-		}
 
 		return false;
-	}
-
-	public void addActor(Actor actor) {
-		actor.setMap(this);
-		actors.add(actor);
-	}
-
-	public void removeActor(Actor actor) {
-		actors.remove(actor);
 	}
 
 	public void addEntity(Entity entity) {
@@ -107,7 +117,7 @@ public class AreaMap extends TiledMap {
 	}
 
 	public void removeEntity(Entity entity) {
-		entities.remove(entity);
+		removeMe.add(entity);
 	}
 
 	public void draw(Graphics g, int cx, int cy) {
@@ -119,7 +129,7 @@ public class AreaMap extends TiledMap {
 		int x = -ox;
 		int y = -oy;
 		int height = 40;
-		int width = 50;
+		int width = 52;
 
 		for (int i = 0; i < 2; i++) {
 			for (int ty = 0; ty < height; ty++) {
@@ -128,15 +138,21 @@ public class AreaMap extends TiledMap {
 			}
 
 			if (i == 0) {
-				for (int j = 0; j < actors.size(); j++) {
-					g.translate(-cx + 400, -cy + 300);
-					((Actor) actors.get(j)).draw(g);
-					g.resetTransform();
-				}
+				g.translate(-cx + 400, -cy + 300);
+				system.render();
+				glowSystem.render();
+				g.resetTransform();
+				
 				for (int j = 0; j < entities.size(); j++) {
-					g.translate(-cx + 400, -cy + 300);
-					((Entity) entities.get(j)).draw(g);
-					g.resetTransform();
+					Entity entity = ((Entity) entities.get(j));
+					float xp = -cx + 400 + entity.getX();
+					float yp = -cy + 300 + entity.getY();
+					
+					if ((xp > -50) && (yp > -50) && (xp < 850) && (yp < 650)) {
+						g.translate(-cx + 400, -cy + 300);
+						entity.draw(g);
+						g.resetTransform();
+					}
 				}
 			}
 		}
@@ -155,13 +171,15 @@ public class AreaMap extends TiledMap {
 	}
 
 	public void update(GameContext context, int delta) {
-		for (int i = 0; i < actors.size(); i++) {
-			Actor actor = (Actor) actors.get(i);
-			actor.update(context, delta);
-		}
+		system.update(delta);
+		glowSystem.update(delta);
+		
 		for (int i = 0; i < entities.size(); i++) {
 			Entity entity = (Entity) entities.get(i);
 			entity.update(context, delta);
 		}
+		
+		entities.removeAll(removeMe);
+		removeMe.clear();
 	}
 }

@@ -41,7 +41,7 @@ public class InGameState extends BasicGameState implements GameContext {
 		
 		map = new AreaMap(packed, "res/base1.tmx");
 		
-		map.addActor(player1);
+		map.addEntity(player1);
 	}
 
 	/**
@@ -72,6 +72,7 @@ public class InGameState extends BasicGameState implements GameContext {
 		if (input.isKeyDown(Keyboard.KEY_DOWN)) {
 			y += 1;
 		}
+		player1.setFire(input.isKeyDown(Keyboard.KEY_LCONTROL));
 		
 		player1.applyDirection(x, y);
 		

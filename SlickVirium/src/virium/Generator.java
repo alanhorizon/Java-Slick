@@ -14,25 +14,37 @@ import org.newdawn.slick.geom.Circle;
  *
  * @author kevin
  */
-public class Generator implements Entity {
-	private SpriteSheet sheet;
-	private Animation anim;
+public class Generator extends AbstractEntity implements Entity {
+	private SpriteSheet sheet1;
+	private SpriteSheet sheet2;
+	private SpriteSheet shet;
+	private Animation anim1;
+	private Animation anim2;
+	private Animation current;
 	private int x;
 	private int y;
 	private int spawnInterval = 1000;
 	private int nextSpawn;
-	private Circle bounds;
 	private PackedSpriteSheet pack;
 	private AreaMap map;
+	private int hitTimeOut = 100;
+	private int timeOutCounter = 0;
+	private int life = 20;
 	
 	public Generator(PackedSpriteSheet pack,int x, int y) throws SlickException {
 		this.pack = pack;
-		sheet = pack.getSpriteSheet("generator");
-		anim = new Animation();
-		anim.addFrame(sheet.getSprite(0,0), 50);
-		anim.addFrame(sheet.getSprite(1,0), 50);
-		anim.addFrame(sheet.getSprite(2,0), 50);
+		sheet1 = pack.getSpriteSheet("generator");
+		sheet2 = pack.getSpriteSheet("generator2");
+		anim1 = new Animation();
+		anim1.addFrame(sheet1.getSprite(0,0), 50);
+		anim1.addFrame(sheet1.getSprite(1,0), 50);
+		anim1.addFrame(sheet1.getSprite(2,0), 50);
+		anim2 = new Animation();
+		anim2.addFrame(sheet2.getSprite(0,0), 50);
+		anim2.addFrame(sheet2.getSprite(1,0), 50);
+		anim2.addFrame(sheet2.getSprite(2,0), 50);
 		
+		current = anim1;
 		this.x = x;
 		this.y = y;
 		
@@ -48,6 +60,13 @@ public class Generator implements Entity {
 	 * @see virium.Entity#update(virium.GameContext, int)
 	 */
 	public void update(GameContext context, int delta) {
+		if (timeOutCounter > 0) {
+			timeOutCounter -= delta;
+			if (timeOutCounter <= 0) {
+				current = anim1;
+			}
+		}
+		
 		nextSpawn -= delta;
 		if (nextSpawn <= 0) {
 			spawn();
@@ -83,7 +102,7 @@ public class Generator implements Entity {
 		
 		if (possibles.size() > 0) {
 			int r = (int) (Math.random() * possibles.size());
-			map.addActor((Actor) possibles.get(r));
+			map.addEntity((Actor) possibles.get(r));
 		}
 	}
 	
@@ -91,8 +110,15 @@ public class Generator implements Entity {
 	 * @see virium.Entity#render(org.newdawn.slick.Graphics)
 	 */
 	public void draw(Graphics g) {
-		int ofs = sheet.getHeight() / 2;
-		anim.draw(x-ofs,y-ofs);
+		if (current != anim1) {
+			anim1.updateNoDraw();
+		}
+		if (current != anim2) {
+			anim2.updateNoDraw();
+		}
+		
+		int ofs = sheet1.getHeight() / 2;
+		current.draw(x-ofs,y-ofs);
 	}
 
 	/**
@@ -102,4 +128,34 @@ public class Generator implements Entity {
 		this.map = map;
 	}
 
+	/**
+	 * @see virium.Entity#getOwner()
+	 */
+	public Entity getOwner() {
+		return this;
+	}
+
+	public void hitByBullet(Actor source) {
+		timeOutCounter = hitTimeOut;
+		current = anim2;
+		life--;
+		if (life <= 0) {
+			// blow up here
+			map.removeEntity(this);
+		}
+	}
+
+	/**
+	 * @see virium.Entity#getX()
+	 */
+	public float getX() {
+		return x;
+	}
+
+	/**
+	 * @see virium.Entity#getY()
+	 */
+	public float getY() {
+		return y;
+	}
 }
