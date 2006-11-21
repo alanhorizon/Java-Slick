@@ -25,7 +25,9 @@ public class Virium extends StateBasedGame {
 	 * @see org.newdawn.slick.state.StateBasedGame#initStatesList(org.newdawn.slick.GameContainer)
 	 */
 	public void initStatesList(GameContainer container) throws SlickException {
-		this.container = (AppGameContainer) container;
+		if (container instanceof AppGameContainer) {
+			this.container = (AppGameContainer) container;
+		}
 		
 		container.setMinimumLogicUpdateInterval(10);
 		addState(ingame);
@@ -41,10 +43,12 @@ public class Virium extends StateBasedGame {
 			container.exit();
 		}
 		if (key == Input.KEY_F2) {
-			try {
-				container.setFullscreen(!container.isFullscreen());
-			} catch (SlickException e) {
-				Log.error(e);
+			if (container != null) {
+				try {
+					container.setFullscreen(!container.isFullscreen());
+				} catch (SlickException e) {
+					Log.error(e);
+				}
 			}
 		}
 	}

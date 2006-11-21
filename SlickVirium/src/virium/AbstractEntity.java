@@ -1,5 +1,7 @@
 package virium;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.geom.Circle;
 
 /**
@@ -9,7 +11,8 @@ import org.newdawn.slick.geom.Circle;
  */
 public abstract class AbstractEntity implements Entity {
 	protected Circle bounds;
-
+	protected Bag list;
+	
 	protected void hitTile(int x, int y, int tile) {
 		
 	}
@@ -20,6 +23,15 @@ public abstract class AbstractEntity implements Entity {
 	
 	public void hitByBullet(Actor source) {
 		
+	}
+
+	
+	public Bag getQuadList() {
+		return list;
+	}
+	
+	public void setQuadList(Bag list) {
+		this.list = list;
 	}
 	
 	protected boolean validPosition(AreaMap map, float x, float y,int size) {

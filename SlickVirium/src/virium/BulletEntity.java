@@ -84,6 +84,7 @@ public class BulletEntity extends AbstractEntity implements Entity {
 	 */
 	public void setMap(AreaMap map) {
 		this.map = map;
+		map.entityPositionUpdated(this);
 	}
 
 	/**

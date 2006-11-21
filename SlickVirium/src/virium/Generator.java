@@ -27,9 +27,11 @@ public class Generator extends AbstractEntity implements Entity {
 	private int nextSpawn;
 	private PackedSpriteSheet pack;
 	private AreaMap map;
-	private int hitTimeOut = 100;
+	private int hitTimeOut = 200;
 	private int timeOutCounter = 0;
 	private int life = 20;
+	private int count;
+	private int maxInPlay = 30;
 	
 	public Generator(PackedSpriteSheet pack,int x, int y) throws SlickException {
 		this.pack = pack;
@@ -81,6 +83,10 @@ public class Generator extends AbstractEntity implements Entity {
 	}
 	
 	private void spawn() {
+		if (count >= maxInPlay) {
+			return;
+		}
+		
 		Actor p1 = createActor(x,y-40);
 		Actor p2 = createActor(x,y+40);
 		Actor p3 = createActor(x-40,y);
@@ -102,7 +108,10 @@ public class Generator extends AbstractEntity implements Entity {
 		
 		if (possibles.size() > 0) {
 			int r = (int) (Math.random() * possibles.size());
-			map.addEntity((Actor) possibles.get(r));
+			Actor spawned = (Actor) possibles.get(r);
+			map.addEntity(spawned);
+			spawned.setGenerator(this);
+			count++;
 		}
 	}
 	
@@ -126,6 +135,7 @@ public class Generator extends AbstractEntity implements Entity {
 	 */
 	public void setMap(AreaMap map) {
 		this.map = map;
+		map.entityPositionUpdated(this);
 	}
 
 	/**
@@ -157,5 +167,9 @@ public class Generator extends AbstractEntity implements Entity {
 	 */
 	public float getY() {
 		return y;
+	}
+	
+	public void entityDied() {
+		count--;
 	}
 }

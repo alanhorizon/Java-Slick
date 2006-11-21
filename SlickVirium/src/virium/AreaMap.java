@@ -16,6 +16,8 @@ import org.newdawn.slick.tiled.TiledMap;
  * @author kevin
  */
 public class AreaMap extends TiledMap {
+	private static final int QUADS = 50;
+	
 	private boolean blocked[][];
 
 	private ArrayList entities = new ArrayList();
@@ -25,9 +27,22 @@ public class AreaMap extends TiledMap {
 	private BloodEmitter bloodEmitter;
 	private ArrayList removeMe = new ArrayList();
 	
+	private int cellWidth;
+	private int cellHeight;
+	private Bag[][] quads = new Bag[QUADS][QUADS];
+	
 	public AreaMap(PackedSpriteSheet sheet, String ref) throws SlickException {
 		super(ref);
 
+		cellWidth = (width * 16) / QUADS;
+		cellHeight = (height * 16) / QUADS;
+		
+		for (int x=0;x<QUADS;x++) {
+			for (int y=0;y<QUADS;y++) {
+				quads[x][y] = new Bag();
+			}
+		}
+		
 		blocked = new boolean[width][height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -64,15 +79,28 @@ public class AreaMap extends TiledMap {
 			}
 		}
 		
-		glowSystem = new ParticleSystem(new Image("res/particle.tga"),200);
+		glowSystem = new ParticleSystem(new Image("res/particle.tga"),500);
 		glowSystem.setBlendingMode(ParticleSystem.BLEND_ADDITIVE);
-		system = new ParticleSystem(new Image("res/splat.tga"),200);
+		system = new ParticleSystem(new Image("res/splat.tga"),500);
 		bulletEmitter = new BulletEmitter();
 		bloodEmitter = new BloodEmitter();
 		glowSystem.addEmitter(bulletEmitter);
 		system.addEmitter(bloodEmitter);
 	}
 
+	public void entityPositionUpdated(Entity entity) {
+		int xp = (int) (entity.getX() / cellWidth);
+		int yp = (int) (entity.getY() / cellHeight);
+		
+		if (entity.getQuadList() != quads[xp][yp]) {
+			if (entity.getQuadList() != null) {
+				entity.getQuadList().remove(entity);
+			}
+			quads[xp][yp].add(entity);
+			entity.setQuadList(quads[xp][yp]);
+		}
+	}
+	
 	public void addSplat(float x, float y) {
 		bloodEmitter.addSplat(x,y);
 	}
@@ -95,15 +123,24 @@ public class AreaMap extends TiledMap {
 	public boolean intersects(Entity against) {
 		Circle sourceBounds = against.getBounds();
 
-		for (int i = 0; i < entities.size(); i++) {
-			Entity current = (Entity) entities.get(i);
-			
-			if ((current != against) && 
-					(current.getOwner() != against.getOwner()) && 
-					(against.getOwner() != current.getOwner())) {
-				if (sourceBounds.intersects(current.getBounds())) {
-					against.hitEntity(current);
-					return true;
+		int xp = (int) (against.getX() / cellWidth);
+		int yp = (int) (against.getY() / cellHeight);
+		
+		for (int x=Math.max(0, xp-1);x<Math.min(QUADS,xp+2);x++) {
+			for (int y=Math.max(0, yp-1);y<Math.min(QUADS,yp+2);y++) {
+				ArrayList entities = quads[x][y];
+				
+				for (int i = 0; i < entities.size(); i++) {
+					Entity current = (Entity) entities.get(i);
+					
+					if ((current != against) && 
+							(current.getOwner() != against.getOwner()) && 
+							(against.getOwner() != current.getOwner())) {
+						if (sourceBounds.intersects(current.getBounds())) {
+							against.hitEntity(current);
+							return true;
+						}
+					}
 				}
 			}
 		}
@@ -120,7 +157,10 @@ public class AreaMap extends TiledMap {
 		removeMe.add(entity);
 	}
 
-	public void draw(Graphics g, int cx, int cy) {
+	public void draw(GameContext context, Graphics g) {
+		int cx = (int) context.getPlayer1().getX();
+		int cy = (int) context.getPlayer1().getY();
+		
 		int sx = (cx - 400) / 16;
 		int sy = (cy - 300) / 16;
 		int ox = (cx - 400) % 16;
@@ -173,10 +213,23 @@ public class AreaMap extends TiledMap {
 	public void update(GameContext context, int delta) {
 		system.update(delta);
 		glowSystem.update(delta);
+
+		int cx = (int) context.getPlayer1().getX();
+		int cy = (int) context.getPlayer1().getY();
 		
 		for (int i = 0; i < entities.size(); i++) {
 			Entity entity = (Entity) entities.get(i);
-			entity.update(context, delta);
+			
+			if ((Math.abs(cx-entity.getX()) < 600) && (Math.abs(cy-entity.getY()) < 600)) {
+				entity.update(context, delta);
+			}
+		}
+		
+		for (int i=0;i<removeMe.size();i++) {
+			Entity entity = (Entity) removeMe.get(i);
+			if (entity.getQuadList() != null) {
+				entity.getQuadList().remove(entity);
+			}
 		}
 		
 		entities.removeAll(removeMe);

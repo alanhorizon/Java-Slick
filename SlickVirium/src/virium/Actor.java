@@ -18,6 +18,8 @@ public class Actor extends AbstractEntity implements Entity {
 	private boolean moving;
 	private int dx;
 	private int dy;
+	private int fx;
+	private int fy;
 	private float ang;
 	private AreaMap map;
 	
@@ -33,6 +35,8 @@ public class Actor extends AbstractEntity implements Entity {
 	private int tilNextFire;
 	
 	private int[] bulletOffsets = new int[] {0, -2, 0, 4, 6, 4};
+	private Generator gen;
+	private boolean dead;
 	
 	public Actor(float x, float y, PackedSpriteSheet sheet, String ref, boolean type) {
 		this(x,y,sheet,ref,type,null);
@@ -72,6 +76,10 @@ public class Actor extends AbstractEntity implements Entity {
 		animation.stop();
 	}
 
+	public void setGenerator(Generator generator) {
+		gen = generator;
+	}
+	
 	public void setFire(boolean fire) {
 		this.fire = fire;
 	}
@@ -86,6 +94,7 @@ public class Actor extends AbstractEntity implements Entity {
 	
 	public void setMap(AreaMap map) {
 		this.map = map;
+		map.entityPositionUpdated(this);
 	}
 	
 	public float getX() {
@@ -118,8 +127,8 @@ public class Actor extends AbstractEntity implements Entity {
 		boolean oldMoving = moving;
 		moving = (applyDX != 0) || (applyDY != 0);
 		
-		int olddx = (int) this.dx;
-		int olddy = (int) this.dy;
+		int oldfx = (int) this.fx;
+		int oldfy = (int) this.fy;
 		
 		if (moving) {
 			this.dx = applyDX;
@@ -166,10 +175,10 @@ public class Actor extends AbstractEntity implements Entity {
 					y = oldy;
 				}
 			} 
-		}
-		
-		if ((olddx != this.dx) || (olddy != this.dy)) {
-			ang = (float) Math.toDegrees(Math.atan2(this.dy, this.dx)) + 90;
+			
+			if ((oldx != x) || (oldy != y)) {
+				map.entityPositionUpdated(this);
+			}
 		}
 		
 		if (oldMoving != moving) {
@@ -183,6 +192,15 @@ public class Actor extends AbstractEntity implements Entity {
 		bounds.setX(x);
 		bounds.setY(y);
 		
+		if ((!fire) || ((fx == 0) && (fy == 0))) {
+			fx = dx;
+			fy = dy;
+		}
+
+		if ((oldfx != this.fx) || (oldfy != this.fy)) {
+			ang = (float) Math.toDegrees(Math.atan2(this.fy, this.fx)) + 90;
+		}
+		
 		if (tilNextFire > 0) {
 			tilNextFire -= delta;
 		}
@@ -192,7 +210,7 @@ public class Actor extends AbstractEntity implements Entity {
 			int index = animation.getFrame();
 			int bulletOffset = bulletOffsets[index];
 			
-			map.addEntity(new BulletEntity(this, x - (bulletOffset*dy),y + (bulletOffset*dx),dx,dy));
+			map.addEntity(new BulletEntity(this, x - (bulletOffset*fy),y + (bulletOffset*fx),fx,fy));
 		}
 	}
 
@@ -205,8 +223,15 @@ public class Actor extends AbstractEntity implements Entity {
 	
 	public void hitByBullet(Actor source) {
 		if (!type) {
-			map.addSplat(x,y);
-			map.removeEntity(this);
+			if (!dead) {
+				dead = true;
+				if (gen != null) {
+					gen.entityDied();
+				}
+				
+				map.addSplat(x,y);
+				map.removeEntity(this);
+			}
 		}
 	}
 }

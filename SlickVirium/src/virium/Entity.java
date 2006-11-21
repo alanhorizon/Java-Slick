@@ -1,5 +1,7 @@
 package virium;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Circle;
 
@@ -27,4 +29,8 @@ public interface Entity {
 	public float getX();
 	
 	public float getY();
+	
+	public Bag getQuadList();
+	
+	public void setQuadList(Bag list);
 }

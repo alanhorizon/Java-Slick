@@ -48,7 +48,7 @@ public class InGameState extends BasicGameState implements GameContext {
 	 * @see org.newdawn.slick.state.GameState#render(org.newdawn.slick.state.StateBasedGame, org.newdawn.slick.Graphics)
 	 */
 	public void render(StateBasedGame game, Graphics g) throws SlickException {
-		map.draw(g,(int) player1.getX(),(int) player1.getY());
+		map.draw(this, g);
 	}
 
 	/**
@@ -75,7 +75,6 @@ public class InGameState extends BasicGameState implements GameContext {
 		player1.setFire(input.isKeyDown(Keyboard.KEY_LCONTROL));
 		
 		player1.applyDirection(x, y);
-		
 		map.update(this, delta);
 	}
 
