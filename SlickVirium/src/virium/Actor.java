@@ -48,7 +48,6 @@ public class Actor extends AbstractEntity implements Entity {
 		this.type = type;
 		
 		scalar = (float) Math.sqrt(0.5f);
-		
 		bounds = new Circle(x,y,14);
 		
 		this.controller = controller;
@@ -146,35 +145,59 @@ public class Actor extends AbstractEntity implements Entity {
 			y += applyDY * delta * speed * s;
 			
 			int size = 13;
-			if (!validPosition(map,x,y,size)) {
-				if (!validPosition(map,x,oldy,size)) {
-					if (!validPosition(map,oldx,y,size)) {
-						x = oldx;
-						y = oldy;
-						
-						if (!type) {
-							x -= applyDY * delta * speed * s;
-							y += applyDX * delta * speed * s;
+			
+			boolean valid = true;
+			
+			// if players then we need to make
+			if ((type) && (context.getPlayer1() != null) && (context.getPlayer2() != null)) {
+				int pdx = (int) Math.abs(context.getPlayer1().getX() - context.getPlayer2().getX());
+				int pdy = (int) Math.abs(context.getPlayer1().getY() - context.getPlayer2().getY());
+				
+				int count = 0;
+				if (pdx > 750) {
+					x = oldx;
+					count++;
+				}
+				if (pdy > 550) {
+					y = oldy;
+					count++;
+				}
+				
+				if (count == 2) {
+					valid = false;
+				}
+			}
+			if (valid) {
+				if (!validPosition(map,x,y,size)) {
+					if (!validPosition(map,x,oldy,size)) {
+						if (!validPosition(map,oldx,y,size)) {
+							x = oldx;
+							y = oldy;
 							
-							if (!validPosition(map,x,y,size)) {
-								x = oldx;
-								y = oldy;
-								x += applyDY * delta * speed * s;
-								y -= applyDX * delta * speed * s;
-
+							if (!type) {
+								x -= applyDY * delta * speed * s;
+								y += applyDX * delta * speed * s;
+								
 								if (!validPosition(map,x,y,size)) {
 									x = oldx;
 									y = oldy;
+									x += applyDY * delta * speed * s;
+									y -= applyDX * delta * speed * s;
+	
+									if (!validPosition(map,x,y,size)) {
+										x = oldx;
+										y = oldy;
+									}
 								}
 							}
+						} else {
+							x = oldx;
 						}
 					} else {
-						x = oldx;
+						y = oldy;
 					}
-				} else {
-					y = oldy;
-				}
-			} 
+				} 
+			}
 			
 			if ((oldx != x) || (oldy != y)) {
 				map.entityPositionUpdated(this);
@@ -204,7 +227,7 @@ public class Actor extends AbstractEntity implements Entity {
 		if (tilNextFire > 0) {
 			tilNextFire -= delta;
 		}
-		if ((fire) && (tilNextFire <= 0)) {
+		if ((fire) && (tilNextFire <= 0) && ((fx != 0) || (fy != 0))) {
 			tilNextFire = fireInterval;
 			
 			int index = animation.getFrame();
@@ -221,17 +244,25 @@ public class Actor extends AbstractEntity implements Entity {
 		return this;
 	}
 	
+	public boolean isDead() {
+		return dead;
+	}
+	
+	public void die() {
+		if (!dead) {
+			dead = true;
+			if (gen != null) {
+				gen.entityDied();
+			}
+			
+			map.addSplat(x,y);
+			map.removeEntity(this);
+		}
+	}
+	
 	public void hitByBullet(Actor source) {
 		if (!type) {
-			if (!dead) {
-				dead = true;
-				if (gen != null) {
-					gen.entityDied();
-				}
-				
-				map.addSplat(x,y);
-				map.removeEntity(this);
-			}
+			die();
 		}
 	}
 }

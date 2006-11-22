@@ -31,6 +31,9 @@ public class AreaMap extends TiledMap {
 	private int cellHeight;
 	private Bag[][] quads = new Bag[QUADS][QUADS];
 	
+	private int lastCX = 230;
+	private int lastCY = 130;
+	
 	public AreaMap(PackedSpriteSheet sheet, String ref) throws SlickException {
 		super(ref);
 
@@ -133,6 +136,10 @@ public class AreaMap extends TiledMap {
 				for (int i = 0; i < entities.size(); i++) {
 					Entity current = (Entity) entities.get(i);
 					
+					if ((current.getTeam() != 0) && (current.getTeam() == against.getTeam())) {
+						continue;
+					}
+					
 					if ((current != against) && 
 							(current.getOwner() != against.getOwner()) && 
 							(against.getOwner() != current.getOwner())) {
@@ -158,8 +165,30 @@ public class AreaMap extends TiledMap {
 	}
 
 	public void draw(GameContext context, Graphics g) {
-		int cx = (int) context.getPlayer1().getX();
-		int cy = (int) context.getPlayer1().getY();
+		int cx = 0;
+		int cy = 0;
+		
+		if ((context.getPlayer1() == null) && (context.getPlayer2() == null)) {
+			cx = lastCX;
+			cy = lastCY;
+		} else {
+			int total = 0;
+			if (context.getPlayer1() != null) {
+				cx += context.getPlayer1().getX();
+				cy += context.getPlayer1().getY();
+				total++;
+			}
+			if (context.getPlayer2() != null) {
+				cx += context.getPlayer2().getX();
+				cy += context.getPlayer2().getY();
+				total++;
+			}
+			cx /= total;
+			cy /= total;
+		}
+		
+		lastCX = cx;
+		lastCY = cy;
 		
 		int sx = (cx - 400) / 16;
 		int sy = (cy - 300) / 16;
@@ -213,15 +242,17 @@ public class AreaMap extends TiledMap {
 	public void update(GameContext context, int delta) {
 		system.update(delta);
 		glowSystem.update(delta);
-
-		int cx = (int) context.getPlayer1().getX();
-		int cy = (int) context.getPlayer1().getY();
 		
-		for (int i = 0; i < entities.size(); i++) {
-			Entity entity = (Entity) entities.get(i);
+		if ((context.getPlayer1() != null) || (context.getPlayer2() != null)) {
+			int cx = lastCX;
+			int cy = lastCY;
 			
-			if ((Math.abs(cx-entity.getX()) < 600) && (Math.abs(cy-entity.getY()) < 600)) {
-				entity.update(context, delta);
+			for (int i = 0; i < entities.size(); i++) {
+				Entity entity = (Entity) entities.get(i);
+				
+				if ((Math.abs(cx-entity.getX()) < 600) && (Math.abs(cy-entity.getY()) < 600)) {
+					entity.update(context, delta);
+				}
 			}
 		}
 		

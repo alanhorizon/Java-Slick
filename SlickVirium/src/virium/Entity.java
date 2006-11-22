@@ -33,4 +33,6 @@ public interface Entity {
 	public Bag getQuadList();
 	
 	public void setQuadList(Bag list);
+	
+	public int getTeam();
 }

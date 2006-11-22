@@ -12,9 +12,18 @@ import org.newdawn.slick.geom.Circle;
 public abstract class AbstractEntity implements Entity {
 	protected Circle bounds;
 	protected Bag list;
+	protected int team;
 	
 	protected void hitTile(int x, int y, int tile) {
 		
+	}
+	
+	public void setTeam(int team) {
+		this.team = team;
+	}
+	
+	public int getTeam() {
+		return team;
 	}
 	
 	public void hitEntity(Entity entity) {
