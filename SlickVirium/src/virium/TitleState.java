@@ -33,14 +33,18 @@ public class TitleState extends BasicGameState implements ComponentListener {
 	private GameContainer container;
 	
 	private String[] controls = new String[] {"Unplayed", "Keyboard", "Gamepad"};
-	private String[] subtext1 = new String[] {"", "Cursors, Ctrl", "Hit Fire to Select"};
-	private String[] subtext2 = new String[] {"", "W,A,S,D, V/Ctrl", "Hit Fire to Select"};
+	private String[] subtext1 = new String[] {"", "(Cursors, Ctrl)", "Hit Fire to Configure"};
+	private String[] subtext2 = new String[] {"", "(W,A,S,D, V/Ctrl)", "Hit Fire to Configure"};
 	
-	private int controller1 = 1;
-	private int controller2;
+	private int controlType1 = 1;
+	private int controller1 = 0;
+	private int controlType2 = 0;
+	private int controller2 = 0;
 	
 	private Font font;
 	private StateBasedGame game;
+	private boolean waitingForButton1;
+	private boolean waitingForButton2;
 	
 	/**
 	 * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -83,9 +87,16 @@ public class TitleState extends BasicGameState implements ComponentListener {
 		logo.draw(250,30);
 		
 		p1.render(container, g);
-		font.drawString(220-(font.getWidth(controls[controller1])/2),300,controls[controller1]);
+		font.drawString(220-(font.getWidth(controls[controlType1])/2),300,controls[controlType1]);
+		if ((controlType1 != 2) || (waitingForButton1)) {
+			font.drawString(220-(font.getWidth(subtext1[controlType1])/2),345,subtext1[controlType1],Color.yellow);
+		}
+		
 		p2.render(container, g);
-		font.drawString(570-(font.getWidth(controls[controller2])/2),300,controls[controller2]);
+		font.drawString(570-(font.getWidth(controls[controlType2])/2),300,controls[controlType2]);
+		if ((controlType2 != 2) || (waitingForButton2)) {
+			font.drawString(570-(font.getWidth(subtext2[controlType2])/2),345,subtext2[controlType2],Color.yellow);
+		}
 		
 		quit.render(container, g);
 		play.render(container, g);
@@ -108,6 +119,17 @@ public class TitleState extends BasicGameState implements ComponentListener {
 		}
 	}
 	
+	public void controllerButtonPressed(int controller, int button) {
+		if (waitingForButton1) {
+			waitingForButton1 = false;
+			controller1 = controller;
+		}
+		if (waitingForButton2) {
+			waitingForButton2 = false;
+			controller2 = controller;
+		}
+	}
+
 	/**
 	 * @see org.newdawn.slick.gui.ComponentListener#componentActivated(org.newdawn.slick.gui.BasicComponent)
 	 */
@@ -117,6 +139,22 @@ public class TitleState extends BasicGameState implements ComponentListener {
 		}
 		if (source == play) {
 			game.enterState(InGameState.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+		}
+		if (source == p1) {
+			controlType1 = (controlType1+1)%3;
+			waitingForButton1 = false;
+			if (controlType1 == 2) {
+				waitingForButton1 = true;
+				waitingForButton2 = false;
+			} 
+		}
+		if (source == p2) {
+			controlType2 = (controlType2+1)%3;
+			waitingForButton2 = false;
+			if (controlType2 == 2) {
+				waitingForButton2 = true;
+				waitingForButton1 = false;
+			}
 		}
 	}
 
