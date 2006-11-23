@@ -11,6 +11,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
+import org.newdawn.slick.util.Log;
 
 /**
  * TODO: Document this class
@@ -18,6 +19,7 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
  * @author kevin
  */
 public class InGameState extends BasicGameState implements GameContext {
+
 	public static final int ID = 1;
 	private AreaMap map;
 	private PackedSpriteSheet packed;
@@ -37,6 +39,15 @@ public class InGameState extends BasicGameState implements GameContext {
 		return ID;
 	}
 
+	public void setController(int player, int controller) {
+		if (player == 0) {
+			player1Controller = controller;
+		}
+		if (player == 1) {
+			player2Controller = controller;
+		}
+	}
+	
 	/**
 	 * @see org.newdawn.slick.state.GameState#init(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame)
 	 */
@@ -48,6 +59,12 @@ public class InGameState extends BasicGameState implements GameContext {
 		map = new AreaMap(packed, "res/base1.tmx");
 	}
 
+	public void initSession() throws SlickException {
+		player1 = null;
+		player2 = null;
+		map = new AreaMap(packed, "res/base1.tmx");
+	}
+	
 	public void setPlayer1Controller(int index) {
 		player1Controller = index;
 	}
@@ -60,7 +77,9 @@ public class InGameState extends BasicGameState implements GameContext {
 	 * @see org.newdawn.slick.state.GameState#render(org.newdawn.slick.state.StateBasedGame, org.newdawn.slick.Graphics)
 	 */
 	public void render(StateBasedGame game, Graphics g) throws SlickException {
-		map.draw(this, g);
+		if (map != null) {
+			map.draw(this, g);
+		}
 		
 		if ((player1 == null) && (player2 == null)) {
 			g.setColor(Color.black);
@@ -161,5 +180,12 @@ public class InGameState extends BasicGameState implements GameContext {
 			player2 = null;
 		}
 	}
-
+	
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+		initSession();
+	}
+	
+	public void leave(GameContainer container, StateBasedGame game) throws SlickException {
+		map = null;
+	}
 }

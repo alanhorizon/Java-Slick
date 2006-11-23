@@ -1,5 +1,7 @@
 package virium;
 
+import java.io.IOException;
+
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
@@ -7,6 +9,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.SavedState;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.BasicComponent;
 import org.newdawn.slick.gui.ComponentListener;
@@ -15,6 +18,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
+import org.newdawn.slick.util.Log;
 
 /**
  * TODO: Document this class
@@ -45,6 +49,13 @@ public class TitleState extends BasicGameState implements ComponentListener {
 	private StateBasedGame game;
 	private boolean waitingForButton1;
 	private boolean waitingForButton2;
+	private Virium virium;
+	
+	private SavedState savedConfig;
+	
+	public TitleState(Virium virium) {
+		this.virium = virium;
+	}
 	
 	/**
 	 * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -58,6 +69,19 @@ public class TitleState extends BasicGameState implements ComponentListener {
 	 */
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
+		try {
+			savedConfig = new SavedState("viriumConfig");
+			controlType1 = (int) savedConfig.getNumber("controlType1", 1);
+			controller1 = (int) savedConfig.getNumber("controller1", 1);
+			controlType2 = (int) savedConfig.getNumber("controlType2", 0);
+			controller2 = (int) savedConfig.getNumber("controller2", 0);
+			
+			updateController1();
+			updateController2();
+		} catch (Exception e) {
+			Log.error(e);
+		}
+		
 		this.container = container;
 		this.game = game;
 		
@@ -119,14 +143,55 @@ public class TitleState extends BasicGameState implements ComponentListener {
 		}
 	}
 	
+	private void saveState() {
+		if (savedConfig != null) {
+			savedConfig.setNumber("controlType1", controlType1);
+			savedConfig.setNumber("controlType2", controlType2);
+			savedConfig.setNumber("controller1", controller1);
+			savedConfig.setNumber("controller2", controller2);
+			
+			try {
+				System.out.println("Saving state..");
+				savedConfig.save();
+			} catch (IOException e) {
+				Log.error(e);
+			}
+		}
+	}
+	
+	private void updateController2() {
+		virium.setController(1,controller2);
+		if (controller1 == controller2) {
+			controlType1 = 0;
+			controller1 = 1000;
+			virium.setController(0,controller1);
+		}
+		
+		saveState();
+	}
+	
+	private void updateController1() {
+		virium.setController(0,controller1);
+		if (controller2 == controller1) {
+			controlType2 = 0;
+			controller2 = 1000;
+			virium.setController(1,controller2);
+		}
+		
+		saveState();
+	}
+	
 	public void controllerButtonPressed(int controller, int button) {
 		if (waitingForButton1) {
 			waitingForButton1 = false;
 			controller1 = controller;
+			updateController1();
+			
 		}
 		if (waitingForButton2) {
 			waitingForButton2 = false;
 			controller2 = controller;
+			updateController2();
 		}
 	}
 
@@ -146,7 +211,9 @@ public class TitleState extends BasicGameState implements ComponentListener {
 			if (controlType1 == 2) {
 				waitingForButton1 = true;
 				waitingForButton2 = false;
-			} 
+			} else {
+				saveState();
+			}
 		}
 		if (source == p2) {
 			controlType2 = (controlType2+1)%3;
@@ -154,6 +221,8 @@ public class TitleState extends BasicGameState implements ComponentListener {
 			if (controlType2 == 2) {
 				waitingForButton2 = true;
 				waitingForButton1 = false;
+			} else {
+				saveState();
 			}
 		}
 	}

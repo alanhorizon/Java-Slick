@@ -15,7 +15,7 @@ import org.newdawn.slick.util.Log;
 public class Virium extends StateBasedGame {
 
 	private InGameState ingame = new InGameState();
-	private TitleState title = new TitleState();
+	private TitleState title;
 	private AppGameContainer container;
 	
 	public Virium() {
@@ -30,12 +30,19 @@ public class Virium extends StateBasedGame {
 			this.container = (AppGameContainer) container;
 		}
 		
+		title = new TitleState(this);
+		
 		container.setShowFPS(false);
 		container.setMinimumLogicUpdateInterval(10);
+		container.setMaximumLogicUpdateInterval(10);
 		addState(title);
 		addState(ingame);
 	}
 
+	public void setController(int player, int controller) {
+		ingame.setController(player, controller);
+	}
+	
 	/**
 	 * @see org.newdawn.slick.state.StateBasedGame#keyPressed(int, char)
 	 */
