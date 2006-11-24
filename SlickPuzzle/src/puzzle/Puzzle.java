@@ -658,7 +658,7 @@ public class Puzzle extends BasicGame {
 							
 							if (matches != 0) {
 								move--;
-								if (move <= 0) {
+								if (move <= 1) {
 									tiles[x][y][MATCH_HINT] = 360 * SPIN_SCALAR;
 									tiles[x+1][y][MATCH_HINT] = 360* SPIN_SCALAR;
 									state = HINT;
@@ -673,7 +673,7 @@ public class Puzzle extends BasicGame {
 							
 							if (matches != 0) {
 								move--;
-								if (move == 0) {
+								if (move <= 1) {
 									tiles[x][y][MATCH_HINT] = 360 * SPIN_SCALAR;
 									tiles[x][y+1][MATCH_HINT] = 360 * SPIN_SCALAR;
 									state = HINT;
