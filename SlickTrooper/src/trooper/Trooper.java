@@ -39,6 +39,7 @@ public class Trooper extends BasicGame {
 	private ArrayList shoots = new ArrayList();
 	private ArrayList shells = new ArrayList();
 	private ArrayList messages = new ArrayList();
+	private ArrayList mines = new ArrayList();
 	
 	private SpriteSheet logo;
 	private int startup = 1000;
@@ -53,7 +54,7 @@ public class Trooper extends BasicGame {
 	
 	private int lives = 5;
 	private int ammo;
-	private int mines;
+	private int mineAmmo;
 	private int score;
 	private int box = -100;
 	private int tilNextBox = 0;
@@ -164,11 +165,15 @@ public class Trooper extends BasicGame {
 		spawnInterval = 2000;
 		xp = 250;
 		
+		mines.clear();
+		box = -100;
+		minePUP = -100;
+		
 		fallSpeed = 0;
 		ammo = 20;
 		score = 0;
 		lives = 5;
-		mines = 1;
+		mineAmmo = 3;
 		tilNextBox = (int) ((Math.random() * 3000) + 10000);
 	}
 	
@@ -199,6 +204,10 @@ public class Trooper extends BasicGame {
 		for (int i=0;i<shells.size();i++) {
 			Shell s = (Shell) shells.get(i);
 			s.render(g);
+		}
+		for (int i=0;i<mines.size();i++) {
+			Mine m = (Mine) mines.get(i);
+			m.render(g);
 		}
 		system.render();
 		for (int i=0;i<shoots.size();i++) {
@@ -233,7 +242,7 @@ public class Trooper extends BasicGame {
 		g.translate(1,1);
 		g.drawString("SCORE: "+pad(score,8),5,495);
 		g.drawString("AMMO: "+pad(ammo,3),440,495);
-		g.drawString("MINES: "+pad(mines, 3),439,480);
+		g.drawString("MINES: "+pad(mineAmmo, 3),439,480);
 		for (int i=0;i<lives;i++) {
 			g.fillRect(220+(i*17), 496, 15, 13);
 		}
@@ -241,7 +250,7 @@ public class Trooper extends BasicGame {
 		g.translate(-1,-1);
 		g.drawString("SCORE: "+pad(score,8),5,495);
 		g.drawString("AMMO: "+pad(ammo,3),440,495);
-		g.drawString("MINES: "+pad(mines,3),439,480);
+		g.drawString("MINES: "+pad(mineAmmo,3),439,480);
 		for (int i=0;i<lives;i++) {
 			g.fillRect(220+(i*17), 496, 15, 13);
 		}
@@ -300,11 +309,11 @@ public class Trooper extends BasicGame {
 		}
 		if (input.isKeyDown(Input.KEY_LEFT) || input.isControllerLeft(Input.ANY_CONTROLLER)) {
 			dir = 1;
-			xp -= delta * 0.04f;
+			xp -= delta * 0.05f;
 		}
 		if (input.isKeyDown(Input.KEY_RIGHT) || input.isControllerRight(Input.ANY_CONTROLLER)) {
 			dir = -1;
-			xp += delta * 0.04f;
+			xp += delta * 0.05f;
 		}
 		
 		xp = Math.max(0,xp);
@@ -321,6 +330,10 @@ public class Trooper extends BasicGame {
 			Shell s = (Shell) shells.get(i);
 			s.update(delta, fadeEmitter, system);
 		}
+		for (int i=0;i<mines.size();i++) {
+			Mine m = (Mine) mines.get(i);
+			m.update(delta);
+		}
 		
 		ArrayList removeMe = new ArrayList();
 		for (int i=0;i<messages.size();i++) {
@@ -335,11 +348,42 @@ public class Trooper extends BasicGame {
 		
 		for (int i=0;i<shoots.size();i++) {
 			Shoot shoot = (Shoot) shoots.get(i);
+
+			if (shoot.running()) {
+				boolean pop = false;
+				
+				for (int j=0;j<mines.size();j++) {
+					Mine mine = (Mine) mines.get(j);
+					if (mine.active()) {
+						if (Math.abs(mine.getX()+3-shoot.getX()) < 5) {
+							for (int k=0;k<shoots.size();k++) {
+								Shoot target = (Shoot) shoots.get(k);
+								if (target.running()) {
+									if (Math.abs(mine.getX()+3-target.getX()) < 13) {
+										target.die(system, fadeEmitter);
+										killme.add(target);
+									}
+								}
+							}
+							
+							mine.explode(glowSystem, glowFadeEmitter);
+							pop = true;
+							killme.add(mine);
+							bang.play();
+							break;
+						}
+					}
+				}
+				
+				if (pop) {
+					continue;
+				}
+			}
 			if (shoot.running() && shoot.isWinged()) {
 				shoot.die(system, fadeEmitter);
 				killme.add(shoot);
 				
-				if (Math.random() > 0.9f) {
+				if (Math.random() > 0.75f) {
 					if (minePUP == -100) {
 						minePUP = (int) shoot.getX();
 					}
@@ -378,19 +422,20 @@ public class Trooper extends BasicGame {
 						shoot.die(system, fadeEmitter);
 						splat.play();
 						killme.add(shoot);
+						
+						if (Math.random() > 0.85f) {
+							if (minePUP == -100) {
+								minePUP = (int) shoot.getX();
+							}
+						}
 					} else {
 						shoot.wing();
 					}
 					killme.add(shell);
 					
 					j = shells.size();
-					int bonus = 100;
-					if (shoot.getY() > 250) {
-						bonus += 1000;
-					}
-					if (shoot.getY() > 320) {
-						bonus += 1000;
-					}
+					int bonus = (int) (Math.max(shoot.getY(), 10) * 5);
+					bonus -= bonus % 10;
 					if (wing) {
 						bonus *= 2;
 					}
@@ -407,6 +452,7 @@ public class Trooper extends BasicGame {
 		for (int i=0;i<killme.size();i++) {
 			shoots.remove(killme.get(i));
 			shells.remove(killme.get(i));
+			mines.remove(killme.get(i));
 			
 			if (killme.get(i) instanceof Shoot) {
 				spawnInterval-=20;
@@ -435,7 +481,7 @@ public class Trooper extends BasicGame {
 			box = -100;
 		}
 		if (Math.abs(xp+20-minePUP) < 20) {
-			mines++;
+			mineAmmo++;
 			reload.play();
 			minePUP = -100;
 		}
@@ -456,11 +502,23 @@ public class Trooper extends BasicGame {
 	}
 
 	private void mine() {
-		if (mines == 0) {
+		if (mineAmmo == 0) {
 			return;
 		}
 		
 		if (!waitForStart) {
+			try {
+				if (dir == -1) {
+					mines.add(new Mine(xp));
+				} else if (dir == 1) {
+					mines.add(new Mine(xp+32));
+				}
+				if (!cheat) {
+					mineAmmo--;
+				}
+			} catch (SlickException e) {
+				Log.error(e);
+			}
 		}
 	}
 	
@@ -513,6 +571,9 @@ public class Trooper extends BasicGame {
 			cheatCount++;
 			if (cheatCount > 3) {
 				cheat = true;
+				ammo += 100;
+				mineAmmo += 100;
+				lives = 5;
 			}
 		}
 		if (key == Input.KEY_ESCAPE) {

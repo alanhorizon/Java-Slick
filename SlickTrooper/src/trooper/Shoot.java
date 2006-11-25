@@ -136,6 +136,7 @@ public class Shoot {
 		
 		if (y > 420) {
 			y = 450;
+			vy = 0;
 			if (x > playerX+20) {
 				anim = runningLeft;
 			} else {
