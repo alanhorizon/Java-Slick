@@ -37,8 +37,8 @@ public class TitleState extends BasicGameState implements ComponentListener {
 	private GameContainer container;
 	
 	private String[] controls = new String[] {"Unplayed", "Keyboard", "Gamepad"};
-	private String[] subtext1 = new String[] {"", "(Cursors, Ctrl)", "Hit Fire to Configure"};
-	private String[] subtext2 = new String[] {"", "(W,A,S,D, V/Ctrl)", "Hit Fire to Configure"};
+	private String[] subtext1 = new String[] {"", "(Cursors, RCtrl)", "Hit Fire to Configure"};
+	private String[] subtext2 = new String[] {"", "(W,A,S,D, V/LCtrl)", "Hit Fire to Configure"};
 	
 	private int controlType1 = 1;
 	private int controller1 = 0;

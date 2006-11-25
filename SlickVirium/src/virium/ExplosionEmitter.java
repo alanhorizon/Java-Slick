@@ -41,4 +41,17 @@ public class ExplosionEmitter implements ParticleEmitter {
 			this.size = size;
 		}
 	}
+
+	/**
+	 * @see org.newdawn.slick.particles.ParticleEmitter#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return true;
+	}
+
+	/**
+	 * @see org.newdawn.slick.particles.ParticleEmitter#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+	}
 }

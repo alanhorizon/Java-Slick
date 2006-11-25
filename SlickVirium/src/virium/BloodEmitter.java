@@ -81,4 +81,17 @@ public class BloodEmitter implements ParticleEmitter {
 			}
 		}
 	}
+
+	/**
+	 * @see org.newdawn.slick.particles.ParticleEmitter#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return true;
+	}
+
+	/**
+	 * @see org.newdawn.slick.particles.ParticleEmitter#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+	}
 }

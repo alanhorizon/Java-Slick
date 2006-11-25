@@ -44,4 +44,17 @@ public class BulletEmitter implements ParticleEmitter {
 		particle.adjustColor(0, adj*2, adj*2, adj*2);
 	}
 
+	/**
+	 * @see org.newdawn.slick.particles.ParticleEmitter#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return true;
+	}
+
+	/**
+	 * @see org.newdawn.slick.particles.ParticleEmitter#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+	}
+
 }
