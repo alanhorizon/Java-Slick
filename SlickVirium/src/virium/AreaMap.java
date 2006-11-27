@@ -91,6 +91,15 @@ public class AreaMap extends TiledMap {
 		system.addEmitter(bloodEmitter);
 	}
 
+	public void setBlocked(int x, int y, boolean b) {
+		blocked[x][y] = b;
+	}
+	
+	public void setTile(int x, int y,int l, int value) {
+		Layer layer = (Layer) layers.get(l);
+		layer.setTileID(x,y,value);
+	}
+	
 	public void entityPositionUpdated(Entity entity) {
 		int xp = (int) (entity.getX() / cellWidth);
 		int yp = (int) (entity.getY() / cellHeight);

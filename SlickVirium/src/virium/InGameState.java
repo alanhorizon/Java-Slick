@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.PackedSpriteSheet;
 import org.newdawn.slick.SlickException;
@@ -11,7 +12,6 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
-import org.newdawn.slick.util.Log;
 
 /**
  * TODO: Document this class
@@ -31,6 +31,8 @@ public class InGameState extends BasicGameState implements GameContext {
 	private int player2Controller = 0;
 	
 	private StateBasedGame game;
+	private Image left;
+	private Image right;
 	
 	/**
 	 * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -57,6 +59,8 @@ public class InGameState extends BasicGameState implements GameContext {
 		this.game = game;
 		
 		map = new AreaMap(packed, "res/base1.tmx");
+		left = new Image("res/p1board.png");
+		right = new Image("res/p2board.png");
 	}
 
 	public void initSession() throws SlickException {
@@ -81,14 +85,35 @@ public class InGameState extends BasicGameState implements GameContext {
 			map.draw(this, g);
 		}
 		
-		if ((player1 == null) && (player2 == null)) {
-			g.setColor(Color.black);
-			g.drawString("PAUSED - PRESS FIRE TO JOIN", 301, 271);
-			g.setColor(Color.white);
-			g.drawString("PAUSED - PRESS FIRE TO JOIN", 300, 270);
+		left.draw(-100,550,new Color(1,1,1,0.5f));
+		g.drawString("P1",10,560);
+		String msg = "";
+		if (player1 == null) {
+			msg = "PRESS FIRE TO JOIN";
+		} else {
+			msg = "KEYS: "+pad(player1.getKeys(),2)+"    SCORE: "+pad(player1.getScore(),8);
 		}
+		g.drawString(msg,10,580);
+		
+		right.draw(550,550,new Color(1,1,1,0.5f));
+		g.drawString("P2",775,560);
+		if (player2 == null) {
+			msg = "PRESS FIRE TO JOIN";
+		} else {
+			msg = "KEYS: "+pad(player2.getKeys(),2)+"    SCORE: "+pad(player2.getScore(),8);
+		}
+		g.drawString(msg,790-g.getFont().getWidth(msg),580);
 	}
 
+	private String pad(int score, int len) {
+		String reg = ""+score;
+		while (reg.length() < len) {
+			reg = "0"+reg;
+		}
+		
+		return reg;
+	}
+	
 	/**
 	 * @see org.newdawn.slick.state.GameState#update(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame, int)
 	 */

@@ -151,7 +151,6 @@ public class TitleState extends BasicGameState implements ComponentListener {
 			savedConfig.setNumber("controller2", controller2);
 			
 			try {
-				System.out.println("Saving state..");
 				savedConfig.save();
 			} catch (IOException e) {
 				Log.error(e);

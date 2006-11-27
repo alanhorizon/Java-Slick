@@ -38,8 +38,13 @@ public class Actor extends AbstractEntity implements Entity {
 	private Generator gen;
 	private boolean dead;
 	
+	private int keys;
+	private int score;
+	
 	public Actor(float x, float y, PackedSpriteSheet sheet, String ref, boolean type) {
 		this(x,y,sheet,ref,type,null);
+		
+		keys = 5;
 	}
 	
 	public Actor(float x, float y, PackedSpriteSheet sheet, String ref, boolean type, ActorController controller) {
@@ -75,6 +80,13 @@ public class Actor extends AbstractEntity implements Entity {
 		animation.stop();
 	}
 
+	public int getKeys() {
+		return keys;
+	}
+	
+	public int getScore() {
+		return score;
+	}
 	public void setGenerator(Generator generator) {
 		gen = generator;
 	}
@@ -263,6 +275,47 @@ public class Actor extends AbstractEntity implements Entity {
 	public void hitByBullet(Actor source) {
 		if (!type) {
 			die();
+		}
+	}
+
+	protected void hitTile(int x, int y, int tile) {
+		if (!type) { // monster check
+			return;
+		}
+		
+		if (tile != 0) {
+			// horizontal doors
+			if ((tile == 455) && (keys > 0)) {
+				keys--;
+				int xp = x;
+				while (map.getTileId(xp, y, 1) == 455) {
+					map.setBlocked(xp,y,false);
+					map.setTile(xp,y,1,0);
+					xp--;
+				}
+				xp = x+1;
+				while (map.getTileId(xp, y, 1) == 455) {
+					map.setBlocked(xp,y,false);
+					map.setTile(xp,y,1,0);
+					xp++;
+				}
+			}
+			// vertical doors
+			if ((tile == 454) && (keys > 0)) {
+				keys--;
+				int yp = y;
+				while (map.getTileId(x, yp, 1) == 454) {
+					map.setBlocked(x,yp,false);
+					map.setTile(x,yp,1,0);
+					yp--;
+				}
+				yp = y+1;
+				while (map.getTileId(x, yp, 1) == 454) {
+					map.setBlocked(x,yp,false);
+					map.setTile(x,yp,1,0);
+					yp++;
+				}
+			}
 		}
 	}
 }
