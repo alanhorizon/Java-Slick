@@ -78,9 +78,9 @@ public class InGameState extends BasicGameState implements GameContext {
 	}
 	
 	/**
-	 * @see org.newdawn.slick.state.GameState#render(org.newdawn.slick.state.StateBasedGame, org.newdawn.slick.Graphics)
+	 * @see org.newdawn.slick.state.BasicGameState#render(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame, org.newdawn.slick.Graphics)
 	 */
-	public void render(StateBasedGame game, Graphics g) throws SlickException {
+	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		if (map != null) {
 			map.draw(this, g);
 		}
