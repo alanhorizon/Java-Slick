@@ -63,7 +63,7 @@ public class Puzzle extends BasicGame {
 	private Image[] kitis = new Image[9];
 	/** The logo displayed on the start screen and faded in the background */
 	private Image logo;
-	/** The label for the matches count */
+	/** The label for the matches yPos */
 	private Image matchesLabel;
 	/** The label for the score display */
 	private Image scoreLabel;
@@ -281,9 +281,9 @@ public class Puzzle extends BasicGame {
 	}
 	
 	/**
-	 * @see org.newdawn.slick.BasicGame#render(org.newdawn.slick.Graphics)
+	 * @see org.newdawn.slick.BasicGame#render(org.newdawn.slick.GameContainer, org.newdawn.slick.Graphics)
 	 */
-	public void render(Graphics g) throws SlickException {
+	public void render(GameContainer container, Graphics g) throws SlickException {
 		background.draw(0,0,640,480);
 		g.scale(0.8f, 1);
 		bottom.draw(2,450);
