@@ -178,9 +178,9 @@ public class Trooper extends BasicGame {
 	}
 	
 	/**
-	 * @see org.newdawn.slick.BasicGame#render(org.newdawn.slick.Graphics)
+	 * @see org.newdawn.slick.BasicGame#render(org.newdawn.slick.GameContainer, org.newdawn.slick.Graphics)
 	 */
-	public void render(Graphics g) throws SlickException {
+	public void render(GameContainer container, Graphics g) throws SlickException {
 		bg.draw(0,0);
 		
 		if (lives != 0) {
