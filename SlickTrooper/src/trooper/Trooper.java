@@ -132,6 +132,11 @@ public class Trooper extends BasicGame {
 					particle.adjustSize(delta * -0.02f);
 				}
 			}
+
+			public boolean completed() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		};
 		system.addEmitter(fadeEmitter);
 		
@@ -149,6 +154,10 @@ public class Trooper extends BasicGame {
 			public void updateParticle(Particle particle, int delta) {
 				particle.adjustColor(0,-delta * 0.003f,-delta * 0.006f,-delta * 0.001f);
 				particle.adjustSize(delta * 0.02f);
+			}
+
+			public boolean completed() {
+				return false;
 			}
 		};
 		glowSystem.addEmitter(glowFadeEmitter);
