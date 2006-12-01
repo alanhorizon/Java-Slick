@@ -54,4 +54,12 @@ public class ExplosionEmitter implements ParticleEmitter {
 	 */
 	public void setEnabled(boolean enabled) {
 	}
+
+	/**
+	 * @see org.newdawn.slick.particles.ParticleEmitter#completed()
+	 */
+	public boolean completed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
