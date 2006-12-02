@@ -214,11 +214,13 @@ public class Trooper extends BasicGame {
 			Shell s = (Shell) shells.get(i);
 			s.render(g);
 		}
+		g.resetTransform();
 		for (int i=0;i<mines.size();i++) {
 			Mine m = (Mine) mines.get(i);
 			m.render(g);
 		}
 		system.render();
+		g.resetTransform();
 		for (int i=0;i<shoots.size();i++) {
 			Shoot s = (Shoot) shoots.get(i);
 			s.render();
