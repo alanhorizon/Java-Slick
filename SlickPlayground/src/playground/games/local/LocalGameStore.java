@@ -75,8 +75,8 @@ public class LocalGameStore implements GameStore {
 			load();
 		}
 		
-		if (!storeType.equals(remote.getClass().getName())) {
-			Log.info("Refreshing based on a change in store type");
+		if (!storeType.equals(remote.getClass().getName()) || (!name.equals(remote.getName()))) {
+			Log.info("Refreshing based on a change in store type: "+storeType+","+name);
 			update();
 		}
 	}
@@ -210,6 +210,7 @@ public class LocalGameStore implements GameStore {
 			lastUpdated = System.currentTimeMillis();
 			root.setAttribute("lastCache", ""+lastUpdated);
 			root.setAttribute("storeType", ""+remoteStore.getClass().getName());
+			root.setAttribute("name", ""+remoteStore.getName());
 			
 			String[] cats = remoteStore.getCategories();
 			for (int i=0;i<cats.length;i++) {
