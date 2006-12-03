@@ -94,6 +94,7 @@ public class LocalGameStore implements GameStore {
 	 */
 	public void update() throws IOException {
 		try {
+			Log.info("Updating remote server");
 			remoteStore.update();
 		} catch (IOException e) {
 			Log.error(e);
@@ -102,6 +103,7 @@ public class LocalGameStore implements GameStore {
 		}
 
 		try {
+			Log.info("Caching");
 			cache();
 			load();
 		} catch (IOException e) {

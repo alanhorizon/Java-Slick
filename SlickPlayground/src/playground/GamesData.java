@@ -11,10 +11,11 @@ import java.net.URLConnection;
 import java.util.HashMap;
 
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.util.Log;
 
+import playground.games.GameList;
 import playground.games.GameRecord;
+import playground.games.GameStore;
 
 /**
  * TODO: Document this class
@@ -33,6 +34,14 @@ public class GamesData {
 	public void cache(GameRecord info) {
 		getThumbImage(info, false);
 		getLogoImage(info, false);
+	}
+	
+	public void update(GameStore store) {
+		GameList list = store.getGames();
+		
+		for (int i=0;i<list.size();i++) {
+			update(list.getGame(i));
+		}
 	}
 	
 	public void update(GameRecord info) {

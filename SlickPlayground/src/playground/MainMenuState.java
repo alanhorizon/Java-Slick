@@ -1,12 +1,17 @@
 package playground;
 
+import java.io.IOException;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.util.FastTrig;
 import org.newdawn.slick.util.Log;
 
 import playground.games.GameStore;
@@ -24,7 +29,9 @@ public class MainMenuState extends State implements PodListener {
 	private boolean on;
 	private int nextState;
 	private GameStore store;
-	
+	private boolean updating;
+	private float ang;
+	private SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 	public MainMenuState(Playground app, GameStore store, boolean reinit) {
 		playground = app;
 	
@@ -74,6 +81,26 @@ public class MainMenuState extends State implements PodListener {
 		if (name.equals("Categories")) {
 			nextState = CategoriesState.ID;
 			group.move(-800, 0);
+		}
+		if (name.equals("Update")) {
+			updating = true;
+			Thread t = new Thread() {
+				public void run() {
+					try {
+						try {
+							store.update();
+						} catch (IOException e) {
+							Log.error(e);
+						}
+						
+						playground.getGamesData().update(store);
+					} catch (Throwable e) {
+						Log.error(e);
+					}
+					updating = false;
+				}
+			};
+			t.start();
 		}
 		if (name.equals("Quit")) {
 			playground.exit();
@@ -154,6 +181,31 @@ public class MainMenuState extends State implements PodListener {
 	public void render(GameContainer container, Graphics g) {
 		super.render(container, g);
 
-		Resources.font3.drawString(6, 575, "Last Update: "+new Date(store.lastUpdated()),new Color(0,0,0,0.3f));
+		Date date = new Date(store.lastUpdated());
+		
+		Resources.font3.drawString(6, 575, "Last Update: "+format.format(date),new Color(0,0,0,0.3f));
+	
+		if (updating) {
+			Texture.bindNone();
+			GL11.glBegin(GL11.GL_QUADS);
+				GL11.glColor4f(0,0,0,0.9f);
+				GL11.glVertex3f(0, 0, 0);
+				GL11.glVertex3f(800, 0, 0);
+				GL11.glVertex3f(800, 600, 0);
+				GL11.glVertex3f(0, 600, 0);
+			GL11.glEnd();
+			
+			Resources.font.drawString(180,(int) (300+(FastTrig.cos(ang)*10)),"Updating Files.. (this needs work)");
+			try { Thread.sleep(50); } catch (Exception e) {};
+		}
 	}
+	
+	public void update(GameContainer container, int delta) {
+		ang += delta * 0.01f;
+		if (updating) {
+			return;
+		}
+		super.update(container, delta);
+	}
+
 }
