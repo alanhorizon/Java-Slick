@@ -43,4 +43,11 @@ public interface GameStore {
 	 * @return The time in milliseconds (timestamp) when the last update occurd
 	 */
 	public long lastUpdated();
+	
+	/**
+	 * Get the name of the store 
+	 * 
+	 * @return The name of the store
+	 */
+	public String getName();
 }

@@ -203,7 +203,8 @@ public class MainMenuState extends State implements PodListener {
 		super.render(container, g);
 
 		Date date = new Date(store.lastUpdated());
-		
+
+		Resources.font3.drawString(6, 550, store.getName(),new Color(0,0,0,0.3f));
 		Resources.font3.drawString(6, 575, "Last Update: "+format.format(date),new Color(0,0,0,0.3f));
 	
 		if (updating) {

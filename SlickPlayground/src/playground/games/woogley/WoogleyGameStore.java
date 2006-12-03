@@ -102,4 +102,11 @@ public class WoogleyGameStore implements GameStore {
 	public long lastUpdated() {
 		return 0;
 	}
+
+	/**
+	 * @see playground.games.GameStore#getName()
+	 */
+	public String getName() {
+		return "Java Unlimited Server";
+	}
 }

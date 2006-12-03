@@ -43,13 +43,16 @@ public class LocalGameStore implements GameStore {
 	private GameStore remoteStore;
 	/** The last update time */
 	private long lastUpdated;
+	/** The name given for this store */
+	protected String name;
+	/** The type of store we've wrapped */
+	private String storeType;
 	
 	/**
 	 * Default constructor for sub classes
 	 *
 	 */
 	protected LocalGameStore() {
-		
 	}
 	
 	/**
@@ -70,6 +73,11 @@ public class LocalGameStore implements GameStore {
 		} else {
 			Log.info("Loading cached games list");
 			load();
+		}
+		
+		if (!storeType.equals(remote.getClass().getName())) {
+			Log.info("Refreshing based on a change in store type");
+			update();
 		}
 	}
 	
@@ -163,6 +171,11 @@ public class LocalGameStore implements GameStore {
 			Element root = document.getDocumentElement();
 			
 			lastUpdated = Long.parseLong(root.getAttribute("lastCache"));
+			storeType = root.getAttribute("storeType");
+			name = root.getAttribute("name");
+			if ((name == null) || (name.equals(""))) {
+				name = "Unnamed store";
+			}
 			
 			NodeList cats = root.getElementsByTagName("category");
 			categories = new String[cats.getLength()];
@@ -196,6 +209,7 @@ public class LocalGameStore implements GameStore {
 			
 			lastUpdated = System.currentTimeMillis();
 			root.setAttribute("lastCache", ""+lastUpdated);
+			root.setAttribute("storeType", ""+remoteStore.getClass().getName());
 			
 			String[] cats = remoteStore.getCategories();
 			for (int i=0;i<cats.length;i++) {
@@ -282,4 +296,9 @@ public class LocalGameStore implements GameStore {
 	public long lastUpdated() {
 		return lastUpdated;
 	}
+
+	public String getName() {
+		return remoteStore.getName();
+	}
+	
 }

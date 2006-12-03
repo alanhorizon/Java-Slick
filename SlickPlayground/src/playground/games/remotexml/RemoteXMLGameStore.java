@@ -46,4 +46,8 @@ public class RemoteXMLGameStore extends LocalGameStore {
 			info.prefixID(id);
 		}
 	}
+
+	public String getName() {
+		return name;
+	}
 }
