@@ -1,7 +1,6 @@
 package playground;
 
 import java.io.IOException;
-import java.sql.Date;
 
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -15,6 +14,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.FastTrig;
@@ -59,6 +59,8 @@ public class Playground extends BasicGame implements PodListener {
 	private GamesListState gamesListState;
 	private int lastID;
 	private InfoState infoState;
+	
+	private AppGameContainer app;
 	
 	public Playground() {
 		super("Playground");
@@ -120,6 +122,10 @@ public class Playground extends BasicGame implements PodListener {
 	 * @see org.newdawn.slick.BasicGame#init(org.newdawn.slick.GameContainer)
 	 */
 	public void init(GameContainer container) throws SlickException {
+		if (container instanceof AppGameContainer) {
+			app = (AppGameContainer) container;
+		}
+		
 		try {
 			store = GameStoreFactory.getGameStore("",storeCacheLocation);
 		} catch (IOException e) {
@@ -327,6 +333,21 @@ public class Playground extends BasicGame implements PodListener {
 		};
 		t.setDaemon(false);
 		t.start();
+	}
+
+	public void keyPressed(int key, char c) {
+		if (key == Input.KEY_F1) {
+			if (app != null) {
+				try {
+					app.setFullscreen(!app.isFullscreen());
+				} catch (SlickException e) {
+					Log.error(e);
+				}
+			}
+		}
+		if (key == Input.KEY_ESCAPE) {
+			container.exit();
+		}
 	}
 	
 	public static void main(String[] argv) {

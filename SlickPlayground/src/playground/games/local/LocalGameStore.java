@@ -39,6 +39,7 @@ public class LocalGameStore implements GameStore {
 	public LocalGameStore(GameStore remote, String cacheLocation) throws IOException {
 		cacheFile = new File(cacheLocation, "store.xml");
 		remoteStore = remote;
+		cacheFile.getParentFile().mkdirs();
 		
 		if (!cacheFile.exists()) {
 			Log.info("Getting initial games from remote game store");

@@ -33,6 +33,7 @@ public class WoogleyGameStore implements GameStore {
 		
 		GameInfo[] infos = Database.getGames(Category.ALL,Database.SORT_DATE,Database.SORT_ASCENDING);
 		
+		allgames.clear();
 		for (int i=0;i<infos.length;i++) {
 			allgames.add(new WoogleyGameRecord(infos[i]));
 		}
