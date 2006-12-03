@@ -12,15 +12,20 @@ import playground.games.GameRecord;
 import playground.games.GameStore;
 
 /**
- * TODO: Document this class
+ * A game store accessing the game repository on javaunlimited.
  *
  * @author kevin
  */
 public class WoogleyGameStore implements GameStore {
+	/** The list of all games retrieved */
 	private GList allgames = new GList();
+	/** The names of the categories defined */
 	private String[] catNames;
 	
-	public WoogleyGameStore() throws IOException {
+	/**
+	 * Create an empty store to connect to javaunlimited
+	 */
+	public WoogleyGameStore() {
 	}
 	
 	/**
@@ -74,7 +79,11 @@ public class WoogleyGameStore implements GameStore {
 		return allgames;
 	}
 
-
+	/**
+	 * Simple implementation of the game list
+	 *
+	 * @author kevin
+	 */
 	private class GList extends ArrayList implements GameList {
 
 		/**

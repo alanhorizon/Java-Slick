@@ -4,13 +4,19 @@ import net.javaunlimited.playground.GameInfo;
 import playground.games.GameRecord;
 
 /**
- * TODO: Document this class
+ * A record represnting data read from the javaunlimited data store
  *
  * @author kevin
  */
 public class WoogleyGameRecord implements GameRecord {
+	/** The data read from the woogley store */
 	private GameInfo info;
 	
+	/**
+	 * Create a new game record based on data read from the woogle store
+	 * 
+	 * @param info The record from the woogley store
+	 */
 	public WoogleyGameRecord(GameInfo info) {
 		this.info = info;
 	}

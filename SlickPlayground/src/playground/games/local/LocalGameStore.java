@@ -1,8 +1,10 @@
 package playground.games.local;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
@@ -25,17 +27,38 @@ import playground.games.GameRecord;
 import playground.games.GameStore;
 
 /**
- * TODO: Document this class
+ * A game store wrapped around a locally cached XML file. This allows us to continue
+ * playing games while offline
  *
  * @author kevin
  */
 public class LocalGameStore implements GameStore {
+	/** The list of categories defined */
 	private String[] categories = new String[] {"Unspecified"};
+	/** The list of all the games defined */
 	private GList allgames = new GList();
+	/** The location of the XML file */
 	private File cacheFile;
+	/** The store we're wrapping and caching */
 	private GameStore remoteStore;
+	/** The last update time */
 	private long lastUpdated;
 	
+	/**
+	 * Default constructor for sub classes
+	 *
+	 */
+	protected LocalGameStore() {
+		
+	}
+	
+	/**
+	 * Create a new game store based on wrapping a remote implementation
+	 * 
+	 * @param remote The remote game store
+	 * @param cacheLocation The location of the cache file
+	 * @throws IOException Indicates a failure to access the local cache file and/or the remote store
+	 */
 	public LocalGameStore(GameStore remote, String cacheLocation) throws IOException {
 		cacheFile = new File(cacheLocation, "store.xml");
 		remoteStore = remote;
@@ -72,6 +95,11 @@ public class LocalGameStore implements GameStore {
 		return list;
 	}
 
+	/**
+	 * Simple implementation of GameList
+	 *
+	 * @author kevin
+	 */
 	private class GList extends ArrayList implements GameList {
 
 		/**
@@ -112,16 +140,26 @@ public class LocalGameStore implements GameStore {
 			Log.warn("Failed to cache remote store");
 		}
 	}
-	
+
 	/**
 	 * Load the locally stored games information
 	 * 
 	 * @throws IOException Indicates a failure to read the cache
 	 */
-	private void load() throws IOException {
+	protected void load() throws IOException {
+		load(new FileInputStream(cacheFile));
+	}
+	
+	/**
+	 * Load the locally stored games information
+	 * 
+	 * @param in The input stream from which to read the XML
+	 * @throws IOException Indicates a failure to read the cache
+	 */
+	protected void load(InputStream in) throws IOException {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document document = builder.parse(cacheFile);
+			Document document = builder.parse(in);
 			Element root = document.getDocumentElement();
 			
 			lastUpdated = Long.parseLong(root.getAttribute("lastCache"));
@@ -188,6 +226,12 @@ public class LocalGameStore implements GameStore {
 		}
 	}
 	
+	/**
+	 * Convert an XML element to a game record
+	 * 
+	 * @param element The XML element representing the game record
+	 * @return The game record generated from the XML
+	 */
 	private GameRecord elementToGame(Element element) {
 		String id = element.getAttribute("id");
 		String name = element.getAttribute("name");
