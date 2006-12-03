@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.newdawn.slick.Image;
@@ -29,6 +30,11 @@ public class GamesData {
 	private HashMap thumbs = new HashMap();
 	/** The location where we should cache image data */
 	private String dataCacheLocation;
+	
+	/** The list of thumbs images to be loaded */
+	private ArrayList thumbsToLoad = new ArrayList();
+	/** The list of thumbs images to be loaded */
+	private ArrayList logosToLoad = new ArrayList();
 	
 	/**
 	 * Create a new set of games data
@@ -114,11 +120,15 @@ public class GamesData {
 			}
 			
 			try {
-				thumbs.put(info, new Image("res/nothumb.png"));
 				if (thumb.exists()) {
-					thumbs.put(info, new Image(new FileInputStream(thumb), thumb.getAbsolutePath(), true));
+					thumbsToLoad.add(new UpdateRecord(info, thumb));
+					//thumbs.put(info, new Image(new FileInputStream(thumb), thumb.getAbsolutePath(), true));
+				} else {
+					thumbsToLoad.add(new UpdateRecord(info, "res/nothumb.png"));
+					//thumbs.put(info, new Image("res/nothumb.png"));
 				}
 			} catch (Exception e) {
+				Log.error("Unable to load: "+thumb);
 				Log.error(e);
 			}
 		}
@@ -167,11 +177,15 @@ public class GamesData {
 			}
 			
 			try {
-				logos.put(info, new Image("res/nologo.png"));
 				if (logo.exists()) {
-					logos.put(info, new Image(new FileInputStream(logo), logo.getAbsolutePath(), true));
-				} 
+					logosToLoad.add(new UpdateRecord(info, logo));
+					//logos.put(info, new Image(new FileInputStream(logo), logo.getAbsolutePath(), true));
+				} else {
+					logosToLoad.add(new UpdateRecord(info, "res/nologo.png"));
+					//logos.put(info, new Image("res/nologo.png"));
+				}
 			} catch (Exception e) {
+				Log.error("Unable to load: "+logo);
 				Log.error(e);
 			}
 		}
@@ -195,5 +209,77 @@ public class GamesData {
 		}
 		
 		out.close();
+	}
+	
+	/**
+	 * Load the images that have been determined as out of date
+	 */
+	public void loadImages() {
+		while (thumbsToLoad.size() > 0) {
+			try { 
+				UpdateRecord update = (UpdateRecord) thumbsToLoad.remove(0);
+				thumbs.put(update.record, update.getImage());
+			} catch (Exception e) {
+				Log.error(e);
+			}
+		}
+		
+		while (logosToLoad.size() > 0) {
+			try { 
+				UpdateRecord update = (UpdateRecord) logosToLoad.remove(0);
+				logos.put(update.record, update.getImage());
+			} catch (Exception e) {
+				Log.error(e);
+			}
+		}
+	}
+	
+	/**
+	 * A record describing an image that has been determined to be out of date
+	 *
+	 * @author kevin
+	 */
+	private class UpdateRecord {
+		/** The record the image is assocaited with */
+		public GameRecord record;
+		/** The local reference in the classpath */
+		public String ref;
+		/** The file system reference */
+		public File fin;
+
+		/**
+		 * Create a record for a downloaded file
+		 * 
+		 * @param record The game the image pertains to
+		 * @param fin The file containing the image
+		 */
+		public UpdateRecord(GameRecord record, File fin) {
+			this.record = record;
+			this.fin = fin;
+		}
+
+		/**
+		 * Create a record for a default image
+		 * 
+		 * @param record The game the image pertains to
+		 * @param ref The reference to the image
+		 */
+		public UpdateRecord(GameRecord record, String ref) {
+			this.record = record;
+			this.ref = ref;
+		}
+		
+		/**
+		 * Load the image specified
+		 * 
+		 * @return The image specified
+		 * @throws Exception Thrown to indicate the image can't be loaded of the reference is invalid
+		 */
+		public Image getImage() throws Exception {
+			if (fin != null) {
+				return new Image(new FileInputStream(fin), fin.getAbsolutePath(), true);
+			} else 
+				return new Image(ref);
+		}
 	}
 }

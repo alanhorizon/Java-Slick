@@ -85,6 +85,15 @@ public class GameInfo implements GameRecord {
 	}
 	
 	/**
+	 * Prefix the game ID in this record with a given string
+	 * 
+	 * @param prefix The string to prefix the ID with
+	 */
+	public void prefixID(String prefix) {
+		id = prefix+id;
+	}
+	
+	/**
 	 * @see playground.games.GameRecord#getID()
 	 */
 	public String getID() {

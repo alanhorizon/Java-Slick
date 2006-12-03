@@ -36,7 +36,7 @@ public class LocalGameStore implements GameStore {
 	/** The list of categories defined */
 	private String[] categories = new String[] {"Unspecified"};
 	/** The list of all the games defined */
-	private GList allgames = new GList();
+	protected GList allgames = new GList();
 	/** The location of the XML file */
 	private File cacheFile;
 	/** The store we're wrapping and caching */
@@ -100,7 +100,7 @@ public class LocalGameStore implements GameStore {
 	 *
 	 * @author kevin
 	 */
-	private class GList extends ArrayList implements GameList {
+	protected class GList extends ArrayList implements GameList {
 
 		/**
 		 * @see playground.games.GameList#getGame(int)

@@ -41,6 +41,8 @@ public class MainMenuState extends State implements PodListener {
 	private float ang;
 	/** The format to use when display the date */
 	private SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+	/** True if we need to update image cache */
+	private boolean updateImages;
 	
 	/**
 	 * Create a new state
@@ -109,12 +111,11 @@ public class MainMenuState extends State implements PodListener {
 						} catch (IOException e) {
 							Log.error(e);
 						}
-						
-						playground.getGamesData().update(store);
 					} catch (Throwable e) {
 						Log.error(e);
 					}
-					updating = false;
+					playground.getGamesData().update(store);
+					updateImages = true;
 				}
 			};
 			t.start();
@@ -224,6 +225,11 @@ public class MainMenuState extends State implements PodListener {
 	 * @see playground.State#update(org.newdawn.slick.GameContainer, int)
 	 */
 	public void update(GameContainer container, int delta) {
+		if (updateImages) {
+			playground.getGamesData().loadImages();
+			updating = false;
+			updateImages = false;
+		}
 		ang += delta * 0.01f;
 		if (updating) {
 			return;

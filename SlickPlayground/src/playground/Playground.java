@@ -197,6 +197,7 @@ public class Playground extends BasicGame implements PodListener {
 		for (int i=0;i<list.size();i++) {
 			gData.cache(list.getGame(i));
 		}
+		gData.loadImages();
 		
 		if (!reinit) {
 			states[MainMenuState.ID] = new MainMenuState(this, store, reinit);
