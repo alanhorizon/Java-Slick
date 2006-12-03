@@ -38,14 +38,15 @@ public class Pod {
 		this(listener, image, font, x,y, image.getWidth(),image.getHeight(),label);
 	}
 
-	public Pod(PodListener listener, Image image, Font font, int x, int y, int width, int height, String label) {
+	public Pod(PodListener listener, Image img, Font font, int x, int y, int width, int height, String label) {
 		this.font = font;
 		this.x = x;
 		this.y = y;
 		this.label = label;
 		this.listener = listener;
 		
-		this.image = image;
+		this.image = img;
+
 		rect = new Rectangle(x,y,width,height);
 	}
 	
@@ -117,7 +118,36 @@ public class Pod {
 		font.drawString((int) (x+xo), (int) (y+yo-5)+offset, label, col);
 	}
 	
+	/**
+	 * Add an image to the pod
+	 * 
+	 * @param image The image to add
+	 */
 	public void addImage(Image image) {
+		addImage(image, false);
+	}
+	/**
+	 * Add an image to the pod
+	 * 
+	 * @param image The image to add
+	 * @param scale True if we should scale the image to fit
+	 */
+	public void addImage(Image image, boolean scale) {
+		if (scale) {
+			if (image != null) {
+				int maxWidth = 170;
+				if (image.getWidth() > maxWidth) {
+					float rat = maxWidth / (float) image.getWidth();
+					image = image.getScaledCopy((int) (image.getWidth()*rat),(int) (image.getHeight()*rat));
+				}
+				int maxHeight = 130;
+				if (image.getHeight() > maxHeight) {
+					float rat = maxHeight / (float) image.getHeight();
+					image = image.getScaledCopy((int) (image.getWidth()*rat),(int) (image.getHeight()*rat));
+				}
+			}
+		}
+		
 		images.add(image);
 	}
 	

@@ -55,11 +55,14 @@ public class GamesData {
 	
 	public Image getThumbImage(GameRecord info, boolean update) {
 		if ((thumbs.get(info) == null) || (update)) {
-			File thumb = new File(dataCacheLocation+"/"+info.getID()+"/thumb.png");
+			String ref = info.getThumbURL();
+			String ext = ref.substring(ref.length()-4);
+			
+			File thumb = new File(dataCacheLocation+"/"+info.getID()+"/thumb"+ext);
 			
 			thumb.getParentFile().mkdirs();
 			
-			if (!thumb.exists() && !update) {
+			if (!thumb.exists() || update) {
 				try {
 					URLConnection thumbURL = new URL(info.getThumbURL()).openConnection();
 					thumbURL.setUseCaches(false);
@@ -92,11 +95,14 @@ public class GamesData {
 	
 	public Image getLogoImage(GameRecord info, boolean update) {
 		if ((logos.get(info) == null) || (update)) {
-			File logo = new File(dataCacheLocation+"/"+info.getID()+"/logo.png");
+			String ref = info.getLogoURL();
+			String ext = ref.substring(ref.length()-4);
+			
+			File logo = new File(dataCacheLocation+"/"+info.getID()+"/logo"+ext);
 
 			logo.getParentFile().mkdirs();
 			
-			if (!logo.exists() && !update) {
+			if (!logo.exists() || update) {
 				try {
 					URLConnection logoURL = new URL(info.getLogoURL()).openConnection();
 					logoURL.setUseCaches(false);

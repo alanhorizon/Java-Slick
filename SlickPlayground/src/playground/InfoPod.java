@@ -31,10 +31,16 @@ public class InfoPod extends Pod {
 		rect = new Rectangle(0,0,0,0);
 	}
 	
-	public void setInfo(String dataCacheLocation, GameRecord info, Image logo) throws SlickException {
+	public void setInfo(String dataCacheLocation, GameRecord info, Image l) throws SlickException {
 		this.info = info;
-		this.logo = logo;
+		this.logo = l;
 		lines = split(font, info.getDescription(), 760);
+		
+		int maxHeight = 200;
+		if (logo.getHeight() > maxHeight) {
+			float rat = maxHeight / (float) logo.getHeight();
+			logo = logo.getScaledCopy((int) (logo.getWidth()*rat),(int) (logo.getHeight()*rat));
+		}
 		
 	}
 	

@@ -61,6 +61,7 @@ public class Playground extends BasicGame implements PodListener {
 	private InfoState infoState;
 	
 	private AppGameContainer app;
+	private Color theme = new Color(1,0,0,1);
 	
 	public Playground() {
 		super("Playground");
@@ -211,7 +212,7 @@ public class Playground extends BasicGame implements PodListener {
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		Texture.bindNone();
 		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glColor3f(0.3f, 0.4f, 0.7f);
+			GL11.glColor3f(0.4f, 0.4f, 0.7f);
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glColor3f(0.3f, 0.3f, 0.6f);
 			GL11.glVertex3f(800, 0, 0);

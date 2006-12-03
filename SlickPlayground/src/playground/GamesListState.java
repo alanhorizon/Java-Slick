@@ -57,7 +57,7 @@ public class GamesListState extends State implements PodListener {
 	
 	private Pod getGameInfoPod(GameRecord info) {
 		Pod pod = new Pod(this, Resources.podImage, Resources.font, 0, 0, "");
-		pod.addImage(playground.getGamesData().getThumbImage(info));
+		pod.addImage(playground.getGamesData().getThumbImage(info), true);
 		pod.setUserData(info);
 		
 		return pod;
