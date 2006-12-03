@@ -41,6 +41,7 @@
 	<delete dir="lib/${game.name}.jar"/>
 	<javac debug="true" srcdir="src" destdir="${build.dir}/classes" target="1.4" source="1.4">
 	    <classpath>
+		  <pathelement path="lib/pgserver.jar"/>
 		  <pathelement path="${slick.install}/lib/slick.jar"/>
 	      <pathelement path="${slick.install}/lib/lwjgl.jar"/>
 	      <pathelement path="${slick.install}/lib/ibxm.jar"/>
