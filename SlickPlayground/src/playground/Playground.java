@@ -28,41 +28,68 @@ import playground.jnlp.LaunchConfig;
 import playground.jnlp.Launcher;
 
 /**
- * TODO: Document this class
+ * The main playground application for launching games.
  *
  * @author kevin
  */
 public class Playground extends BasicGame implements PodListener {
+	/** The list of pods for the alt menu at the bottom of the screen*/
 	private PodGroup alt = new PodGroup();
 	
+	/** The logo to display in the bottom right corer */
 	private Image logo;
+	/** The container holding this application */
 	private GameContainer container;
+	/** The location at which we'll cache launcher data */
 	private String launchCacheLocation;
+	/** The location at which we'll cache image data */
 	private String dataCacheLocation;
+	/** The location at which we'll cache games store data */
 	private String storeCacheLocation;
 	
+	/** The middle alt-menu pod */
 	private Pod quitPod;
+	/** The right alt-menu pod */
 	private Pod nextPod;
+	/** The left alt-menu pod */
 	private Pod prevPod;
 	
+	/** The version of java available */
 	private String version;
+	/** The record for the game currently being displayed (if any) */
 	private GameRecord current;
+	/** True if we're reinitialising after running a game */
 	private boolean reinit;
+	/** True if we're waiting for a download */
 	private boolean waitingForDownload;
+	/** The configuration that should be executed to launch the game */
 	private LaunchConfig config;
+	/** The bouce angle for the message display */
 	private double ang;
 	
+	/** The store that lists the games available */
 	private GameStore store;
+	/** The current state being display, main menu, games list, categories etc */
 	private State currentState;
+	/** The list of states */
 	private State[] states = new State[10];
+	/** The games visual data cached */
 	private GamesData gData;
+	/** The state showing a list of games */
 	private GamesListState gamesListState;
+	/** The last state ID */
 	private int lastID;
+	/** The state display the information about a single game */
 	private InfoState infoState;
 	
+	/** The container holding this app */
 	private AppGameContainer app;
+	/** The theme colour */
 	private Color theme = new Color(1,0,0,1);
 	
+	/** 
+	 * Create a new playground
+	 */
 	public Playground() {
 		super("Playground");
 
@@ -74,14 +101,29 @@ public class Playground extends BasicGame implements PodListener {
 		version = "JRE "+System.getProperty("java.version").substring(0,3);
 	}
 	
+	/**
+	 * Set the list of games to be displayed in the games list state
+	 * 
+	 * @param list The list of games to be displayed
+	 */
 	public void setGamesList(GameList list) {
 		gamesListState.setList(list);
 	}
 	
+	/**
+	 * Get the visual data cached about the games (logos and thumbs)
+	 * 
+	 * @return The visual data cached about the games
+	 */
 	public GamesData getGamesData() {
 		return gData;
 	}
 	
+	/**
+	 * Enter a state specified by its ID
+	 * 
+	 * @param id The ID of the state to enter
+	 */
 	public void enterState(int id) {
 		if (id < 0) {
 			return;
@@ -104,6 +146,11 @@ public class Playground extends BasicGame implements PodListener {
 		currentState.enter(oldID, this);
 	}
 	
+	/**
+	 * Update the alt-menu labels
+	 * 
+	 * @param state The state we've entered
+	 */
 	private void updateLabels(State state) {
 		quitPod.setEnabled(currentState.getBackLabel() != null);
 		prevPod.setEnabled(currentState.getPrevLabel() != null);
@@ -128,7 +175,7 @@ public class Playground extends BasicGame implements PodListener {
 		}
 		
 		try {
-			store = GameStoreFactory.getGameStore("",storeCacheLocation);
+			store = GameStoreFactory.getGameStore(storeCacheLocation);
 		} catch (IOException e) {
 			Sys.alert("Error", "Unable to contact game server");
 			container.exit();
@@ -184,6 +231,9 @@ public class Playground extends BasicGame implements PodListener {
 		reinit = true;
 	}
 
+	/**
+	 * Exit the application
+	 */
 	public void exit() {
 		container.exit();
 	}
@@ -295,6 +345,11 @@ public class Playground extends BasicGame implements PodListener {
 	public void podMoveCompleted(Pod pod) {
 	}
 
+	/**
+	 * Set the information on the game to be displayed
+	 * 
+	 * @param info The information on the game to be displayed
+	 */
 	public void setInfo(GameRecord info) {
 		 infoState.setInfo(dataCacheLocation, launchCacheLocation, info);
 	}
@@ -314,6 +369,13 @@ public class Playground extends BasicGame implements PodListener {
 		}
 	}
 
+	/**
+	 * Perform the download and potential launch of a game
+	 * 
+	 * @param current The info describing the game to be launched
+	 * @param update True if we should attempt to update the cache before running
+	 * @param run True if we should attempt to run the game
+	 */
 	public void doDownload(final GameRecord current, final boolean update, final boolean run) {
 		Thread t = new Thread() {
 			public void run() {
@@ -336,6 +398,9 @@ public class Playground extends BasicGame implements PodListener {
 		t.start();
 	}
 
+	/**
+	 * @see org.newdawn.slick.BasicGame#keyPressed(int, char)
+	 */
 	public void keyPressed(int key, char c) {
 		if (key == Input.KEY_F1) {
 			if (app != null) {
@@ -351,6 +416,11 @@ public class Playground extends BasicGame implements PodListener {
 		}
 	}
 	
+	/**
+	 * Entry point into the application
+	 * 
+	 * @param argv The arguments passed to the application
+	 */
 	public static void main(String[] argv) {
 		try {
 			AppGameContainer container = new AppGameContainer(new Playground(), 800, 600, false);

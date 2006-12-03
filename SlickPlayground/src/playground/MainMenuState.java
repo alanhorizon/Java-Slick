@@ -17,21 +17,38 @@ import org.newdawn.slick.util.Log;
 import playground.games.GameStore;
 
 /**
- * TODO: Document this class
+ * The state to display the main menu
  *
  * @author kevin
  */
 public class MainMenuState extends State implements PodListener {
+	/** The unique identifier for this state */
 	public static final int ID = 1;
 		
+	/** The application holding this tate */
 	private Playground playground;
+	/** The group holding the pods */
 	private PodGroup group;
+	/** True if this state is on the screen */
 	private boolean on;
+	/** The next state we should transition to */
 	private int nextState;
+	/** The store of games to be accessed */
 	private GameStore store;
+	/** True if we're currently updating the games data */
 	private boolean updating;
+	/** The angle of the bounce */
 	private float ang;
+	/** The format to use when display the date */
 	private SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+	
+	/**
+	 * Create a new state
+	 * 
+	 * @param app The application holding this stae
+	 * @param store The store of games to be presented
+	 * @param reinit True if this is a reinitialisation
+	 */
 	public MainMenuState(Playground app, GameStore store, boolean reinit) {
 		playground = app;
 	
@@ -178,6 +195,9 @@ public class MainMenuState extends State implements PodListener {
 		}
 	}
 
+	/**
+	 * @see playground.State#render(org.newdawn.slick.GameContainer, org.newdawn.slick.Graphics)
+	 */
 	public void render(GameContainer container, Graphics g) {
 		super.render(container, g);
 
@@ -200,6 +220,9 @@ public class MainMenuState extends State implements PodListener {
 		}
 	}
 	
+	/**
+	 * @see playground.State#update(org.newdawn.slick.GameContainer, int)
+	 */
 	public void update(GameContainer container, int delta) {
 		ang += delta * 0.01f;
 		if (updating) {

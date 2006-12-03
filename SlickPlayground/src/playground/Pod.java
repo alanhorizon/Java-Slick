@@ -16,28 +16,65 @@ import org.newdawn.slick.geom.Rectangle;
  * @author kevin
  */
 public class Pod {
+	/** The area occupied by this rectangle */
 	protected Rectangle rect;
+	/** The image being displayed for this POD */
 	protected Image image;
+	/** The x coordinate of the position of the POD */
 	protected float x;
+	/** The y cooridnate of the position of the POD */
 	protected float y;
+	/** The font used to render the label on the POD */
 	protected Font font;
+	/** The label to display on the POD */
 	protected String label;
+	/** The listener to report updates to */
 	protected PodListener listener;
+	/** The list of images to layer on top of the POD */
 	protected ArrayList images = new ArrayList();
+	/** The arbitrary user data assigned to this POD - eeek, untyped */
 	protected Object data;
+	/** True if this POD is rendered and updated */
 	protected boolean enabled = true;
+	/** True if the mouse button has been released since last press on this POD */
 	protected boolean hasBeenReleased = true;
+	/** True if the mouse is over this POD */
 	protected boolean over;
-	
+	/** The group that this POD belongs to */
 	private PodGroup group = new PodGroup();
 	
+	/**
+	 * Default constructor for subclasses
+	 */
 	protected Pod() {
 	}
 	
+	/**
+	 * Create a new POD 
+	 * 
+	 * @param listener The listener to report updates 
+	 * @param image The image to display in the background of the POD
+	 * @param font The font to us for the label
+	 * @param x The x coordinate of the position of the POD
+	 * @param y The y coordinate of the position of the POD
+	 * @param label The label to display on the POD
+	 */
 	public Pod(PodListener listener, Image image, Font font, int x, int y, String label) {
 		this(listener, image, font, x,y, image.getWidth(),image.getHeight(),label);
 	}
 
+	/**
+	 * Create a new POD 
+	 * 
+	 * @param listener The listener to report updates 
+	 * @param img The image to display in the background of the POD
+	 * @param font The font to us for the label
+	 * @param x The x coordinate of the position of the POD
+	 * @param y The y coordinate of the position of the POD
+	 * @param width The width of the POD
+	 * @param height The height of the POD
+	 * @param label The label to display on the POD
+	 */
 	public Pod(PodListener listener, Image img, Font font, int x, int y, int width, int height, String label) {
 		this.font = font;
 		this.x = x;
@@ -50,36 +87,78 @@ public class Pod {
 		rect = new Rectangle(x,y,width,height);
 	}
 	
+	/**
+	 * Set the group this POD belongs to
+	 * 
+	 * @param group The group this POD belongs to 
+	 */
 	public void setGroup(PodGroup group) {
 		this.group = group;
 	}
 	
+	/**
+	 * Indicate if this POD should be enabled. A disabled POD
+	 * is neither rendered or updated.
+	 * 
+	 * @param enabled True if this POD should be enabled
+	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 	
+	/**
+	 * Check if this POD is enabled
+	 * 
+	 * @return True if this POD is enabled.
+	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
 	
+	/**
+	 * Set the arbitrary user data given for this pod - eeek this is untyped data!
+	 * 
+	 * @param data The data to assign to this POD
+	 */
 	public void setUserData(Object data) {
 		this.data = data;
 	}
 	
+	/**
+	 * Get the arbitrary data thats been given for this POD
+	 * 
+	 * @return The untyped data assigned to this POD
+	 */
 	public Object getUserData() {
 		return data;
 	}
 	
+	/**
+	 * Set the x coordiante of the position of this POD
+	 * 
+	 * @param x The new x coordinate
+	 */
 	public void setX(int x) {
 		rect.x = x;
 		this.x = x;
 	}
-	
+
+	/**
+	 * Set the y coordiante of the position of this POD
+	 * 
+	 * @param y The new y coordinate
+	 */
 	public void setY(int y) {
 		rect.y = y;
 		this.y = y;
 	}
 	
+	/**
+	 * Draw the POD to the graphics context provided
+	 * 
+	 * @param container The container housing the graphics
+	 * @param g The graphics context to which the POD should be drawn
+	 */
 	public void draw(GameContainer container, Graphics g) {
 		if (!enabled) {
 			return;
@@ -126,6 +205,7 @@ public class Pod {
 	public void addImage(Image image) {
 		addImage(image, false);
 	}
+	
 	/**
 	 * Add an image to the pod
 	 * 
@@ -151,7 +231,15 @@ public class Pod {
 		images.add(image);
 	}
 	
-	public void update(GameContainer container, int d, float xoffset, float yoffset) {
+	/**
+	 * Update the POD's state
+	 * 
+	 * @param container The container holding the game using this POD
+	 * @param delta The amount of time passed since last update
+	 * @param xoffset The amount the POD has been offset by its group 
+	 * @param yoffset The amount the POD has been offset by its group
+	 */
+	public void update(GameContainer container, int delta, float xoffset, float yoffset) {
 		if (!enabled) {
 			hasBeenReleased = true;
 			return;
@@ -172,18 +260,36 @@ public class Pod {
 		}
 	}
 	
+	/**
+	 * Fire an event indicating that this POD has stopped moving
+	 */
 	public void fireMoveComplete() {
 		listener.podMoveCompleted(this);
 	}
 	
+	/**
+	 * Get the x position of this POD
+	 * 
+	 * @return The x coordinate of the position of this POD
+	 */
 	public int getX() {
 		return (int) x;
 	}
-	
+
+	/**
+	 * Get the y position of this POD
+	 * 
+	 * @return The y coordinate of the position of this POD
+	 */
 	public int getY() {
 		return (int) y;
 	}
 	
+	/**
+	 * Set the label to be displayed in text on this POD
+	 * 
+	 * @param label The label to be displayed on the POD
+	 */
 	public void setLabel(String label) {
 		this.label = label;
 	}

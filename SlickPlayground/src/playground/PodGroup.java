@@ -6,27 +6,48 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 /**
- * TODO: Document this class
+ * A collection of PODs that can be slid around the screen.
  *
  * @author kevin
  */
 public class PodGroup {
+	/** The list of PODs to be displayed */
 	private ArrayList pods = new ArrayList();
+	/** The x component of the velocity of the group */
 	private double vx;
+	/** The y component of the velocity of the group */
 	private double vy;
+	/** The remaining movement on the X axis */
 	private double dx;
+	/** The remaining movement on the Y axis */
 	private double dy;
+	/** The current x offset from base */
 	private double x;
+	/** The current y offset from base */
 	private double y;
 	
+	/**
+	 * Create a new empty group
+	 */
 	public PodGroup() {
 		
 	}
 	
+	/**
+	 * Arrange the pods in this group on the screen
+	 */
 	public void arrange() {
 		arrange(50,50,255,180);
 	}
 	
+	/**
+	 * Arrange the pods in this group on the screen
+	 * 
+	 * @param xoffset The base x coordinate offset
+	 * @param yoffset The base y cooridnate offset
+	 * @param width The width that should be given for each POD
+	 * @param height The height that should be given for each POD
+	 */
 	public void arrange(int xoffset, int yoffset, int width, int height) {
 		if (pods.size() <= 9) {
 			for (int y=0;y<3;y++) {
@@ -53,20 +74,44 @@ public class PodGroup {
 		}
 	}
 
+	/**
+	 * Set the position on the screen of this POD group and hence all the PODs
+	 * it holds
+	 * 
+	 * @param x The new x position of the POD group
+	 * @param y The new y position of the POD group
+	 */
 	public void setPosition(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
 	
+	/**
+	 * Add a pod to the group
+	 * 
+	 * @param pod The pod to add to the group
+	 */
 	public void add(Pod pod) {
 		pod.setGroup(this);
 		pods.add(pod);
 	}
 	
+	/**
+	 * Check if this group contains the specified POD
+	 * 
+	 * @param pod The POD to check for
+	 * @return True if the POD is in the group
+	 */
 	public boolean contains(Pod pod) {
 		return pods.contains(pod);
 	}
 	
+	/**
+	 * Update the group, moving and updating the PODs inside
+	 * 
+	 * @param container The container holding the display
+	 * @param d The amount of time thats passed since last update (milliseconds)
+	 */
 	public void update(GameContainer container, int d) {
 		double mx = 0;
 		double my = 0;
@@ -120,18 +165,38 @@ public class PodGroup {
 		}
 	}
 
+	/**
+	 * The width in PODs of the group's display
+	 * 
+	 * @return The width in PODs of the groups display
+	 */
 	public int width() {
 		return pods.size() / 3;
 	}
 	
+	/**
+	 * Check if the POD group is moving 
+	 * 
+	 * @return True if the POD group is moving 
+	 */
 	public boolean moving() {
 		return ((dx != 0) || (dy != 0));
 	}
 	
+	/**
+	 * Clear the group, remove all PODs
+	 */
 	public void clear() {
 		pods.clear();
 	}
 	
+	/**
+	 * Move the group a given amount in the x and y axis. Note that it won't
+	 * move instantly, rather it will slide.
+	 * 
+	 * @param dx The ammount to move on the x-axis (pixels)
+	 * @param dy The ammount to move on teh y-axis (pixels)
+	 */
 	public void move(double dx, double dy) {
 		if (moving()) {
 			return;
@@ -142,6 +207,12 @@ public class PodGroup {
 		vy = 0;
 	}
 	
+	/**
+	 * Draw this group and hence all the enabled PODs inside
+	 * 
+	 * @param container The container holding the graphics context 
+	 * @param g The graphics context on which to draw the POD
+	 */
 	public void draw(GameContainer container, Graphics g) {
 		g.translate((float) x,(float) y);
 		for (int i=0;i<pods.size();i++) {

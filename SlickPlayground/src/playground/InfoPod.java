@@ -14,24 +14,42 @@ import org.newdawn.slick.geom.Rectangle;
 import playground.games.GameRecord;
 
 /**
- * TODO: Document this class
+ * A Pod display the game information and controls to download, rate, play and mark the
+ * entry.
  *
  * @author kevin
  */
 public class InfoPod extends Pod {
+	/** The font to render to the text */
 	private Font font;
+	/** The record of data being display */
 	private GameRecord info;
+	/** The image displayed as the logo of the game */
 	private Image logo;
+	/** The lines of text to dispaly */
 	private String[] lines;
+	/** The colour used for shadowing the text */
 	private Color shadow = new Color(0,0,0,0.5f);
 	
+	/**
+	 * Create a new information Pod
+	 * 
+	 * @param listener The listener to report updates to
+	 * @param font The font to display the text with
+	 */
 	public InfoPod(PodListener listener, Font font) {
 		this.listener = listener;
 		this.font = font;
 		rect = new Rectangle(0,0,0,0);
 	}
 	
-	public void setInfo(String dataCacheLocation, GameRecord info, Image l) throws SlickException {
+	/**
+	 * Set the information to be displayed
+	 * 
+	 * @param info The information to be displayed
+	 * @param l The logo image
+	 */
+	public void setInfo(GameRecord info, Image l) {
 		this.info = info;
 		this.logo = l;
 		lines = split(font, info.getDescription(), 760);
@@ -44,6 +62,14 @@ public class InfoPod extends Pod {
 		
 	}
 	
+	/**
+	 * Split a piece of text into seperate lines based on the width of the font
+	 *
+	 * @param font The font to check against
+	 * @param text The full text to be displayed
+	 * @param max The maximum length of a line
+	 * @return The lines of text
+	 */
 	private String[] split(Font font, String text, int max) {
 		ArrayList lines = new ArrayList();
 		StringTokenizer tokens = new StringTokenizer(text);
@@ -64,6 +90,9 @@ public class InfoPod extends Pod {
 		return (String[]) lines.toArray(new String[0]);
 	}
 	
+	/**
+	 * @see playground.Pod#draw(org.newdawn.slick.GameContainer, org.newdawn.slick.Graphics)
+	 */
 	public void draw(GameContainer container, Graphics g) {
 		if (info != null) {
 			g.setFont(font);
@@ -78,15 +107,21 @@ public class InfoPod extends Pod {
 		}
 	}
 
-	public void center(GameContainer container, Font font, Graphics g, String text, int y) {
+	/**
+	 * Center a piece of text on the screen
+	 * 
+	 * @param container The container in which the graphics are being displayed
+	 * @param font The font to draw the text with
+	 * @param g The graphics context that should be used to draw the text
+	 * @param text The text to write
+	 * @param y The y coordinate to draw the font at
+	 */
+	private void center(GameContainer container, Font font, Graphics g, String text, int y) {
 		int xo = (container.getWidth()-font.getWidth(text))/2;
 		g.setColor(shadow);
 		g.drawString(text, xo+1, y+1);
 		g.setColor(Color.white);
 		g.drawString(text, xo, y);
-	}
-	
-	public void update(GameContainer container, int d) {
 	}
 
 }

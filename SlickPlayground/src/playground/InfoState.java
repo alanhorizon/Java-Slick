@@ -8,27 +8,45 @@ import org.newdawn.slick.util.Log;
 import playground.games.GameRecord;
 
 /**
- * TODO: Document this class
+ * A state in which the information about a game will be displayed and
+ * can be manipulated
  *
  * @author kevin
  */
 public class InfoState extends State implements PodListener {
+	/** The unique identifier for this state */
 	public static final int ID = 3;
 
+	/** The pod displaying the game info */
 	private InfoPod infoPod;
+	/** The pod to "get" the game */
 	private Pod getPod;
+	/** The pod to check for updates */
 	private Pod updatePod;
+	/** The pod to play the game */
 	private Pod playPod;
 	
+	/** The application holding this state */
 	private Playground playground;
+	/** The group holding all the pods */
 	private PodGroup group;
+	/** True if this state is on screen */
 	private boolean on;
+	/** The next state we should transition to */
 	private int nextState;
 	
+	/** The record currently being displaye */
 	private GameRecord current;
+	/** The last data cache location specified */
 	private String lastDataCache;
+	/** The last launch cache location specified */
 	private String lastLaunchCache;
 	
+	/**
+	 * Create a new state
+	 * 
+	 * @param app The application holding this state
+	 */
 	public InfoState(Playground app) {
 		playground = app;
 		
@@ -37,15 +55,18 @@ public class InfoState extends State implements PodListener {
 		on = true;
 	}
 	
+	/**
+	 * Set the information to be displayed in this state
+	 * 
+	 * @param dataCacheLocation The location to cache the image data to
+	 * @param launchCacheLocation The location to cache the launch information to
+	 * @param info The information to be displayed
+	 */
 	public void setInfo(String dataCacheLocation, String launchCacheLocation, GameRecord info) {
 		lastDataCache = dataCacheLocation;
 		lastLaunchCache = launchCacheLocation;
 		
-		try {
-			infoPod.setInfo(dataCacheLocation, info, playground.getGamesData().getLogoImage(info));
-		} catch (SlickException e) {
-			Log.error(e);
-		}
+		infoPod.setInfo(info, playground.getGamesData().getLogoImage(info));
 		this.current = info;
 		
 		if (new File(launchCacheLocation+"/"+info.getID()).exists()) {

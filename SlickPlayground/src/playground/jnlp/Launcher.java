@@ -58,7 +58,6 @@ public class Launcher {
 	 * @param location The URL location of the JNLP
 	 * @param update True if we should attempt to update the install if possible
 	 * @param config The launch configuration to add to
-	 * @return The configuration used to launch the application after return
 	 * @throws IOException Indicates a failure to read the required files
 	 */
 	private void getLaunch(String id, String location, boolean update, LaunchConfig config) throws IOException {

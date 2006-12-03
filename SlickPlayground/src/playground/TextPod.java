@@ -14,16 +14,26 @@ import org.newdawn.slick.geom.Rectangle;
 import playground.games.GameRecord;
 
 /**
- * TODO: Document this class
+ * A POD to display a simple text message in the middle of the
+ * screen.
  *
  * @author kevin
  */
 public class TextPod extends Pod {
+	/** The font to render the text with */
 	private Font font;
-	private String[] lines;
+	/** The colour to use for shadowing the text */
 	private Color shadow = new Color(0,0,0,0.5f);
+	/** The text to be displayed */
 	private String text;
 	
+	/**
+	 * Create a new POD to display a single piece of text
+	 * 
+	 * @param listener The listener to be notified of updates to this POD
+	 * @param font The font to use to render the text
+	 * @param text The text to be displayed
+	 */
 	public TextPod(PodListener listener, Font font, String text) {
 		this.listener = listener;
 		this.font = font;
@@ -31,40 +41,28 @@ public class TextPod extends Pod {
 		rect = new Rectangle(0,0,0,0);
 	}
 	
-	private String[] split(Font font, String text, int max) {
-		ArrayList lines = new ArrayList();
-		StringTokenizer tokens = new StringTokenizer(text);
-		
-		String line = "";
-		while (tokens.hasMoreTokens()) {
-			String current = tokens.nextToken();
-			
-			if (font.getWidth(line+current) < max) {
-				line += " "+current;
-			} else {
-				lines.add(line);
-				line = current;
-			}
-		}
-		
-		lines.add(line);
-		return (String[]) lines.toArray(new String[0]);
-	}
-	
+	/**
+	 * @see playground.Pod#draw(org.newdawn.slick.GameContainer, org.newdawn.slick.Graphics)
+	 */
 	public void draw(GameContainer container, Graphics g) {
 		g.setFont(font);
 		center(container, font, g, text, (int) y+250);
 	}
 
-	public void center(GameContainer container, Font font, Graphics g, String text, int y) {
+	/**
+	 * Center a piece of text on the display
+	 * 
+	 * @param container The container holding the display
+	 * @param font The font to render the text with
+	 * @param g The graphics context to render the text to
+	 * @param text The text to be render
+	 * @param y The y coordinate to render the text at
+	 */
+	private void center(GameContainer container, Font font, Graphics g, String text, int y) {
 		int xo = (container.getWidth()-font.getWidth(text))/2;
 		g.setColor(shadow);
 		g.drawString(text, xo+1, y+1);
 		g.setColor(Color.white);
 		g.drawString(text, xo, y);
 	}
-	
-	public void update(GameContainer container, int d) {
-	}
-
 }

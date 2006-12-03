@@ -18,24 +18,43 @@ import playground.games.GameRecord;
 import playground.games.GameStore;
 
 /**
- * TODO: Document this class
+ * A set of visual data relating the games that have been loaded
  *
  * @author kevin
  */
 public class GamesData {
+	/** The logos stored for each game */
 	private HashMap logos = new HashMap();
+	/** The thumbnails logos stored for each game */
 	private HashMap thumbs = new HashMap();
+	/** The location where we should cache image data */
 	private String dataCacheLocation;
 	
+	/**
+	 * Create a new set of games data
+	 * 
+	 * @param cache The location we should cache image data
+	 */
 	public GamesData(String cache) {
 		dataCacheLocation = cache;
 	}
 	
+	/**
+	 * Cache a single game record's data into this holder
+	 * 
+	 * @param info The description of game to cache
+	 */
 	public void cache(GameRecord info) {
 		getThumbImage(info, false);
 		getLogoImage(info, false);
 	}
 	
+	/**
+	 * Update the visual data based on the potentially new settings 
+	 * from the games store.
+	 * 
+	 * @param store The store whose games should be updated
+	 */
 	public void update(GameStore store) {
 		GameList list = store.getGames();
 		
@@ -44,15 +63,33 @@ public class GamesData {
 		}
 	}
 	
+	/**
+	 * Update the information about a single game
+	 * 
+	 * @param info The description of the game whose data should be updated
+	 */
 	public void update(GameRecord info) {
 		getThumbImage(info, true);
 		getLogoImage(info, true);
 	}
 
+	/**
+	 * Get the thumnail logo for a given game
+	 * 
+	 * @param info The description of the game whose thumbnail should be retrieve
+	 * @return The thumbnail image
+	 */
 	public Image getThumbImage(GameRecord info) {
 		return getThumbImage(info, false);
 	}
-	
+
+	/**
+	 * Get the thumnail logo for a given game
+	 * 
+	 * @param info The description of the game whose thumbnail should be retrieve
+	 * @param update True if we should update the records is needed
+	 * @return The thumbnail image
+	 */
 	public Image getThumbImage(GameRecord info, boolean update) {
 		if ((thumbs.get(info) == null) || (update)) {
 			String ref = info.getThumbURL();
@@ -89,10 +126,23 @@ public class GamesData {
 		return (Image) thumbs.get(info);
 	}
 
+	/**
+	 * Get the logo logo for a given game
+	 * 
+	 * @param info The description of the game whose logo should be retrieve
+	 * @return The logo image
+	 */
 	public Image getLogoImage(GameRecord info) {
 		return getLogoImage(info, false);
 	}
-	
+
+	/**
+	 * Get the logo logo for a given game
+	 * 
+	 * @param info The description of the game whose logo should be retrieve
+	 * @param update True if we should update the records is needed
+	 * @return The logo image
+	 */
 	public Image getLogoImage(GameRecord info, boolean update) {
 		if ((logos.get(info) == null) || (update)) {
 			String ref = info.getLogoURL();
@@ -129,6 +179,13 @@ public class GamesData {
 		return (Image) logos.get(info);
 	}
 	
+	/**
+	 * Copy the contents of one stream to another
+	 * 
+	 * @param is The stream to read from
+	 * @param out The stream to write to
+	 * @throws IOException Indicates a failure to copy the data from stream to the other
+	 */
 	private void copy(InputStream is, OutputStream out) throws IOException {
 		byte[] buffer = new byte[4096];
 		

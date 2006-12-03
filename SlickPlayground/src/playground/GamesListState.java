@@ -16,22 +16,37 @@ import playground.games.GameRecord;
 import playground.games.GameStore;
 
 /**
- * TODO: Document this class
+ * A state to display a list of games (either in All Games, Categories or Faves)
  *
  * @author kevin
  */
 public class GamesListState extends State implements PodListener {
+	/** The ID of this state */
 	public static final int ID = 2;
-		
+	
+	/** The application holding this state */
 	private Playground playground;
+	/** The group of pods displayed */
 	private PodGroup group;
+	/** True if this state is currently on screen */
 	private boolean on;
+	/** The state we should move to next */
 	private int nextState;
+	/** The offset of the slide */
 	private float offsetx = 0;
+	/** True if we're laying out vertical due to having more than 9 entries */
 	private boolean vertical;
+	/** The state from which we entered this one */
 	private int lastState;
+	/** The list of games to display */
 	private GameList lastList;
 	
+	/**
+	 * Create a new games list state
+	 * 
+	 * @param app The application holding this state
+	 * @param store The store of games to be displayd
+	 */
 	public GamesListState(Playground app, GameStore store) {
 		playground = app;
 		
@@ -41,6 +56,11 @@ public class GamesListState extends State implements PodListener {
 		on = true;
 	}
 	
+	/**
+	 * Set the list of games to display
+	 * 
+	 * @param list The list of games to display
+	 */
 	public void setList(GameList list) {
 		lastList = list;
 		
@@ -55,6 +75,12 @@ public class GamesListState extends State implements PodListener {
 		}
 	}
 	
+	/**
+	 * Create a pod for a single game record
+	 * 
+	 * @param info The game information to display
+	 * @return The newly created Pod
+	 */
 	private Pod getGameInfoPod(GameRecord info) {
 		Pod pod = new Pod(this, Resources.podImage, Resources.font, 0, 0, "");
 		pod.addImage(playground.getGamesData().getThumbImage(info), true);
