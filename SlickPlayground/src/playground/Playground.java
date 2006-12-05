@@ -188,8 +188,9 @@ public class Playground extends BasicGame implements PodListener {
 					for (int i=0;i<list.size();i++) {
 						gData.cache(list.getGame(i));
 					}
-				} catch (IOException e) {
+				} catch (Throwable e) {
 					Log.error(e);
+					System.exit(0);
 				}
 				doneInitialCache = true;
 			}
@@ -262,7 +263,7 @@ public class Playground extends BasicGame implements PodListener {
 	 */
 	public void update(GameContainer container, int delta) throws SlickException {
 		if (doneInitialCache) {
-			doneInitialCache = true;
+			doneInitialCache = false;
 			initialize();
 			enterState(MainMenuState.ID);
 		}
