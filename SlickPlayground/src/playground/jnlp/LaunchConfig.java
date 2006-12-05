@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class LaunchConfig {
 	 */
 	public void addSignedCodebase(File dir) {
 		try {
-			policy += "grant codeBase \""+dir.toURL()+"*\" {\n";
+			policy += "grant codeBase \""+dir.toURI().toASCIIString()+"*\" {\n";
 			policy += "  permission java.security.AllPermission;\n";
 			policy += "};\n";
 			policy += "\n";
@@ -108,7 +109,7 @@ public class LaunchConfig {
 	 */
 	public void addUnsignedCodebase(String host, File dir) {
 		try {
-			policy += "grant codeBase \""+dir.toURL()+"*\" {\n";
+			policy += "grant codeBase \""+dir.toURI().toASCIIString()+"*\" {\n";
 			policy += "  permission java.net.SocketPermission \""+host+"\", \"connect\";\n";  
 			policy += "  permission java.util.PropertyPermission \"*\", \"read\";\n";
 			policy += "};\n";
