@@ -71,6 +71,8 @@ public class Playground extends BasicGame implements PodListener {
 	private GameStore store;
 	/** The current state being display, main menu, games list, categories etc */
 	private State currentState;
+	/** The splash screen state */
+	private SplashState splash;
 	/** The list of states */
 	private State[] states = new State[10];
 	/** The games visual data cached */
@@ -86,6 +88,8 @@ public class Playground extends BasicGame implements PodListener {
 	private AppGameContainer app;
 	/** The theme colour */
 	private Color theme = new Color(1,0,0,1);
+	/** True if we've completed the initial cache */
+	private boolean doneInitialCache;
 	
 	/** 
 	 * Create a new playground
@@ -174,13 +178,23 @@ public class Playground extends BasicGame implements PodListener {
 			app = (AppGameContainer) container;
 		}
 		
-		try {
-			store = GameStoreFactory.getGameStore(storeCacheLocation);
-		} catch (IOException e) {
-			Sys.alert("Error", "Unable to contact game server");
-			container.exit();
-			return;
-		}
+		Thread t = new Thread() {
+			public void run() {
+				try { Thread.sleep(1000); } catch (Exception e) {};
+				try {
+					store = GameStoreFactory.getGameStore(storeCacheLocation);
+
+					GameList list = store.getGames();
+					for (int i=0;i<list.size();i++) {
+						gData.cache(list.getGame(i));
+					}
+				} catch (IOException e) {
+					Log.error(e);
+				}
+				doneInitialCache = true;
+			}
+		};
+		t.start();
 		
 		container.setIcons(new String[] {"res/icon.png","res/icon32.png", "res/icon24.png"});
 		
@@ -192,13 +206,39 @@ public class Playground extends BasicGame implements PodListener {
 		logo = new Image("res/logo.png");
 		container.setShowFPS(false);
 		container.setVSync(true);
-
-		GameList list = store.getGames();
-		for (int i=0;i<list.size();i++) {
-			gData.cache(list.getGame(i));
-		}
-		gData.loadImages();
 		
+		states[SplashState.ID] = splash = new SplashState();
+		
+		quitPod = new Pod(this, null, Resources.font, 365,570,60,20,"Quit");
+		prevPod = new Pod(this, null, Resources.font, 265,570,60,20,"Prev");
+		nextPod = new Pod(this, null, Resources.font, 465,570,60,20,"Next");
+		
+		prevPod.setEnabled(false);
+		nextPod.setEnabled(false);
+		alt.add(quitPod);
+		alt.add(prevPod);
+		alt.add(nextPod);
+		
+		if (reinit) {
+			updateLabels(currentState);
+		} else {
+			enterState(SplashState.ID);
+		}
+	}
+
+	/**
+	 * Exit the application
+	 */
+	public void exit() {
+		container.exit();
+	}
+	
+	/**
+	 * Init the world after the store has been resolved
+	 */
+	private void initialize() {
+		gData.loadImages();
+
 		if (!reinit) {
 			states[MainMenuState.ID] = new MainMenuState(this, store, reinit);
 			states[GamesListState.ID] = gamesListState = new GamesListState(this, store);
@@ -214,35 +254,19 @@ public class Playground extends BasicGame implements PodListener {
 			}
 		}
 		
-		quitPod = new Pod(this, null, Resources.font, 365,570,60,20,"Quit");
-		prevPod = new Pod(this, null, Resources.font, 265,570,60,20,"Prev");
-		nextPod = new Pod(this, null, Resources.font, 465,570,60,20,"Next");
-		
-		prevPod.setEnabled(false);
-		nextPod.setEnabled(false);
-		alt.add(quitPod);
-		alt.add(prevPod);
-		alt.add(nextPod);
-		
-		if (reinit) {
-			updateLabels(currentState);
-		} else {
-			enterState(MainMenuState.ID);
-		}
 		reinit = true;
-	}
-
-	/**
-	 * Exit the application
-	 */
-	public void exit() {
-		container.exit();
 	}
 	
 	/**
 	 * @see org.newdawn.slick.BasicGame#update(org.newdawn.slick.GameContainer, int)
 	 */
 	public void update(GameContainer container, int delta) throws SlickException {
+		if (doneInitialCache) {
+			doneInitialCache = true;
+			initialize();
+			enterState(MainMenuState.ID);
+		}
+		
 		if (config != null) {
 			try { Thread.sleep(100); } catch (Exception e) {}
 			return;
@@ -276,6 +300,11 @@ public class Playground extends BasicGame implements PodListener {
 		logo.draw(600,400,200,200,new Color(0,0,0,0.1f));
 		
 		currentState.render(container, g);
+		
+		if (currentState == splash) {
+			return;
+		}
+		
 		alt.draw(container, g);
 
 		Texture.bindNone();

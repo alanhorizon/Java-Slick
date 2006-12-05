@@ -38,12 +38,16 @@ public class RemoteXMLGameStore extends LocalGameStore {
 	 * @see playground.games.local.LocalGameStore#update()
 	 */
 	public void update() throws IOException {
-		URL remote = new URL(url);
-		load(remote.openConnection().getInputStream());
-		
-		for (int i=0;i<allgames.size();i++) {
-			GameInfo info = (GameInfo) allgames.get(i);
-			info.prefixID(id);
+		try {
+			URL remote = new URL(url);
+			load(remote.openConnection().getInputStream());
+			
+			for (int i=0;i<allgames.size();i++) {
+				GameInfo info = (GameInfo) allgames.get(i);
+				info.prefixID(id);
+			}
+		} catch (IOException e) {
+			name = "Server Unavailable";
 		}
 	}
 

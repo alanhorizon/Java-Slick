@@ -136,7 +136,6 @@ public class LocalGameStore implements GameStore {
 		} catch (IOException e) {
 			Log.error(e);
 			Log.warn("Failed to update remote store");
-			return;
 		}
 
 		try {
