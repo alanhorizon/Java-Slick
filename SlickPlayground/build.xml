@@ -30,6 +30,7 @@
 	
 	<delete dir="${build.dir}"/>
 	<mkdir dir="${build.dir}/classes"/>
+	<mkdir dir="${build.dir}/jnlpclasses"/>
 	<delete dir="webstart"/>
 	<mkdir dir="webstart"/>
 </target>
@@ -49,6 +50,12 @@
 	      <pathelement path="${slick.install}/lib/jorbis-0.0.15.jar"/>
 	    </classpath>
 	</javac>
+	<javac debug="true" srcdir="jnlpsrc" destdir="${build.dir}/jnlpclasses" target="1.4" source="1.4">
+	    <classpath>
+	    </classpath>
+	</javac>
+	<jar destfile="res/pgjnlp.jar" 
+		 basedir="${build.dir}/jnlpclasses"/>
 	<jar destfile="lib/${game.name}.jar" 
 		 basedir="${build.dir}/classes"/>
 	<jar update="true" destfile="lib/${game.name}.jar" 

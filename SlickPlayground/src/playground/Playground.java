@@ -87,7 +87,7 @@ public class Playground extends BasicGame implements PodListener {
 	/** The container holding this app */
 	private AppGameContainer app;
 	/** The theme colour */
-	private Color theme = new Color(1,0,0,1);
+	private Color theme = new Color(0,0,1,1f);
 	/** True if we've completed the initial cache */
 	private boolean doneInitialCache;
 	
@@ -178,31 +178,36 @@ public class Playground extends BasicGame implements PodListener {
 			app = (AppGameContainer) container;
 		}
 		
-		Thread t = new Thread() {
-			public void run() {
-				try { Thread.sleep(1000); } catch (Exception e) {};
-				try {
-					store = GameStoreFactory.getGameStore(storeCacheLocation);
-
-					GameList list = store.getGames();
-					for (int i=0;i<list.size();i++) {
-						gData.cache(list.getGame(i));
+		Resources.init();
+		
+		if (!reinit) {
+			Thread t = new Thread() {
+				public void run() {
+					try { Thread.sleep(1000); } catch (Exception e) {};
+					try {
+						store = GameStoreFactory.getGameStore(storeCacheLocation);
+	
+						GameList list = store.getGames();
+						for (int i=0;i<list.size();i++) {
+							gData.cache(list.getGame(i));
+						}
+					} catch (Throwable e) {
+						Log.error(e);
+						System.exit(0);
 					}
-				} catch (Throwable e) {
-					Log.error(e);
-					System.exit(0);
+					doneInitialCache = true;
 				}
-				doneInitialCache = true;
-			}
-		};
-		t.start();
+			};
+			t.start();
+		} else {
+			gData.update(store);
+			doneInitialCache = true;
+		}
 		
 		container.setIcons(new String[] {"res/icon.png","res/icon32.png", "res/icon24.png"});
 		
 		alt = new PodGroup();
 		this.container = container;
-		
-		Resources.init();
 		
 		logo = new Image("res/logo.png");
 		container.setShowFPS(false);
@@ -247,6 +252,7 @@ public class Playground extends BasicGame implements PodListener {
 			states[InfoState.ID] = infoState = new InfoState(this);
 			
 			gamesListState.setList(store.getGames());
+			enterState(MainMenuState.ID);
 		} else {
 			for (int i=0;i<states.length;i++) {
 				if (states[i] != null) {
@@ -254,7 +260,6 @@ public class Playground extends BasicGame implements PodListener {
 				}
 			}
 		}
-		
 		reinit = true;
 	}
 	
@@ -265,7 +270,6 @@ public class Playground extends BasicGame implements PodListener {
 		if (doneInitialCache) {
 			doneInitialCache = false;
 			initialize();
-			enterState(MainMenuState.ID);
 		}
 		
 		if (config != null) {
@@ -283,18 +287,37 @@ public class Playground extends BasicGame implements PodListener {
 	}
 
 	/**
+	 * Set the GL colour based on the current theme
+	 * 
+	 * @param base The base value for components
+	 * @param add The additional value from the theme color
+	 */
+	private void setThemeColor(float base, float add) {
+		GL11.glColor3f(base+(theme.r*add),base+(theme.g*add),base+(theme.b*add));
+	}
+	
+	/**
+	 * Set the colour to theme the background
+	 * 
+	 * @param theme The color to theme the background with
+	 */
+	public void setTheme(Color theme) {
+		this.theme = theme;
+	}
+	
+	/**
 	 * @see org.newdawn.slick.BasicGame#render(org.newdawn.slick.GameContainer, org.newdawn.slick.Graphics)
 	 */
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		Texture.bindNone();
 		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glColor3f(0.4f, 0.4f, 0.7f);
+			setThemeColor(0.4f, 0.3f);
 			GL11.glVertex3f(0, 0, 0);
-			GL11.glColor3f(0.3f, 0.3f, 0.6f);
+			setThemeColor(0.3f, 0.3f);
 			GL11.glVertex3f(800, 0, 0);
-			GL11.glColor3f(0.1f, 0.1f, 0.4f);
+			setThemeColor(0.1f, 0.3f);
 			GL11.glVertex3f(800, 600, 0);
-			GL11.glColor3f(0.2f, 0.2f, 0.5f);
+			setThemeColor(0.2f, 0.3f);
 			GL11.glVertex3f(0, 600, 0);
 		GL11.glEnd();
 			
@@ -310,17 +333,17 @@ public class Playground extends BasicGame implements PodListener {
 
 		Texture.bindNone();
 		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glColor3f(0.2f, 0.2f, 0.4f);
+			setThemeColor(0.2f, 0.2f);
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(800, 0, 0);
-			GL11.glColor3f(0.0f, 0.0f, 0.2f);
+			setThemeColor(0.0f, 0.2f);
 			GL11.glVertex3f(800, 31, 0);
 			GL11.glVertex3f(0, 31, 0);
-			
-			GL11.glColor3f(0.4f, 0.4f, 0.7f);
+
+			setThemeColor(0.4f, 0.3f);
 			GL11.glVertex3f(0, 31, 0);
 			GL11.glVertex3f(800, 31, 0);
-			GL11.glColor3f(0.2f, 0.2f, 0.5f);
+			setThemeColor(0.2f, 0.3f);
 			GL11.glVertex3f(800, 33, 0);
 			GL11.glVertex3f(0, 33, 0);
 		GL11.glEnd();

@@ -73,11 +73,11 @@ public class LocalGameStore implements GameStore {
 		} else {
 			Log.info("Loading cached games list");
 			load();
-		}
-		
-		if (!storeType.equals(remote.getClass().getName()) || (!name.equals(remote.getName()))) {
-			Log.info("Refreshing based on a change in store type: "+storeType+","+name);
-			update();
+			
+			if (!storeType.equals(remote.getClass().getName())) {
+				Log.info("Refreshing based on a change in store type: "+storeType+","+name);
+				update();
+			}
 		}
 	}
 	
@@ -298,7 +298,12 @@ public class LocalGameStore implements GameStore {
 	}
 
 	public String getName() {
-		return remoteStore.getName();
+		String result = remoteStore.getName();
+		if (result == null) {
+			result = this.name;
+		}
+		
+		return result;
 	}
 	
 }

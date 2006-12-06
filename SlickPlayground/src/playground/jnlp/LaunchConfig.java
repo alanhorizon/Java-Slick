@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.URLEncoder;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -173,6 +173,19 @@ public class LaunchConfig {
 	 */
 	public int run() throws IOException, InterruptedException {
 		File runDir = new File(path);
+		
+		// copy the JNLP implementation into the right place
+		File libDir = new File(runDir, "lib");
+		libDir.mkdirs();
+		
+		URL libURL = Thread.currentThread().getContextClassLoader().getResource("res/pgjnlp.jar");
+		if (libURL == null) {
+			throw new IOException("Packaging error, unable to locate pgjnlp.jar");
+		}
+		Launcher.getURL(libURL.openConnection(), new File(libDir, "pgjnlp.jar"));
+		addJar("lib/pgjnlp.jar");
+		addSignedCodebase(libDir);
+		
 		File policyFile = new File(runDir, id+"/java.policy");
 		
 		try {
@@ -196,7 +209,10 @@ public class LaunchConfig {
 		}
 		
 		String java = System.getProperty("java.home")+"/bin/java";
-		String command = java+" -Xmx"+heap+"m -Djava.security.manager -Djava.security.policy="+id+"/java.policy "+libPath+" -cp "+classpath+" "+mainclass;
+		String command = java+" -Xmx"+heap+"m -Dpg.id="+id+" -Djava.security.manager -Djava.security.policy="+id+"/java.policy "+libPath+" -cp "+classpath+" "+mainclass;
+		
+		Log.info("Running: "+command);
+		Log.info("From: "+runDir);
 		
 		Process process = Runtime.getRuntime().exec(command, env, runDir);
 		new Pipe(process.getInputStream(), System.out);

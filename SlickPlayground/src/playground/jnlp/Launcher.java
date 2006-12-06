@@ -257,25 +257,27 @@ public class Launcher {
 				File jarLocal = new File(local, name);
 				config.addJar(jarLocal.getPath());
 				
-				URLConnection jarConn;
-				
-				jarFiles.add(jarLocal);
-				try { 
-					jarConn = jarUrl.openConnection();
-					jarConn.setUseCaches(false);
-				} catch (Exception e) {
-					if (jarLocal.exists()) {
-						continue;
+				if (!jarLocal.exists() || update) {
+					URLConnection jarConn;
+					
+					jarFiles.add(jarLocal);
+					try { 
+						jarConn = jarUrl.openConnection();
+						jarConn.setUseCaches(false);
+					} catch (Exception e) {
+						if (jarLocal.exists()) {
+							continue;
+						}
+						
+						throw new IOException("Failed to retrieve: "+jarUrl);
 					}
 					
-					throw new IOException("Failed to retrieve: "+jarUrl);
+					// if we haven't yet got the jar or the remote jar is newer than this
+					// one then try to get it
+					if (!jarLocal.exists() || jarConn.getLastModified() > jarLocal.lastModified() || jarConn.getContentLength() != jarLocal.length()) {
+						getURL(jarConn, jarLocal);
+					} 
 				}
-				
-				// if we haven't yet got the jar or the remote jar is newer than this
-				// one then try to get it
-				if (!jarLocal.exists() || jarConn.getLastModified() > jarLocal.lastModified() || jarConn.getContentLength() != jarLocal.length()) {
-					getURL(jarConn, jarLocal);
-				} 
 			}
 
 			// deal with getting the jars
@@ -284,24 +286,27 @@ public class Launcher {
 				String name = (String) nativeJars.get(i);
 				URL jarUrl = new URL(file.getCodeBase()+"/"+name);
 				File jarLocal = new File(local, name);
-				URLConnection jarConn;
 				
-				jarFiles.add(jarLocal);
-				try { 
-					jarConn = jarUrl.openConnection();
-					jarConn.setUseCaches(false);
-				} catch (Exception e) {
-					if (jarLocal.exists()) {
-						continue;
+				if (!jarLocal.exists() || update) {
+					URLConnection jarConn;
+					
+					jarFiles.add(jarLocal);
+					try { 
+						jarConn = jarUrl.openConnection();
+						jarConn.setUseCaches(false);
+					} catch (Exception e) {
+						if (jarLocal.exists()) {
+							continue;
+						}
+						
+						throw new IOException("Failed to retrieve: "+jarUrl);
 					}
 					
-					throw new IOException("Failed to retrieve: "+jarUrl);
-				}
-				
-				// if we haven't yet got the jar or the remote jar is newer than this
-				// one then try to get it
-				if (!jarLocal.exists() || jarConn.getLastModified() > jarLocal.lastModified() || jarConn.getContentLength() != jarLocal.length()) {
-					getURL(jarConn, jarLocal);
+					// if we haven't yet got the jar or the remote jar is newer than this
+					// one then try to get it
+					if (!jarLocal.exists() || jarConn.getLastModified() > jarLocal.lastModified() || jarConn.getContentLength() != jarLocal.length()) {
+						getURL(jarConn, jarLocal);
+					}
 				}
 			}
 			
@@ -343,7 +348,7 @@ public class Launcher {
 	 * @param file The file to write to
 	 * @throws IOException Indicates a failure to grab the URL from the remote location
 	 */
-	private void getURL(URLConnection url, File file) throws IOException {
+	static void getURL(URLConnection url, File file) throws IOException {
 		file.getParentFile().mkdirs();
 
 		InputStream in = url.getInputStream();
