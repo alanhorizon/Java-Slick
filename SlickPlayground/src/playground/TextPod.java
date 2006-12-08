@@ -26,6 +26,10 @@ public class TextPod extends Pod {
 	private Color shadow = new Color(0,0,0,0.5f);
 	/** The text to be displayed */
 	private String text;
+	/** The x offset */
+	private int xofs;
+	/** The y offset */
+	private int yofs;
 	
 	/**
 	 * Create a new POD to display a single piece of text
@@ -39,6 +43,41 @@ public class TextPod extends Pod {
 		this.font = font;
 		this.text = text;
 		rect = new Rectangle(0,0,0,0);
+		yofs = 250;
+	}
+
+	/**
+	 * Create a new POD to display a single piece of text
+	 * 
+	 * @param listener The listener to be notified of updates to this POD
+	 * @param font The font to use to render the text
+	 * @param text The text to be displayed
+	 * @param x The x position of the text
+	 * @param y The y position of the text
+	 */
+	public TextPod(PodListener listener, Font font, String text, int x, int y) {
+		this.listener = listener;
+		this.font = font;
+		this.xofs = x;
+		this.yofs = y;
+		this.text = text;
+		rect = new Rectangle(0,0,0,0);
+	}
+
+	/**
+	 * Create a new POD to display a single piece of text
+	 * 
+	 * @param listener The listener to be notified of updates to this POD
+	 * @param font The font to use to render the text
+	 * @param text The text to be displayed
+	 * @param y The y position of the text
+	 */
+	public TextPod(PodListener listener, Font font, String text, int y) {
+		this.listener = listener;
+		this.font = font;
+		this.yofs = y;
+		this.text = text;
+		rect = new Rectangle(0,0,0,0);
 	}
 	
 	/**
@@ -46,7 +85,14 @@ public class TextPod extends Pod {
 	 */
 	public void draw(GameContainer container, Graphics g) {
 		g.setFont(font);
-		center(container, font, g, text, (int) y+250);
+		if (x == 0) {
+			center(container, font, g, text, (int) y+yofs);
+		} else {
+			g.setColor(shadow);
+			g.drawString(text, (int) (x+xofs+1), (int) (y+yofs+1));
+			g.setColor(Color.white);
+			g.drawString(text, (int) (x+xofs), (int) (y+yofs));
+		}
 	}
 
 	/**

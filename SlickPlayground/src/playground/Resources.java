@@ -19,6 +19,8 @@ public class Resources {
 	public static Font font3;
 	/** The background image for the big pods */
 	public static Image podImage;
+	/** The background image for the big pods */
+	public static Image smallPodImage;
 	
 	/**
 	 * Initialise the set of resources for Playground
@@ -30,5 +32,6 @@ public class Resources {
 		Resources.font3 = new AngelCodeFont("res/font3.fnt","res/font3_00.tga");
 		Resources.font2 = new AngelCodeFont("res/font.fnt","res/font_00.png");
 		Resources.podImage = new Image("res/pod.png");
+		Resources.smallPodImage = new Image("res/smallpod.png");
 	}
 }

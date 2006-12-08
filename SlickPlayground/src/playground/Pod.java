@@ -42,6 +42,8 @@ public class Pod {
 	protected boolean over;
 	/** The group that this POD belongs to */
 	private PodGroup group = new PodGroup();
+	/** The colour block to show on the pod */
+	private Color color;
 	
 	/**
 	 * Default constructor for subclasses
@@ -85,6 +87,15 @@ public class Pod {
 		this.image = img;
 
 		rect = new Rectangle(x,y,width,height);
+	}
+	
+	/**
+	 * Set the color of the block to show
+	 * 
+	 * @param color The color of the block to show
+	 */
+	public void setColor(Color color) {
+		this.color = color;
 	}
 	
 	/**
@@ -183,6 +194,11 @@ public class Pod {
 		if (image != null) {
 			image.draw((int) x,(int) y+offset, (int) rect.width, (int) rect.height);
 		}
+		if (color != null) {
+			g.setColor(color);
+			g.fillRect((int) x+5,(int) y+offset+5, (int) rect.width-10, (int) rect.height-10);
+		}
+		
 		for (int i=0;i<images.size();i++) {
 			Image image = (Image) images.get(i);
 			int xp = (int) ((rect.width - image.getWidth()) / 2);

@@ -2,7 +2,6 @@ package playground;
 
 import java.io.IOException;
 
-import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -45,7 +44,7 @@ public class Playground extends BasicGame implements PodListener {
 	/** The location at which we'll cache image data */
 	private String dataCacheLocation;
 	/** The location at which we'll cache games store data */
-	private String storeCacheLocation;
+	private static String storeCacheLocation;
 	
 	/** The middle alt-menu pod */
 	private Pod quitPod;
@@ -83,6 +82,8 @@ public class Playground extends BasicGame implements PodListener {
 	private int lastID;
 	/** The state display the information about a single game */
 	private InfoState infoState;
+	/** The state for configuration information */
+	private SetupState setupState;
 	
 	/** The container holding this app */
 	private AppGameContainer app;
@@ -96,8 +97,8 @@ public class Playground extends BasicGame implements PodListener {
 	 */
 	public Playground() {
 		super("Playground");
-
-		storeCacheLocation = System.getProperty("user.home")+"/"+".playground";
+		theme = LocalSettings.getTheme();
+		
 		dataCacheLocation = System.getProperty("user.home")+"/"+".playground/imagecache";
 		gData = new GamesData(dataCacheLocation);
 		
@@ -250,6 +251,7 @@ public class Playground extends BasicGame implements PodListener {
 			states[GamesListState.ID] = gamesListState = new GamesListState(this, store);
 			states[CategoriesState.ID] = new CategoriesState(this, store);
 			states[InfoState.ID] = infoState = new InfoState(this);
+			states[SetupState.ID] = setupState = new SetupState(this);
 			
 			gamesListState.setList(store.getGames());
 			enterState(MainMenuState.ID);
@@ -303,6 +305,13 @@ public class Playground extends BasicGame implements PodListener {
 	 */
 	public void setTheme(Color theme) {
 		this.theme = theme;
+		LocalSettings.setTheme(theme);
+		
+		try {
+			LocalSettings.save();
+		} catch (IOException e) {
+			Log.error(e);
+		}
 	}
 	
 	/**
@@ -453,17 +462,31 @@ public class Playground extends BasicGame implements PodListener {
 	}
 
 	/**
+	 * Toggle between windowed and fullscreen mode
+	 */
+	public void toggleFullscreen() {
+		if (app != null) {
+			try {
+				app.setFullscreen(!app.isFullscreen());
+			} catch (SlickException e) {
+				Log.error(e);
+			}
+			
+			try {
+				LocalSettings.setFullscreen(app.isFullscreen());
+				LocalSettings.save();
+			} catch (IOException e) {
+				Log.error(e);
+			}
+		}
+	}
+	
+	/**
 	 * @see org.newdawn.slick.BasicGame#keyPressed(int, char)
 	 */
 	public void keyPressed(int key, char c) {
 		if (key == Input.KEY_F1) {
-			if (app != null) {
-				try {
-					app.setFullscreen(!app.isFullscreen());
-				} catch (SlickException e) {
-					Log.error(e);
-				}
-			}
+			toggleFullscreen();
 		}
 		if (key == Input.KEY_ESCAPE) {
 			container.exit();
@@ -477,7 +500,16 @@ public class Playground extends BasicGame implements PodListener {
 	 */
 	public static void main(String[] argv) {
 		try {
-			AppGameContainer container = new AppGameContainer(new Playground(), 800, 600, false);
+			try {
+				storeCacheLocation = System.getProperty("user.home")+"/"+".playground";
+				
+				LocalSettings.init(storeCacheLocation);
+				LocalSettings.load();
+			} catch (IOException e) {
+				Log.error(e);
+			}
+			
+			AppGameContainer container = new AppGameContainer(new Playground(), 800, 600, LocalSettings.getFullscreen());
 			container.start();
 		} catch (Exception e) {
 			e.printStackTrace();

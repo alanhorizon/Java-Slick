@@ -3,6 +3,7 @@ package playground;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
@@ -14,6 +15,8 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.FastTrig;
 import org.newdawn.slick.util.Log;
 
+import playground.games.GameList;
+import playground.games.GameRecord;
 import playground.games.GameStore;
 
 /**
@@ -82,6 +85,26 @@ public class MainMenuState extends State implements PodListener {
 	}
 
 	/**
+	 * Get a list of fave games
+	 * 
+	 * @return The list of games marked as fave
+	 */
+	private GameList getFaves() {
+		GameList list = store.getGames();
+		GList faves = new GList();
+		ArrayList ids = LocalSettings.getFaves();
+		
+		for (int i=0;i<list.size();i++) {
+			GameRecord record = list.getGame(i);
+			if (ids.contains(record.getID())) {
+				faves.addGame(record);
+			}
+		}
+		
+		return faves;
+	}
+	
+	/**
 	 * @see playground.PodListener#podMoveCompleted(playground.Pod)
 	 */
 	public void podMoveCompleted(Pod pod) {
@@ -99,6 +122,15 @@ public class MainMenuState extends State implements PodListener {
 		}
 		if (name.equals("Categories")) {
 			nextState = CategoriesState.ID;
+			group.move(-800, 0);
+		}
+		if (name.equals("Favourites")) {
+			nextState = GamesListState.ID;
+			playground.setGamesList(getFaves());
+			group.move(-800, 0);
+		}
+		if (name.equals("Setup")) {
+			nextState = SetupState.ID;
 			group.move(-800, 0);
 		}
 		if (name.equals("Update")) {
@@ -238,4 +270,37 @@ public class MainMenuState extends State implements PodListener {
 		super.update(container, delta);
 	}
 
+	/**
+	 * A game list implementation to allow fave filtering
+	 *
+	 * @author kevin
+	 */
+	private class GList implements GameList {
+		/** The list of games */
+		private ArrayList list = new ArrayList();
+		
+		/**
+		 * @see playground.games.GameList#getGame(int)
+		 */
+		public GameRecord getGame(int index) {
+			return (GameRecord) list.get(index);
+		}
+
+		/**
+		 * Add a game to the list
+		 * 
+		 * @param record The record describing the game added
+		 */
+		public void addGame(GameRecord record) {
+			list.add(record);
+		}
+		
+		/**
+		 * @see playground.games.GameList#size()
+		 */
+		public int size() {
+			return list.size();
+		}
+		
+	}
 }
