@@ -188,15 +188,23 @@ public class InfoState extends State implements PodListener {
 		updatePod = new Pod(this, Resources.smallPodImage, Resources.font3, 640,435,140,30,"Update");
 		favePod = new Pod(this, Resources.smallPodImage, Resources.font3, 640,470,140,30,"Favourite");
 		group.add(infoPod);
-		group.add(playPod);
 		group.add(getPod);
-		group.add(favePod);
+		group.add(playPod);
 		group.add(updatePod);
+		group.add(favePod);
 		
+		group.setUpDownStep(1);
 		podGroups.add(group);
 		
 		if (current != null) {
 			setInfo(lastDataCache, lastLaunchCache, current);
 		}
+	}
+
+	/**
+	 * @see playground.State#giveFocus(playground.Playground)
+	 */
+	public void giveFocus(Playground app) {
+		app.setCurrentFocus(group);
 	}
 }

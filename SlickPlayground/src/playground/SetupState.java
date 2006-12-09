@@ -157,4 +157,11 @@ public class SetupState extends State implements PodListener {
 		
 		podGroups.add(group);
 	}
+
+	/**
+	 * @see playground.State#giveFocus(playground.Playground)
+	 */
+	public void giveFocus(Playground app) {
+		app.setCurrentFocus(group);
+	}
 }

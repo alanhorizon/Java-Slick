@@ -25,12 +25,58 @@ public class PodGroup {
 	private double x;
 	/** The current y offset from base */
 	private double y;
+	/** True if the group is using cursor focus */
+	private boolean cursorFocus;
+	/** The current POD cursor selected */
+	private Pod selected;
+	/** The selected index */
+	private int index;
+	/** True if we're using vertical scan lines */
+	private boolean vertScan;
+	/** The up down step */
+	private int upDownStep = 3;
 	
 	/**
 	 * Create a new empty group
 	 */
 	public PodGroup() {
 		
+	}
+	
+	/**
+	 * Set the amount ot move when cursor up/down
+	 * 
+	 * @param upDownStep The amount to move when cursor up/down
+	 */
+	public void setUpDownStep(int upDownStep) {
+		this.upDownStep = upDownStep;
+	}
+	
+	/**
+	 * Indicate whether this group is current controlled by cursor
+	 * 
+	 * @param cursorFocus True if the group should be configured by a cursor
+	 */
+	public void setCursorFocus(boolean cursorFocus) {
+		if (this.cursorFocus == cursorFocus) {
+			return;
+		}
+		
+		this.cursorFocus = cursorFocus;
+		if (cursorFocus) {
+			selected = (Pod) pods.get(0);
+			selected.setSelected(true);
+			index = -1;
+		} else {
+			if (selected != null) {
+				selected.setSelected(false);
+				selected = null;
+			}
+		}
+		
+		for (int i=0;i<pods.size();i++) {
+			((Pod) pods.get(i)).setCursorFocus(cursorFocus);
+		}
 	}
 	
 	/**
@@ -49,6 +95,7 @@ public class PodGroup {
 	 * @param height The height that should be given for each POD
 	 */
 	public void arrange(int xoffset, int yoffset, int width, int height) {
+		vertScan = false;
 		if (pods.size() <= 9) {
 			for (int y=0;y<3;y++) {
 				for (int x=0;x<3;x++) {
@@ -61,6 +108,7 @@ public class PodGroup {
 				}
 			}
 		} else {
+			vertScan = true;
 			for (int x=0;x<((pods.size()-1)/3)+1;x++) {
 				for (int y=0;y<3;y++) {
 					int index = (x*3)+y;
@@ -219,5 +267,140 @@ public class PodGroup {
 			((Pod) pods.get(i)).draw(container, g);
 		}
 		g.translate((float) -x,(float) -y);
+	}
+	
+	/**
+	 * Move the cursor left
+	 * 
+	 * @param app The application instructing this POD
+	 */
+	public void left(Playground app) {
+		if (vertScan) {
+			index = index - 3;
+		} else {
+			index -= 1;
+		}
+		
+		if (index < 0) {
+			app.giveFocus();
+			return;
+		}
+		
+		index = Math.max(index, 0);
+		index = Math.min(index, pods.size()-1);
+		
+		if (selected != null) {
+			selected.setSelected(false);
+		}
+		selected = (Pod) pods.get(index);
+		selected.setSelected(true);
+		
+		if (!selected.isActive()) {
+			left(app);
+		}
+	}
+
+	/**
+	 * Move the cursor right
+	 * 
+	 * @param app The application instructing this POD
+	 */
+	public void right(Playground app) {
+		if (vertScan) {
+			index = index + 3;
+		} else {
+			index += 1;
+		}
+
+		if (index >= pods.size()) {
+			app.giveFocus();
+			return;
+		}
+		
+		index = Math.max(index, 0);
+		index = Math.min(index, pods.size()-1);
+		
+		if (selected != null) {
+			selected.setSelected(false);
+		}
+		selected = (Pod) pods.get(index);
+		selected.setSelected(true);
+		
+		if (!selected.isActive()) {
+			right(app);
+		}
+	}
+
+	/**
+	 * Move the cursor up
+	 * 
+	 * @param app The application instructing this POD
+	 */
+	public void up(Playground app) {
+		if (!vertScan) {
+			index = index - upDownStep;
+		} else {
+			index -= 1;
+		}
+
+		if (index < 0) {
+			app.giveFocus();
+			return;
+		}
+		
+		index = Math.max(index, 0);
+		index = Math.min(index, pods.size()-1);
+		
+		if (selected != null) {
+			selected.setSelected(false);
+		}
+		selected = (Pod) pods.get(index);
+		selected.setSelected(true);
+		
+		if (!selected.isActive()) {
+			up(app);
+		}
+	}
+
+	/**
+	 * Move the cursor down
+	 * 
+	 * @param app The application instructing this POD
+	 */
+	public void down(Playground app) {
+		if (!vertScan) {
+			index = index + upDownStep;
+		} else {
+			index += 1;
+		}
+		
+		if (index >= pods.size()) {
+			app.giveFocus();
+			return;
+		}
+		
+		index = Math.max(index, 0);
+		index = Math.min(index, pods.size()-1);
+		
+		if (selected != null) {
+			selected.setSelected(false);
+		}
+		selected = (Pod) pods.get(index);
+		selected.setSelected(true);
+		
+		if (!selected.isActive()) {
+			down(app);
+		}
+	}
+
+	/**
+	 * Select the POD currently on the cursor
+	 * 
+	 * @param app The application instructing this POD
+	 */
+	public void select(Playground app) {
+		if (selected != null) {
+			selected.firePodSelected();
+		}
 	}
 }

@@ -122,4 +122,9 @@ public class SplashState extends State {
 		ofs += delta;
 	}
 
+	/**
+	 * @see playground.State#giveFocus(playground.Playground)
+	 */
+	public void giveFocus(Playground app) {
+	}
 }

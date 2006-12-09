@@ -194,4 +194,11 @@ public class GamesListState extends State implements PodListener {
 	public void reinit() {
 		setList(lastList);
 	}
+
+	/**
+	 * @see playground.State#giveFocus(playground.Playground)
+	 */
+	public void giveFocus(Playground app) {
+		app.setCurrentFocus(group);
+	}
 }

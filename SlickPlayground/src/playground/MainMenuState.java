@@ -303,4 +303,12 @@ public class MainMenuState extends State implements PodListener {
 		}
 		
 	}
+
+	/**
+	 * @see playground.State#giveFocus(playground.Playground)
+	 */
+	public void giveFocus(Playground app) {
+		app.setCurrentFocus(group);
+	}
+
 }

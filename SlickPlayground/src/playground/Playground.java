@@ -91,6 +91,10 @@ public class Playground extends BasicGame implements PodListener {
 	private Color theme = new Color(0,0,1,1f);
 	/** True if we've completed the initial cache */
 	private boolean doneInitialCache;
+	/** The pod group with the current focus */
+	private PodGroup currentFocus;
+	/** Using keyboard/controller focus */
+	private boolean cursorFocus = false;
 	
 	/** 
 	 * Create a new playground
@@ -104,6 +108,37 @@ public class Playground extends BasicGame implements PodListener {
 		
 		launchCacheLocation = System.getProperty("user.home")+"/"+".playground/cache";
 		version = "JRE "+System.getProperty("java.version").substring(0,3);
+	}
+	
+	/**
+	 * Give the focus to the app's alternative controls
+	 */
+	public void giveFocus() {
+		if (currentFocus == alt) {
+			currentState.giveFocus(this);
+		} else {
+			setCurrentFocus(alt);
+		}
+	}
+
+	/**
+	 * Set the current keyboard/controller focus group
+	 * 
+	 * @param group The group currently in focus
+	 */
+	public void setCurrentFocus(PodGroup group) {
+		if (currentFocus == group) {
+			return;
+		}
+		
+		if (currentFocus != null) {
+			currentFocus.setCursorFocus(false);
+		}
+		
+		currentFocus = group;
+		if (currentFocus != null) {
+			currentFocus.setCursorFocus(cursorFocus);
+		}
 	}
 	
 	/**
@@ -149,6 +184,7 @@ public class Playground extends BasicGame implements PodListener {
 		
 		updateLabels(currentState);
 		currentState.enter(oldID, this);
+		currentState.giveFocus(this);
 	}
 	
 	/**
@@ -222,8 +258,8 @@ public class Playground extends BasicGame implements PodListener {
 		
 		prevPod.setEnabled(false);
 		nextPod.setEnabled(false);
-		alt.add(quitPod);
 		alt.add(prevPod);
+		alt.add(quitPod);
 		alt.add(nextPod);
 		
 		if (reinit) {
@@ -396,7 +432,7 @@ public class Playground extends BasicGame implements PodListener {
 					GL11.glVertex3f(0, 600, 0);
 				GL11.glEnd();
 				
-				Resources.font3.drawString(250,(int) (300+(FastTrig.cos(ang)*10)),"Downloading Game....");
+				Resources.font3.drawString(300,(int) (300+(FastTrig.cos(ang)*10)),"Downloading Game....");
 				try { Thread.sleep(50); } catch (Exception e) {};
 			}
 		}
@@ -492,8 +528,51 @@ public class Playground extends BasicGame implements PodListener {
 		if (key == Input.KEY_ESCAPE) {
 			container.exit();
 		}
-	}
+		
+		if (key == Input.KEY_LEFT) {
+			cursorFocus = true;
+			setCurrentFocus(currentFocus);
+			if (currentFocus != null) {
+				currentFocus.left(this);
+			}
+		}
+		if (key == Input.KEY_RIGHT) {
+			cursorFocus = true;
+			setCurrentFocus(currentFocus);
+			if (currentFocus != null) {
+				currentFocus.right(this);
+			}
+		}
+		if (key == Input.KEY_UP) {
+			cursorFocus = true;
+			setCurrentFocus(currentFocus);
+			if (currentFocus != null) {
+				currentFocus.up(this);
+			}
+		}
+		if (key == Input.KEY_DOWN) {
+			cursorFocus = true;
+			setCurrentFocus(currentFocus);
+			if (currentFocus != null) {
+				currentFocus.down(this);
+			}
+		}
+		if (key == Input.KEY_ENTER) {
+			if (cursorFocus) {
+				if (currentFocus != null) {
+					currentFocus.select(this);
+				}
+			}
+		}
+	}	
 	
+	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+		if (currentFocus != null) {
+			currentFocus.setCursorFocus(false);
+			cursorFocus = false;
+		}
+	}
+
 	/**
 	 * Entry point into the application
 	 * 
@@ -514,6 +593,61 @@ public class Playground extends BasicGame implements PodListener {
 			container.start();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @see org.newdawn.slick.BasicGame#controllerButtonPressed(int, int)
+	 */
+	public void controllerButtonPressed(int controller, int button) {
+		if (cursorFocus) {
+			if (currentFocus != null) {
+				currentFocus.select(this);
+			}
+		}
+	}
+
+	/**
+	 * @see org.newdawn.slick.BasicGame#controllerDownPressed(int)
+	 */
+	public void controllerDownPressed(int controller) {
+		cursorFocus = true;
+		setCurrentFocus(currentFocus);
+		if (currentFocus != null) {
+			currentFocus.down(this);
+		}
+	}
+
+	/**
+	 * @see org.newdawn.slick.BasicGame#controllerLeftPressed(int)
+	 */
+	public void controllerLeftPressed(int controller) {
+		cursorFocus = true;
+		setCurrentFocus(currentFocus);
+		if (currentFocus != null) {
+			currentFocus.left(this);
+		}
+	}
+
+	/**
+	 * @see org.newdawn.slick.BasicGame#controllerRightPressed(int)
+	 */
+	public void controllerRightPressed(int controller) {
+		cursorFocus = true;
+		setCurrentFocus(currentFocus);
+		if (currentFocus != null) {
+			currentFocus.right(this);
+		}
+	}
+
+	/**
+	 * @see org.newdawn.slick.BasicGame#controllerUpPressed(int)
+	 */
+	public void controllerUpPressed(int controller) {
+		cursorFocus = true;
+		setCurrentFocus(currentFocus);
+		if (currentFocus != null) {
+			currentFocus.up(this);
 		}
 	}
 }

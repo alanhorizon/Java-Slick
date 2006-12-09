@@ -128,4 +128,11 @@ public class CategoriesState extends State implements PodListener {
 		group.arrange(100,225-(((cats.length-1) / 3)*75),200,150);
 		podGroups.add(group);
 	}
+	
+	/**
+	 * @see playground.State#giveFocus(playground.Playground)
+	 */
+	public void giveFocus(Playground app) {
+		app.setCurrentFocus(group);
+	}
 }

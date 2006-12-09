@@ -98,4 +98,11 @@ public abstract class State {
 	 * while in this state
 	 */
 	public abstract void backSelected();
+	
+	/**
+	 * Give the focus to the control in this state
+	 * 
+	 * @param app The application given focus
+	 */
+	public abstract void giveFocus(Playground app);
 }

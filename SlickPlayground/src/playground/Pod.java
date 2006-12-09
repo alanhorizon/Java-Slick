@@ -46,13 +46,17 @@ public class Pod {
 	private Color color;
 	/** True if the POD is active */
 	private boolean active = true;
+	/** True if the pod is currently cursor selected */
+	private boolean selected = false;
+	/** True if the cursor focus is being used */
+	private boolean cursorFocus;
 	
 	/**
 	 * Default constructor for subclasses
 	 */
 	protected Pod() {
 	}
-	
+
 	/**
 	 * Create a new POD 
 	 * 
@@ -89,6 +93,33 @@ public class Pod {
 		this.image = img;
 
 		rect = new Rectangle(x,y,width,height);
+	}
+
+	/**
+	 * True if the pod is currently active
+	 * 
+	 * @return True if the POD is currently active
+	 */
+	public boolean isActive() {
+		return active && enabled;
+	}
+	
+	/**
+	 * Indicate if cursor focus should be being used
+	 * 
+	 * @param cursorFocus True if the cursor focus should be used
+	 */
+	public void setCursorFocus(boolean cursorFocus) {
+		this.cursorFocus = cursorFocus;
+	}
+	
+	/**
+	 * True if this POD is currently cursor selected
+	 * 
+	 * @param selected True if this POD is cursor selected
+	 */
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 	
 	/**
@@ -277,7 +308,7 @@ public class Pod {
 		
 		over = false;
 		if ((!group.moving()) && (hasBeenReleased) && (active)) {
-			if (rect.contains(container.getInput().getMouseX()-xoffset, container.getInput().getMouseY()-yoffset)) {
+			if ((selected) || ((rect.contains(container.getInput().getMouseX()-xoffset, container.getInput().getMouseY()-yoffset)) && !cursorFocus)) {
 				if (container.getInput().isMouseButtonDown(0)) {
 					listener.podSelected(this, label);
 					hasBeenReleased = false;
@@ -295,6 +326,15 @@ public class Pod {
 	 */
 	public void fireMoveComplete() {
 		listener.podMoveCompleted(this);
+	}
+
+	/**
+	 * Fire an event indicating that this POD has been selected
+	 */
+	public void firePodSelected() {
+		if (active) {
+			listener.podSelected(this, label);
+		}
 	}
 	
 	/**
