@@ -1,8 +1,8 @@
 package playground;
 
 import java.io.File;
+import java.io.IOException;
 
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.util.Log;
 
 import playground.games.GameRecord;
@@ -25,6 +25,8 @@ public class InfoState extends State implements PodListener {
 	private Pod updatePod;
 	/** The pod to play the game */
 	private Pod playPod;
+	/** The pod to make the game favourite */
+	private Pod favePod;
 	
 	/** The application holding this state */
 	private Playground playground;
@@ -70,13 +72,13 @@ public class InfoState extends State implements PodListener {
 		this.current = info;
 		
 		if (new File(launchCacheLocation+"/"+info.getID()).exists()) {
-			playPod.setEnabled(true);
-			getPod.setEnabled(false);
-			updatePod.setEnabled(true);
+			playPod.setActive(true);
+			getPod.setActive(false);
+			updatePod.setActive(true);
 		} else {
-			playPod.setEnabled(false);
-			getPod.setEnabled(true);
-			updatePod.setEnabled(false);
+			playPod.setActive(false);
+			getPod.setActive(true);
+			updatePod.setActive(false);
 		}
 	}
 
@@ -113,13 +115,27 @@ public class InfoState extends State implements PodListener {
 	 */
 	public void podSelected(Pod pod, String name) {
 		if (pod == getPod) {
-			playground.doDownload(current, true, true);
+			playground.doDownload(current, true, false);
 		}
 		if (pod == playPod) {
 			playground.doDownload(current, false, true);
 		}
 		if (pod == updatePod) {
 			playground.doDownload(current, true, false);
+		}
+		if (pod == favePod) {
+			if (LocalSettings.getFaves().contains(current.getID())) {
+				LocalSettings.removeFave(current.getID());
+			} else {
+				LocalSettings.addFave(current.getID());
+			}
+			
+			try {
+				LocalSettings.save();
+			} catch (IOException e) {
+				Log.error(e);
+			}
+			playground.setInfo(current);
 		}
 	}
 
@@ -167,12 +183,14 @@ public class InfoState extends State implements PodListener {
 		group.clear();
 		
 		infoPod = new InfoPod(this, Resources.font3);
-		playPod = new Pod(this, Resources.podImage, Resources.font, 140,500,160,40,"Play");
-		getPod = new Pod(this, Resources.podImage, Resources.font, 320,500,160,40,"Get It!");
-		updatePod = new Pod(this, Resources.podImage, Resources.font, 500,500,160,40,"Update");
+		getPod = new Pod(this, Resources.smallPodImage, Resources.font3, 640,365,140,30,"Download");
+		playPod = new Pod(this, Resources.smallPodImage, Resources.font3, 640,400,140,30,"Play");
+		updatePod = new Pod(this, Resources.smallPodImage, Resources.font3, 640,435,140,30,"Update");
+		favePod = new Pod(this, Resources.smallPodImage, Resources.font3, 640,470,140,30,"Favourite");
 		group.add(infoPod);
 		group.add(playPod);
 		group.add(getPod);
+		group.add(favePod);
 		group.add(updatePod);
 		
 		podGroups.add(group);

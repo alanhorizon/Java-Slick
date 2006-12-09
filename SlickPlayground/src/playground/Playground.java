@@ -389,14 +389,14 @@ public class Playground extends BasicGame implements PodListener {
 			} else {
 				Texture.bindNone();
 				GL11.glBegin(GL11.GL_QUADS);
-					GL11.glColor4f(0,0,0,0.9f);
+					GL11.glColor4f(0,0,0,0.8f);
 					GL11.glVertex3f(0, 0, 0);
 					GL11.glVertex3f(800, 0, 0);
 					GL11.glVertex3f(800, 600, 0);
 					GL11.glVertex3f(0, 600, 0);
 				GL11.glEnd();
 				
-				Resources.font.drawString(180,(int) (300+(FastTrig.cos(ang)*10)),"Getting game.. (this needs work)");
+				Resources.font3.drawString(250,(int) (300+(FastTrig.cos(ang)*10)),"Downloading Game....");
 				try { Thread.sleep(50); } catch (Exception e) {};
 			}
 		}
@@ -455,6 +455,7 @@ public class Playground extends BasicGame implements PodListener {
 				} catch (IOException e) {
 					waitingForDownload = false;
 				}
+				setInfo(current);
 			}
 		};
 		t.setDaemon(false);

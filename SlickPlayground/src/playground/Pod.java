@@ -44,6 +44,8 @@ public class Pod {
 	private PodGroup group = new PodGroup();
 	/** The colour block to show on the pod */
 	private Color color;
+	/** True if the POD is active */
+	private boolean active = true;
 	
 	/**
 	 * Default constructor for subclasses
@@ -165,6 +167,15 @@ public class Pod {
 	}
 	
 	/**
+	 * Indicate if this POD should be active
+	 * 
+	 * @param active True if this POD should be active
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
+	/**
 	 * Draw the POD to the graphics context provided
 	 * 
 	 * @param container The container housing the graphics
@@ -179,6 +190,9 @@ public class Pod {
 		Color col = new Color(0,0,0,0.4f);
 		if (image == null) {
 			col = new Color(0,0,0,0.3f);
+		}
+		if (!active) {
+			col = new Color(0,0,0,0.1f);
 		}
 		if (!group.moving()) {
 			if (over) {
@@ -210,7 +224,7 @@ public class Pod {
 		int xo = (int) ((rect.width - font.getWidth(label)) / 2);
 		int yo = (int) ((rect.height - font.getHeight(label)) / 2);
 		
-		font.drawString((int) (x+xo), (int) (y+yo-5)+offset, label, col);
+		font.drawString((int) (x+xo), (int) (y+yo-2)+offset, label, col);
 	}
 	
 	/**
@@ -262,7 +276,7 @@ public class Pod {
 		}
 		
 		over = false;
-		if ((!group.moving()) && (hasBeenReleased)) {
+		if ((!group.moving()) && (hasBeenReleased) && (active)) {
 			if (rect.contains(container.getInput().getMouseX()-xoffset, container.getInput().getMouseY()-yoffset)) {
 				if (container.getInput().isMouseButtonDown(0)) {
 					listener.podSelected(this, label);

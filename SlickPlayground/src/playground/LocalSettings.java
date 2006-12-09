@@ -22,21 +22,35 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * TODO: Document this class
+ * A collection of settings held locally for the client.
  *
  * @author kevin
  */
 public class LocalSettings {
+	/** The IDs of the games marked as favourites */
 	private static ArrayList faves = new ArrayList();
+	/** The theme selected */
 	private static Color theme = Color.blue;
+	/** True if we should start in fullscreen mode */
 	private static boolean fullscreen = false;
+	/** The file holding our local settings */
 	private static File file;
 	
+	/**
+	 * Initialise the settings from a local cache file
+	 * 
+	 * @param cacheLocation The location of the local cache file
+	 */
 	public static void init(String cacheLocation) {
 		File loc = new File(cacheLocation);
 		file = new File(loc, "config.xml");
 	}
 	
+	/**
+	 * Load the settings from the file
+	 * 
+	 * @throws IOException Indicates a failure to read the local settings
+	 */
 	public static void load() throws IOException {
 		if (file.exists()) {
 			try {
@@ -67,6 +81,11 @@ public class LocalSettings {
 		}
 	}
 	
+	/**
+	 * Save the settings to a local file
+	 * 
+	 * @throws IOException Indicates a failure to write the file
+	 */
 	public static void save() throws IOException {
 		file.getParentFile().mkdirs();
 
@@ -104,30 +123,65 @@ public class LocalSettings {
 		}
 	}
 	
+	/**
+	 * Indicate if fullscreen mode should be used
+	 * 
+	 * @param fs True if fullscreen mode should be used 
+	 */
 	public static void setFullscreen(boolean fs) {
 		fullscreen = fs;
 	}
 	
+	/**
+	 * Check if fullscreen mode should be used
+	 * 
+	 * @return True if fullscreen mode should be used
+	 */
 	public static boolean getFullscreen() {
 		return fullscreen;
 	}
 	
+	/**
+	 * Get a list of the IDs of the games marked as favourite
+	 * 
+	 * @return The list of IDs
+	 */
 	public static ArrayList getFaves() {
 		return faves;
 	}
 	
+	/**
+	 * Add a game to the favourites list
+	 * 
+	 * @param id The ID of the game to add
+	 */
 	public static void addFave(String id) {
 		faves.add(id);
 	}
 	
-	public static void removeFace(String id) {
+	/**
+	 * Remove a game from the favourites list
+	 * 
+	 * @param id The ID of the game to remove
+	 */
+	public static void removeFave(String id) {
 		faves.remove(id);
 	}
 	
+	/**
+	 * Get the theme that should be used
+	 * 
+	 * @return The colour theme that should be used
+	 */
 	public static Color getTheme() {
 		return theme;
 	}
 	
+	/**
+	 * Set the theme that should be used
+	 * 
+	 * @param col The colour of theme that should be used
+	 */
 	public static void setTheme(Color col) {
 		theme = col;
 	}
