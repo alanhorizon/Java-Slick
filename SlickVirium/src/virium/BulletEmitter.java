@@ -30,7 +30,7 @@ public class BulletEmitter implements ParticleEmitter {
 			p.setPosition(add[0],add[1]);
 			p.setColor(1,1,0.5f,1);
 			p.setSize(8);
-			p.setVelocity(0, 0);
+			p.setVelocity(0, 0, 0);
 		}
 		addMe.clear();
 	}

@@ -74,6 +74,13 @@ public class Generator extends AbstractEntity implements Entity {
 			spawn();
 			nextSpawn = spawnInterval;
 		}
+		
+		if (current != anim1) {
+			anim1.update(delta);
+		}
+		if (current != anim2) {
+			anim2.update(delta);
+		}
 	}
 
 	protected Actor createActor(int x, int y) {
@@ -119,13 +126,6 @@ public class Generator extends AbstractEntity implements Entity {
 	 * @see virium.Entity#render(org.newdawn.slick.Graphics)
 	 */
 	public void draw(Graphics g) {
-		if (current != anim1) {
-			anim1.updateNoDraw();
-		}
-		if (current != anim2) {
-			anim2.updateNoDraw();
-		}
-		
 		int ofs = sheet1.getHeight() / 2;
 		current.draw(x-ofs,y-ofs);
 	}

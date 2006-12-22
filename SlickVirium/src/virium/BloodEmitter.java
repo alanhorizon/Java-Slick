@@ -77,7 +77,7 @@ public class BloodEmitter implements ParticleEmitter {
 				p.setPosition(x + (dis * dx), y + (dis * dy));
 				p.setSize(size);
 				p.setColor(((float) Math.random()*0.6f) + 0.4f,0,0,1);
-				p.setVelocity(dx*speed, dy*speed);
+				p.setVelocity(dx,dy,speed);
 			}
 		}
 	}
