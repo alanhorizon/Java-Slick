@@ -112,7 +112,7 @@ public class Shoot {
 			particle.setColor((float) (Math.random()+0.5f),0,0,(float) ((Math.random()*0.5f)+0.1f));
 			particle.setType(2);
 			if (!winged) {
-				particle.setVelocity(0, vy / 300);
+				particle.setVelocity(0, vy / 300, 1);
 			}
 		}
 	}
