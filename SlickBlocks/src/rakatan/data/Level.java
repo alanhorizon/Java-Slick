@@ -1,12 +1,8 @@
 package rakatan.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import net.phys2d.math.Vector2f;
-import net.phys2d.raw.Body;
 import net.phys2d.raw.CollisionEvent;
 import net.phys2d.raw.CollisionListener;
 import net.phys2d.raw.World;
@@ -22,24 +18,21 @@ import org.newdawn.slick.Graphics;
 public class Level {
 	private World world;
 	private ArrayList elements = new ArrayList();
-	private HashMap bodyMap = new HashMap();
 	
 	private int remainder = 0;
-	private int step = 5;
+	private int step = 1;
 	
 	public Level() {
-		world = new World(new Vector2f(0,1f), 20, new BruteCollisionStrategy());
-		world.setDamping(0.9f);
+		world = new World(new Vector2f(0,1f), 5, new BruteCollisionStrategy());
 	}
 	
-	public int getCollisions(LevelElement source) {
-		final Body body = source.getBody();
+	public int getCollisions(final LevelElement source) {
 		final ArrayList bodies = new ArrayList();
 		
 		CollisionListener listener = new CollisionListener() {
 			public void collisionOccured(CollisionEvent event) {
-				if ((event.getBodyA() == body) || (event.getBodyB() == body)) {
-					bodies.add(body);
+				if ((source.containsBody(event.getBodyA())) || (source.containsBody(event.getBodyB()))) {
+					bodies.add(event);
 				}
 			}
 		};
@@ -86,7 +79,6 @@ public class Level {
 	public void add(LevelElement element) {
 		elements.add(element);
 		element.addToWorld(world);
-		bodyMap.put(element.getBody(), element);
 		
 		element.init();
 	}

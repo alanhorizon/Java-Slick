@@ -71,11 +71,6 @@
 		 port="122"
 		 verbose="true"/>
 	<scp todir="${username}:${password}@${host}:${dir}" 
-		 file="lib/phys2d.jar"
-		 trust="true"
-		 port="122"
-		 verbose="true"/>
-	<scp todir="${username}:${password}@${host}:${dir}" 
 		 trust="true"
 		 port="122"
 		 verbose="true">

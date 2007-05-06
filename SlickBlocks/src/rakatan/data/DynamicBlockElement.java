@@ -25,6 +25,10 @@ public class DynamicBlockElement extends LevelElement {
 	private int height;
 	
 	public DynamicBlockElement(int x, int y,int width, int height, Image image, Color c) {
+		this(x,y,width,height,image,c,0);
+	}
+
+	public DynamicBlockElement(int x, int y,int width, int height, Image image, Color c, float rot) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -32,15 +36,19 @@ public class DynamicBlockElement extends LevelElement {
 		this.image = image;
 		this.color = c;
 		
-		shape = new Rectangle(-(width/2),-(height/2),width,height);
+		shapes.add(new Rectangle(-(width/2),-(height/2),width,height));
 		
-		ConvexPolygon poly = new ConvexPolygon(new Vector2f[] {new Vector2f(-width/2,-height/2), 
-																new Vector2f(width/2,-height/2), 
-																new Vector2f(width/2,height/2), 
-																new Vector2f(-width/2,height/2)});
-		body = new Body(new Box(width,height), 1);
+		ConvexPolygon poly = new ConvexPolygon(new Vector2f[] {
+							new Vector2f(-width/2,-height/2),
+							new Vector2f(width/2,-height/2),
+							new Vector2f(width/2,height/2),
+							new Vector2f(-width/2,height/2),
+		});
+		
+		body = new Body(new Box(width,height), 1000);
+		//body = new Body(poly, 1);
 		body.setPosition(x+(width/2), y+(height/2));
-		body.setRotation(10);
+		body.setRotation(rot);
 	}
 	
 	public void addToWorld(World world) {

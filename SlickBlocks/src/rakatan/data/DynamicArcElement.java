@@ -1,5 +1,7 @@
 package rakatan.data;
 
+import java.util.ArrayList;
+
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.World;
@@ -14,13 +16,13 @@ import org.newdawn.slick.geom.Polygon;
  *
  * @author kevin
  */
-public class DynamicWedgeElement extends LevelElement {
+public class DynamicArcElement extends LevelElement {
 	private int x;
 	private int y;
 	private int width;
 	private int height;
 	
-	public DynamicWedgeElement(int x, int y,int width, int height, Image image, Color c) {
+	public DynamicArcElement(int x, int y,int width, int height, int segs, Image image, Color c) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -28,18 +30,25 @@ public class DynamicWedgeElement extends LevelElement {
 		this.image = image;
 		this.color = c;
 		
-		ConvexPolygon poly = new ConvexPolygon(new Vector2f[] {new Vector2f(0, -(height/2)),
-												   new Vector2f((width/2), (height/2)),
-												   new Vector2f(-(width/2), (height/2))});
+		ArrayList pts = new ArrayList();
+		for (int i=0;i<segs+1;i++) {
+			float ang = (float) Math.toRadians((180.0f / segs) * i);
+			float yo = (float) ((height/2) - (Math.sin(ang) * height));
+			float xo = (float) -(Math.cos(ang) * (width/2));
+			pts.add(new Vector2f(xo,yo));
+		}
+		
+		Vector2f[] ptsArray = (Vector2f[]) pts.toArray(new Vector2f[0]);
+		
+		ConvexPolygon poly = new ConvexPolygon(ptsArray);
 	
 		body = new Body(poly, 1000);
 		body.setPosition(x+(width/2), y+(height/2));
-		body.setRotation(10);
 		
 		Polygon p = new Polygon();
-		p.addPoint(0,-(height/2));
-		p.addPoint((width/2),+(height/2));
-		p.addPoint(-(width/2),+(height/2));
+		for (int i=0;i<ptsArray.length;i++) {
+			p.addPoint(ptsArray[i].getX(), ptsArray[i].getY());
+		}
 		shapes.add(p);
 	}
 	

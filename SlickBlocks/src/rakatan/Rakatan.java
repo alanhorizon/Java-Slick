@@ -26,7 +26,7 @@ public class Rakatan extends StateBasedGame {
 	
 	public static void main(String[] argv) {
 		try {
-			AppGameContainer container = new AppGameContainer(new Rakatan(), 800, 600, false);
+			AppGameContainer container = new AppGameContainer(new Rakatan(), 1024, 768, false);
 			container.start();
 		} catch (Exception e) {
 			Log.error(e);
