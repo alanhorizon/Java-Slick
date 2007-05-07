@@ -189,19 +189,18 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			loadedState.getTargetState().render(g);
 			g.resetTransform();
 			g.clearClip();
-
 			big.drawString(2, 20, "Target");
+			
+			String cm = ""+(((int) (100 * (currentMatch))));
+			cm+="%";
+			big.drawString(810+(big.getWidth("Match")/2)-(big.getWidth(cm)/2), 60, cm);
+			big.drawString(810, 20, "Match");
 		}
 		
 		String title = "Toy Blocks";
 		int x = (container.getWidth() - big.getWidth(title)) / 2;
 		big.drawString(x, 7, title);
 
-		String cm = ""+(((int) (100 * (currentMatch))));
-		cm+="%";
-		big.drawString(810+(big.getWidth("Match")/2)-(big.getWidth(cm)/2), 60, cm);
-		big.drawString(810, 20, "Match");
-		
 		g.setFont(tiny);
 		String line = "blocks@cokeandcode.com";
 		x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
@@ -370,7 +369,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 				try {
 					levelData.save(new FileOutputStream("res/levels/save"+System.currentTimeMillis()+".xml"));
 					addMessage("Level data saved");
-				} catch (IOException e) {
+				} catch (Throwable e) {
 					addMessage("Failed to save: "+e.getMessage());
 				}
 			}
