@@ -26,6 +26,7 @@ public class Rakatan extends StateBasedGame {
 		music.loop(1.0f,0.2f);
 
 		addState(new TitleState());
+		addState(new LevelSelectState());
 		addState(new InGameState());
 	}
 	

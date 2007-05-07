@@ -21,6 +21,11 @@ public class LoadedLevelState {
 	private Level initalState;
 	private Level targetState;
 	private LevelElement key;
+	private String name = "Unknown";
+	
+	public String getName() {
+		return name;
+	}
 	
 	public Level getInitialState() {
 		return initalState;
@@ -40,6 +45,10 @@ public class LoadedLevelState {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(in);
+			state.name = doc.getDocumentElement().getAttribute("name");
+			if (state.name.length() == 0) {
+				state.name = "Unknown";
+			}
 			
 			Element initial = (Element) doc.getElementsByTagName("Initial").item(0);
 			state.initalState = readElements(initial.getChildNodes(), stat, dynamic);

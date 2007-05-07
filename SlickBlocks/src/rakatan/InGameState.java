@@ -19,6 +19,8 @@ import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -41,6 +43,12 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	public static boolean RESTING_BODDIES = false;
 	public static boolean SHOW_MATCHES = false;
 	public static final int ID = 1;
+	private static int nextLevel;
+	
+	public static void setLevel(int level) 
+	{
+		nextLevel = level;
+	}
 	
 	private Level level;
 	private Image back;
@@ -75,6 +83,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	private boolean showTarget = true;
 	private int lastCheck = 2000;
 	private float currentMatch;
+	private StateBasedGame game;
 	
 	/**
 	 * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -96,6 +105,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	 */
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
+		this.game = game;
 		this.container = container;
 		container.setTargetFrameRate(100);
 		container.setShowFPS(false);
@@ -118,7 +128,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 		floorTexture = new Image("res/floor.png");
 		selected = null;
 		try {
-			loadedState = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/test1.xml"), 
+			loadedState = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/level"+(nextLevel+1)+".xml"), 
 												       	   floorTexture, blockTexture);
 			level = loadedState.getInitialState();
 			level.addListener(this);
@@ -477,7 +487,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			}
 		}
 		if (key == Input.KEY_ESCAPE) {
-			container.exit();
+			game.enterState(LevelSelectState.ID, new FadeOutTransition(Color.white), new FadeInTransition(Color.white));
 		}
 		if (key == Input.KEY_SPACE) {
 			showTarget = !showTarget;
