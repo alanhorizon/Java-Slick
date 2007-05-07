@@ -280,6 +280,13 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 				float nx = x + ((newx - oldx) * Level.SCALE);
 				float ny = y + ((newy - oldy) * Level.SCALE);
 				
+				if ((nx < 0) || (nx > 1000 * Level.SCALE)) {
+					return;
+				}
+				if ((ny < 0) || (ny > 720 * Level.SCALE)) {
+					return;
+				}
+				
 				int before = level.getCollisions(selected);
 				selected.setPosition(nx, ny);
 				int after = level.getCollisions(selected);
