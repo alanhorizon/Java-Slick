@@ -1,14 +1,16 @@
 package rakatan.data;
 
-import net.phys2d.math.Vector2f;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import net.phys2d.raw.shapes.Box;
-import net.phys2d.raw.shapes.ConvexPolygon;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Shape;
+
+import rakatan.ShapeRenderer;
 
 /**
  * TODO: Document this class
@@ -27,9 +29,12 @@ public class StaticBlockElement extends LevelElement {
 		this.width = width;
 		this.height = height;
 		this.image = image;
+		this.color = Color.white;
 		
-		body = new StaticBody(new Box(width,height));
-		body.setPosition(x+(width/2), y+(height/2));
+		body = new StaticBody(new Box(width * Level.SCALE,height * Level.SCALE));
+		body.setPosition((x+(width/2))*Level.SCALE, (y+(height/2))*Level.SCALE);
+		
+		shapes.add(new Rectangle(-(width/2)*Level.SCALE,-(height/2)*Level.SCALE,width*Level.SCALE,height*Level.SCALE));	
 	}
 
 	public boolean contains(float x, float y) {
@@ -39,13 +44,11 @@ public class StaticBlockElement extends LevelElement {
 	public void addToWorld(World world) {
 		world.add(body);
 	}
-	
-	/**
-	 * @see rakatan.data.LevelElement#render(org.newdawn.slick.Graphics)
-	 */
-	public void render(Graphics g) {
-		g.setColor(Color.white);
-		g.fillRect(x,y,width,height,image,0,0);
+
+	protected void fillShape(Graphics g) {
+		for (int i=0;i<shapes.size();i++) {
+			ShapeRenderer.fill((Shape) shapes.get(i), image, 0.005f / Level.SCALE);
+		}
 	}
 
 	/**

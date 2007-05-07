@@ -36,18 +36,18 @@ public class DynamicBlockElement extends LevelElement {
 		this.image = image;
 		this.color = c;
 		
-		shapes.add(new Rectangle(-(width/2),-(height/2),width,height));
+		shapes.add(new Rectangle(-(width/2)*Level.SCALE,-(height/2)*Level.SCALE,width*Level.SCALE,height*Level.SCALE));
 		
-		ConvexPolygon poly = new ConvexPolygon(new Vector2f[] {
-							new Vector2f(-width/2,-height/2),
-							new Vector2f(width/2,-height/2),
-							new Vector2f(width/2,height/2),
-							new Vector2f(-width/2,height/2),
-		});
+//		ConvexPolygon poly = new ConvexPolygon(new Vector2f[] {
+//							new Vector2f(-width/2,-height/2),
+//							new Vector2f(width/2,-height/2),
+//							new Vector2f(width/2,height/2),
+//							new Vector2f(-width/2,height/2),
+//		});
 		
-		body = new Body(new Box(width,height), 1000);
+		body = new Body(new Box(width*Level.SCALE,height*Level.SCALE), 1000);
 		//body = new Body(poly, 1);
-		body.setPosition(x+(width/2), y+(height/2));
+		body.setPosition((x+(width/2))*Level.SCALE, (y+(height/2))*Level.SCALE);
 		body.setRotation(rot);
 	}
 	

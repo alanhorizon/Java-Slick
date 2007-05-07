@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
+import net.phys2d.raw.BodyList;
 import net.phys2d.raw.Collide;
 import net.phys2d.raw.Contact;
 import net.phys2d.raw.World;
@@ -16,6 +17,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Shape;
 
+import rakatan.InGameState;
 import rakatan.ShapeRenderer;
 
 /**
@@ -31,12 +33,15 @@ public abstract class LevelElement {
 	protected boolean selected;
 	
 	public void init() {
-		body.setFriction(1);
-		body.setRestitution(0);
+		body.setFriction(0.8f);
 	}
 	
-	public void setSelected(boolean selected) {
-		this.selected = selected;
+	public void clearResting() {
+		BodyList list = body.getConnected();
+		for (int i=0;i<list.size();i++) {
+			list.get(i).setIsResting(false);
+		}
+		body.setIsResting(false);
 	}
 	
 	public void update(int delta) {
@@ -82,7 +87,7 @@ public abstract class LevelElement {
 	
 	protected void fillShape(Graphics g) {
 		for (int i=0;i<shapes.size();i++) {
-			ShapeRenderer.fill((Shape) shapes.get(i), image, 0.015f);
+			ShapeRenderer.fill((Shape) shapes.get(i), image, 0.015f / Level.SCALE);
 		}
 	}
 	
@@ -91,11 +96,18 @@ public abstract class LevelElement {
 			g.draw((Shape) shapes.get(i));
 		}
 	}
-	
+
 	/**
 	 * @see rakatan.data.LevelElement#render(org.newdawn.slick.Graphics)
 	 */
 	public void render(Graphics g) {
+		render(g, null);
+	}
+	
+	/**
+	 * @see rakatan.data.LevelElement#render(org.newdawn.slick.Graphics)
+	 */
+	public void render(Graphics g, Color c) {
 		ROVector2f pos = body.getPosition();
 		float rot = body.getRotation();
 		
@@ -105,10 +117,15 @@ public abstract class LevelElement {
 		g.setColor(color);
 		fillShape(g);
 
-		if (selected) {
-			g.setColor(Color.white);
+		if (c != null) {
+			g.setColor(c);
 		} else {
 			g.setColor(Color.black);
+			if (InGameState.RESTING_BODDIES) {
+				if (body.isResting()) {
+					g.setColor(Color.yellow);
+				}
+			}
 		}
 		g.setAntiAlias(true);
 		drawShape(g);
@@ -129,6 +146,9 @@ public abstract class LevelElement {
 	}
 	
 	public boolean contains(float x, float y) {
+		x *= Level.SCALE;
+		y *= Level.SCALE;
+		
 		if (body.getShape() instanceof ConvexPolygon) {
 			x -= body.getPosition().getX();
 			y -= body.getPosition().getY();

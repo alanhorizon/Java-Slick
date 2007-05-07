@@ -27,6 +27,8 @@ import rakatan.data.StaticBlockElement;
  * @author kevin
  */
 public class InGameState extends BasicGameState implements GameState {
+	public static boolean RESTING_BODDIES = false;
+	
 	private static final int ID = 1;
 	private Level level;
 	private Image back;
@@ -49,6 +51,9 @@ public class InGameState extends BasicGameState implements GameState {
 	
 	private LevelElement over;
 	private int mouseMoveIgnoreCount = 0;
+	private boolean editMode = false;
+	
+	private String[] messages = new String[] {"","","","","",""};
 	
 	/**
 	 * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -57,6 +62,13 @@ public class InGameState extends BasicGameState implements GameState {
 		return ID;
 	}
 
+	private void addMessage(String message) {
+		for (int i=0;i<messages.length-1;i++) {
+			messages[i] = messages[i+1];
+		}
+		messages[messages.length-1] = message;
+	}
+	
 	/**
 	 * @see org.newdawn.slick.state.GameState#init(org.newdawn.slick.GameContainer,
 	 *      org.newdawn.slick.state.StateBasedGame)
@@ -91,7 +103,7 @@ public class InGameState extends BasicGameState implements GameState {
 		
 		level.add(new DynamicBlockElement(300, 500, 250, 20, new Image(
 			    "res/block.png"), Color.cyan));
-		level.add(new DynamicBlockElement(280, 515, 250, 20, new Image(
+		level.add(new DynamicBlockElement(280, 525, 250, 20, new Image(
 	    		"res/block.png"), Color.cyan));
 		
 		level.add(new DynamicBlockElement(440, 700, 100, 30, new Image(
@@ -112,11 +124,11 @@ public class InGameState extends BasicGameState implements GameState {
 				"res/block.png"), Color.red));
 		level.add(new DynamicWedgeElement(850, 650, 70, 40, new Image(
 		"res/block.png"), Color.red));
-//		level.add(new DynamicWedgeElement(850, 550, 70, 40, new Image(
-//		"res/block.png"), Color.red));
-//		level.add(new DynamicWedgeElement(850, 500, 70, 40, new Image(
-//		"res/block.png"), Color.red));
-//		
+		level.add(new DynamicWedgeElement(850, 550, 70, 40, new Image(
+		"res/block.png"), Color.red));
+		level.add(new DynamicWedgeElement(850, 500, 70, 40, new Image(
+		"res/block.png"), Color.red));
+		
 //		level.add(new DynamicArcElement(500, 300, 100, 50, 10, new Image("res/block.png"), Color.magenta));
 //		level.add(new DynamicArcElement(350, 300, 100, 50, 10, new Image("res/block.png"), Color.magenta));
 //		level.add(new DynamicArcElement(650, 300, 100, 50, 10, new Image("res/block.png"), Color.magenta));
@@ -135,7 +147,9 @@ public class InGameState extends BasicGameState implements GameState {
 		level.render(g);
 		if (over != null) {
 			g.setLineWidth(2);
-			over.render(g);
+			g.scale(1/Level.SCALE, 1/Level.SCALE);
+			over.render(g, Color.white);
+			g.resetTransform();
 			g.setLineWidth(1);
 		}
 		
@@ -150,7 +164,16 @@ public class InGameState extends BasicGameState implements GameState {
 		line = "http://www.cokeandcode.com";
 		x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
 		g.drawString(line, x, 65);
-
+		if (editMode) {
+			line = "[EDIT MODE]";
+			x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
+			g.drawString(line, x, 80);
+		
+			for (int i=0;i<messages.length;i++) {
+				
+			}
+		}
+		
 		small.drawString(xp, container.getHeight()-30, instructions);
 	}
 
@@ -178,7 +201,7 @@ public class InGameState extends BasicGameState implements GameState {
 			selected.setPosition(x, y);
 			selected.setRotation(originalRotation);
 			selected.makeStill();
-		}
+		} 
 	}
 
 	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
@@ -196,30 +219,26 @@ public class InGameState extends BasicGameState implements GameState {
 				if (after > before) {
 					selected.setRotation(oldRot);
 				} else {
+					level.clearResting(selected);
 					originalRotation = selected.getRotation();
 				}
 			} else {
 				float x = selected.getX();
 				float y = selected.getY();
-				float nx = x + (newx - oldx);
-				float ny = y + (newy - oldy);
-	
+				float nx = x + ((newx - oldx) * Level.SCALE);
+				float ny = y + ((newy - oldy) * Level.SCALE);
+				
 				int before = level.getCollisions(selected);
 				selected.setPosition(nx, ny);
 				int after = level.getCollisions(selected);
 				if (after > before) {
 					selected.setPosition(x, y);
+				} else {
+					level.clearResting(selected);
 				}
 			}
 		} else {
-			if (over != null) {
-				over.setSelected(false);
-			}
-			
 			over = level.getElementAt(newx, newy);
-			if (over != null) {
-				over.setSelected(true);
-			}
 		}
 	}
 
@@ -246,6 +265,9 @@ public class InGameState extends BasicGameState implements GameState {
 			if (selected != null) {
 				selected.makeStill();
 				Mouse.setCursorPosition((int) selected.getX(), (int) (container.getHeight()-selected.getY()));
+				mouseMoveIgnoreCount+=5;
+				level.clearResting(selected);
+				over = null;
 				selected = null;
 			}
 			rmb = false;
@@ -256,6 +278,24 @@ public class InGameState extends BasicGameState implements GameState {
 	}
 
 	public void keyPressed(int key, char c) {
+		if (key == Input.KEY_F10) {
+			editMode = !editMode;
+		}
+		if (key == Input.KEY_F11) {
+			RESTING_BODDIES = !RESTING_BODDIES;
+		}
+		if (editMode) {
+			if (key == Input.KEY_I) {
+				addMessage("Inital state saved");
+			}
+			if (key == Input.KEY_I) {
+				addMessage("Key block selected");
+			}
+			if (key == Input.KEY_T) {
+				addMessage("Target state saved");
+			}
+		}
+		
 		if (key == Input.KEY_R) {
 			try {
 				reset();

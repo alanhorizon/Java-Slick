@@ -16,14 +16,23 @@ import org.newdawn.slick.Graphics;
  * @author kevin
  */
 public class Level {
+	public static final float SCALE = 1;
+	
 	private World world;
 	private ArrayList elements = new ArrayList();
 	
 	private int remainder = 0;
-	private int step = 1;
+	private int step = 5;
+	private long lastLevelUpdate;
 	
 	public Level() {
-		world = new World(new Vector2f(0,1f), 5, new BruteCollisionStrategy());
+		world = new World(new Vector2f(0,1f * SCALE), 30, new BruteCollisionStrategy());
+		world.enableRestingBodyDetection(0.01f, 0.000001f, 100f);
+	}
+	
+	public void clearResting(LevelElement from) {
+		//world.clearRestingState();
+		from.clearResting();
 	}
 	
 	public int getCollisions(final LevelElement source) {
@@ -71,9 +80,11 @@ public class Level {
 	}
 	
 	public void render(Graphics g) {
+		g.scale(1/SCALE, 1/SCALE);
 		for (int i=0;i<elements.size();i++) {
 			((LevelElement) elements.get(i)).render(g);
 		}
+		g.resetTransform();
 	}
 	
 	public void add(LevelElement element) {

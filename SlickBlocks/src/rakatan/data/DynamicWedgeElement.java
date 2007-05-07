@@ -28,18 +28,18 @@ public class DynamicWedgeElement extends LevelElement {
 		this.image = image;
 		this.color = c;
 		
-		ConvexPolygon poly = new ConvexPolygon(new Vector2f[] {new Vector2f(0, -(height/2)),
-												   new Vector2f((width/2), (height/2)),
-												   new Vector2f(-(width/2), (height/2))});
+		ConvexPolygon poly = new ConvexPolygon(new Vector2f[] {new Vector2f(0, -(height/2)*Level.SCALE),
+												   new Vector2f((width/2)*Level.SCALE, (height/2)*Level.SCALE),
+												   new Vector2f(-(width/2)*Level.SCALE, (height/2)*Level.SCALE)});
 	
 		body = new Body(poly, 1000);
-		body.setPosition(x+(width/2), y+(height/2));
+		body.setPosition((x+(width/2))*Level.SCALE, (y+(height/2))*Level.SCALE);
 		body.setRotation(10);
 		
 		Polygon p = new Polygon();
-		p.addPoint(0,-(height/2));
-		p.addPoint((width/2),+(height/2));
-		p.addPoint(-(width/2),+(height/2));
+		p.addPoint(0,(-(height/2))*Level.SCALE);
+		p.addPoint(((width/2))*Level.SCALE,(height/2)*Level.SCALE);
+		p.addPoint((-(width/2))*Level.SCALE,(height/2)*Level.SCALE);
 		shapes.add(p);
 	}
 	
