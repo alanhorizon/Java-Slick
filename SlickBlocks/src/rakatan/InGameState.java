@@ -43,12 +43,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	public static boolean RESTING_BODDIES = false;
 	public static boolean SHOW_MATCHES = false;
 	public static final int ID = 1;
-	private static int nextLevel;
 	
-	public static void setLevel(int level) 
-	{
-		nextLevel = level;
-	}
 	
 	private Level level;
 	private Image back;
@@ -63,6 +58,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	private AngelCodeFont big;
 	private AngelCodeFont small;
 	private AngelCodeFont tiny;
+	private int nextLevel;
 	
 	private float xp = 800;
 	private String instructions = ".. Drag with LMB to move .. Hold RMB to rotate .. Press R to reset .." +
@@ -84,6 +80,16 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	private int lastCheck = 2000;
 	private float currentMatch;
 	private StateBasedGame game;
+
+	public void setLevel(int level) 
+	{
+		nextLevel = level;
+		try {
+			reset();
+		} catch (Exception e) {
+			Log.error(e);
+		}
+	}
 	
 	/**
 	 * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -545,5 +551,9 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 					   (float) (0.5f+(Math.random() * 0.5f)));
 			lastPlay = 10;
 		}
+	}
+
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+		super.enter(container, game);
 	}
 }

@@ -32,7 +32,7 @@ public class LevelSelectState extends BasicGameState {
 	private int levelCount = 2;
 	private Image blockTexture;
 	private Image floorTexture;
-	private StateBasedGame game;
+	private Rakatan game;
 	
 	private LoadedLevelState[] states = new LoadedLevelState[levelCount];
 	private int over = -1;
@@ -48,7 +48,7 @@ public class LevelSelectState extends BasicGameState {
 	 * @see org.newdawn.slick.state.GameState#init(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame)
 	 */
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		this.game = game;
+		this.game = (Rakatan) game;
 		back = new Image("res/back.png");
 		big = new AngelCodeFont("res/big.fnt","res/big.png");
 		small = new AngelCodeFont("res/small.fnt","res/small.png");
@@ -145,7 +145,7 @@ public class LevelSelectState extends BasicGameState {
 
 	public void mousePressed(int button, int x, int y) {
 		if (over != -1) {
-			InGameState.setLevel(over);	
+			game.getInGameState().setLevel(over);	
 			game.enterState(InGameState.ID, new FadeOutTransition(Color.white), new FadeInTransition(Color.white));		
 		}
 	}

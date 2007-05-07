@@ -13,7 +13,8 @@ import org.newdawn.slick.util.Log;
  * @author kevin
  */
 public class Rakatan extends StateBasedGame {
-
+	private InGameState ingame;
+	
 	public Rakatan() {
 		super("Rakatan");
 	}
@@ -25,9 +26,15 @@ public class Rakatan extends StateBasedGame {
 		Music music = new Music("res/toybox.mod");
 		music.loop(1.0f,0.2f);
 
+		ingame = new InGameState();
+		
 		addState(new TitleState());
 		addState(new LevelSelectState());
-		addState(new InGameState());
+		addState(ingame);
+	}
+	
+	public InGameState getInGameState() {
+		return ingame;
 	}
 	
 	public static void main(String[] argv) {
