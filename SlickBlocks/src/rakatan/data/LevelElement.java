@@ -65,12 +65,16 @@ public abstract class LevelElement {
 
 	protected void makeStill(Body body) {
 		body.setForce(0, 0);
+		body.setTorque(0);
 		body.adjustAngularVelocity(-body.getAngularVelocity());
 		body.adjustBiasedAngularVelocity(-body.getBiasedAngularVelocity());
 		
 		Vector2f vel = new Vector2f(body.getVelocity());
 		vel.scale(-1);
 		body.adjustVelocity(vel);
+		vel = new Vector2f(body.getBiasedVelocity());
+		vel.scale(-1);
+		body.adjustBiasedVelocity(vel);
 	}
 	
 	public void makeStill() {
