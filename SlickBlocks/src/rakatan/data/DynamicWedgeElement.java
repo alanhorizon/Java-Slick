@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.World;
+import net.phys2d.raw.shapes.Box;
 import net.phys2d.raw.shapes.ConvexPolygon;
 
 import org.newdawn.slick.Color;
@@ -49,6 +50,32 @@ public class DynamicWedgeElement extends LevelElement {
 		shapes.add(p);
 	}
 
+	public boolean compareAngle(LevelElement local) {
+		float expectedDistance = ((Vector2f) local.body.getPosition()).distanceSquared(body.getPosition());
+		expectedDistance += 100;
+		
+		ConvexPolygon localBox = (ConvexPolygon) local.body.getShape();
+		ConvexPolygon thisBox = (ConvexPolygon) body.getShape();
+		
+		Vector2f[] localPts = localBox.getVertices(local.body.getPosition(), local.body.getRotation());
+		Vector2f[] thisPts = thisBox.getVertices(body.getPosition(), body.getRotation());
+		
+		for (int i=0;i<localPts.length;i++) {
+			Vector2f findMe = localPts[i];
+			boolean found = false;
+			for (int j=0;j<thisPts.length;j++) {
+				if (findMe.distanceSquared(thisPts[j]) < expectedDistance) {
+					found = true;
+				}
+			}
+			
+			if (!found) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * @see rakatan.data.LevelElement#save(java.io.PrintStream)
 	 */
