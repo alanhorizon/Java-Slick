@@ -7,6 +7,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -110,6 +111,12 @@ public class LevelSelectState extends BasicGameState {
 		String line = "Select a level to play - you can always press escape to choose another later!";
 		x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
 		g.drawString(line, x, container.getHeight()-50);
+	}
+
+	public void keyPressed(int key, char c) {
+		if (key == Input.KEY_ESCAPE) {
+			System.exit(0);
+		};
 	}
 
 	/**
