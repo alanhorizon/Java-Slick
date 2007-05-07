@@ -2,6 +2,7 @@ package rakatan;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.Log;
@@ -21,6 +22,10 @@ public class Rakatan extends StateBasedGame {
 	 * @see org.newdawn.slick.state.StateBasedGame#initStatesList(org.newdawn.slick.GameContainer)
 	 */
 	public void initStatesList(GameContainer container) throws SlickException {
+		Music music = new Music("res/toybox.mod");
+		music.loop(1.0f,0.2f);
+
+		addState(new TitleState());
 		addState(new InGameState());
 	}
 	

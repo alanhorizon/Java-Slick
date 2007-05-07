@@ -1,5 +1,6 @@
 package rakatan.data;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import net.phys2d.math.ROVector2f;
@@ -16,6 +17,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Shape;
+import org.w3c.dom.Element;
 
 import rakatan.InGameState;
 import rakatan.ShapeRenderer;
@@ -31,17 +33,43 @@ public abstract class LevelElement {
 	protected ArrayList shapes = new ArrayList();
 	protected Image image;
 	protected boolean selected;
+	protected int id;
+	protected boolean matches;
 	
 	public void init() {
 		body.setFriction(0.8f);
 	}
 	
+	public void setMatches(boolean matches) {
+		this.matches = matches;
+	}
+	
+	public boolean matchesTarget() {
+		return matches;
+	}
+	
+	public void setID(int id) {
+		this.id = id;
+	}
+	
+	public int getID() {
+		return id;
+	}
+	
+	public Body getBody() {
+		return body;
+	}
+	
 	public void clearResting() {
-		BodyList list = body.getConnected();
+		BodyList list = body.getConnected(true);
 		for (int i=0;i<list.size();i++) {
 			list.get(i).setIsResting(false);
 		}
 		body.setIsResting(false);
+	}
+	
+	public void translate(float x, float y) {
+		body.setPosition(getX()+x, getY()+y);
 	}
 	
 	public void update(int delta) {
@@ -125,6 +153,11 @@ public abstract class LevelElement {
 			g.setColor(c);
 		} else {
 			g.setColor(Color.black);
+			if (InGameState.SHOW_MATCHES) {
+				if (matches) {
+					g.setColor(Color.orange);
+				}
+			} 
 			if (InGameState.RESTING_BODDIES) {
 				if (body.isResting()) {
 					g.setColor(Color.yellow);
@@ -171,6 +204,69 @@ public abstract class LevelElement {
 		
 		return false;
 	}
+
+	public void addToWorld(World world) {
+		world.add(body);
+	}
 	
-	public abstract void addToWorld(World world);
+	public void removeFromWorld(World world) {
+		world.remove(body);
+	}
+	
+	public abstract void save(PrintStream pout);
+	
+	public abstract LevelElement load(Element xml, Image stat, Image dynamic);
+	
+	public abstract boolean isSameKind(LevelElement other);
+	
+	public boolean compareAngle(LevelElement local) {
+		float ang1 = (float) (Math.toDegrees(getBody().getRotation()) % 360.0);
+		float ang2 = (float) (Math.toDegrees(local.getBody().getRotation()) % 360.0);
+		
+		float degDif = ang1 - ang2;
+		if (degDif > 180) {
+			degDif -= 360;
+		} else if (degDif < -180) {
+			degDif += 360;
+		}
+		
+		float rotationTolerance = 10;
+		if (degDif > rotationTolerance) {
+			return false;
+		}
+		
+		return true;
+	}
+
+	public boolean isSimilar(LevelElement local) {
+		float positionDif = ((Vector2f) local.getBody().getPosition()).distanceSquared(getBody().getPosition());
+
+		float positionTolerance = 50;
+		if (positionDif > positionTolerance * positionTolerance) {
+			return false;
+		}
+
+		return compareAngle(local);
+	}
+	
+	public static LevelElement loadFromXML(Element xml, Image stat, Image dynamic) {
+		if (xml.getTagName().equals("Block")) {
+			DynamicBlockElement element = new DynamicBlockElement();
+			return element.load(xml, stat, dynamic);
+		}
+		if (xml.getTagName().equals("Arc")) {
+			DynamicArcElement element = new DynamicArcElement();
+			return element.load(xml, stat, dynamic);
+		}
+		if (xml.getTagName().equals("Wedge")) {
+			DynamicWedgeElement element = new DynamicWedgeElement();
+			return element.load(xml, stat, dynamic);
+		}
+		if (xml.getTagName().equals("StaticBlock")) {
+			StaticBlockElement element = new StaticBlockElement();
+			return element.load(xml, stat, dynamic);
+		}
+		
+		return null;
+	}
 }

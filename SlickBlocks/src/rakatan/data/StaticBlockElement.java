@@ -1,5 +1,7 @@
 package rakatan.data;
 
+import java.io.PrintStream;
+
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import net.phys2d.raw.shapes.Box;
@@ -9,6 +11,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
+import org.w3c.dom.Element;
 
 import rakatan.ShapeRenderer;
 
@@ -22,6 +25,9 @@ public class StaticBlockElement extends LevelElement {
 	private int y;
 	private int width;
 	private int height;
+	
+	StaticBlockElement() {	
+	}
 	
 	public StaticBlockElement(int x, int y,int width, int height, Image image) {
 		this.x = x;
@@ -57,4 +63,43 @@ public class StaticBlockElement extends LevelElement {
 	public void update(int delta) {
 	}
 
+	/**
+	 * @see rakatan.data.LevelElement#save(java.io.PrintStream)
+	 */
+	public void save(PrintStream pout) {
+		pout.print("<StaticBlock ");
+		pout.print("id=\""+id+"\" ");
+		pout.print("width=\""+width+"\" ");
+		pout.print("height=\""+height+"\" ");
+		pout.print("x=\""+x+"\" ");
+		pout.print("y=\""+y+"\" ");
+		pout.println(">");
+		pout.println("</StaticBlock>");
+	}
+
+	/**
+	 * @see rakatan.data.LevelElement#load(org.w3c.dom.Element, org.newdawn.slick.Image, org.newdawn.slick.Image)
+	 */
+	public LevelElement load(Element xml, Image stat, Image dynamic) {
+		int id = Integer.parseInt(xml.getAttribute("id"));
+		float width = Float.parseFloat(xml.getAttribute("width"));
+		float height = Float.parseFloat(xml.getAttribute("height"));
+		float x = Float.parseFloat(xml.getAttribute("x"));
+		float y = Float.parseFloat(xml.getAttribute("y"));
+		
+		StaticBlockElement block = new StaticBlockElement((int) x,(int) y,(int) width,(int) height,stat);
+		block.setID(id);
+		
+		return block;
+	}
+
+	public boolean isSameKind(LevelElement other) {
+		if (other instanceof StaticBlockElement) {
+			StaticBlockElement o = (StaticBlockElement) other;
+			
+			return (o.width == this.width) && (o.height == this.height);
+		}
+		
+		return false;
+	}
 }

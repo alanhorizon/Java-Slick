@@ -1,5 +1,11 @@
 package rakatan;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import net.phys2d.raw.Body;
+
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.AppGameContainer;
@@ -9,16 +15,21 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.ResourceLoader;
 
 import rakatan.data.DynamicArcElement;
 import rakatan.data.DynamicBlockElement;
 import rakatan.data.DynamicWedgeElement;
 import rakatan.data.Level;
+import rakatan.data.LevelData;
 import rakatan.data.LevelElement;
+import rakatan.data.LevelListener;
+import rakatan.data.LoadedLevelState;
 import rakatan.data.StaticBlockElement;
 
 /**
@@ -26,10 +37,11 @@ import rakatan.data.StaticBlockElement;
  * 
  * @author kevin
  */
-public class InGameState extends BasicGameState implements GameState {
+public class InGameState extends BasicGameState implements GameState, LevelListener {
 	public static boolean RESTING_BODDIES = false;
+	public static boolean SHOW_MATCHES = false;
+	public static final int ID = 1;
 	
-	private static final int ID = 1;
 	private Level level;
 	private Image back;
 	private LevelElement selected;
@@ -46,7 +58,7 @@ public class InGameState extends BasicGameState implements GameState {
 	
 	private float xp = 800;
 	private String instructions = ".. Drag with LMB to move .. Hold RMB to rotate .. Press R to reset .." +
-	                              " Press F to toggle Fullscreen ..";
+	                              " Press F to toggle Fullscreen .. Press Space to toggle the target .. Press M to toggle music/sound ..";
 	private boolean rmb;
 	
 	private LevelElement over;
@@ -54,6 +66,15 @@ public class InGameState extends BasicGameState implements GameState {
 	private boolean editMode = false;
 	
 	private String[] messages = new String[] {"","","","","",""};
+	private Image blockTexture;
+	private Image floorTexture;
+	private LevelData levelData;
+	private LoadedLevelState loadedState;
+	private Sound sound;
+	private int lastPlay;
+	private boolean showTarget = true;
+	private int lastCheck = 2000;
+	private float currentMatch;
 	
 	/**
 	 * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -77,7 +98,9 @@ public class InGameState extends BasicGameState implements GameState {
 			throws SlickException {
 		this.container = container;
 		container.setTargetFrameRate(100);
+		container.setShowFPS(false);
 		
+		sound = new Sound("res/click.wav");
 		big = new AngelCodeFont("res/big.fnt","res/big.png");
 		small = new AngelCodeFont("res/small.fnt","res/small.png");
 		tiny = new AngelCodeFont("res/tiny.fnt","res/tiny.png");
@@ -86,52 +109,51 @@ public class InGameState extends BasicGameState implements GameState {
 		reset();
 	}
 	
+	private void addFloor() {
+		level.add(new StaticBlockElement(-500, container.getHeight()-40, container.getWidth()+1000, 50, floorTexture));
+	}
+	
 	private void reset() throws SlickException {
+		blockTexture = new Image("res/block.png");
+		floorTexture = new Image("res/floor.png");
 		selected = null;
-		level = new Level();
-		level.add(new StaticBlockElement(-500, container.getHeight()-40, container.getWidth()+1000, 50, new Image(
-				"res/floor.png")));
+		try {
+			loadedState = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/test1.xml"), 
+												       	   floorTexture, blockTexture);
+			level = loadedState.getInitialState();
+			level.addListener(this);
+			lastPlay = 100;
+			check();
+		} catch (IOException e) {
+			Log.error(e);
+			throw new SlickException("Failed to load level", e);
+		}
 		
-		level.add(new DynamicBlockElement(140, 500, 50, 50, new Image(
-				"res/block.png"), Color.yellow));
-		level.add(new DynamicBlockElement(200, 490, 50, 50, new Image(
-				"res/block.png"), Color.yellow));
-		level.add(new DynamicBlockElement(140, 580, 50, 50, new Image(
-				"res/block.png"), Color.yellow));
-		level.add(new DynamicBlockElement(200, 590, 50, 50, new Image(
-				"res/block.png"), Color.yellow));
-		
-		level.add(new DynamicBlockElement(300, 500, 250, 20, new Image(
-			    "res/block.png"), Color.cyan));
-		level.add(new DynamicBlockElement(280, 525, 250, 20, new Image(
-	    		"res/block.png"), Color.cyan));
-		
-		level.add(new DynamicBlockElement(440, 700, 100, 30, new Image(
-				"res/block.png"), Color.blue));
-		level.add(new DynamicBlockElement(440, 660, 100, 30, new Image(
-			"res/block.png"), Color.blue));
-		level.add(new DynamicBlockElement(440, 620, 100, 30, new Image(
-			"res/block.png"), Color.blue));
-		
-		level.add(new DynamicBlockElement(650, 600, 70, 40, new Image(
-				"res/block.png"), Color.green));
-		level.add(new DynamicBlockElement(650, 520, 70, 40, new Image(
-		"res/block.png"), Color.green));
-		level.add(new DynamicBlockElement(650, 680, 70, 40, new Image(
-		"res/block.png"), Color.green));
-		
-		level.add(new DynamicWedgeElement(850, 600, 70, 40, new Image(
-				"res/block.png"), Color.red));
-		level.add(new DynamicWedgeElement(850, 650, 70, 40, new Image(
-		"res/block.png"), Color.red));
-		level.add(new DynamicWedgeElement(850, 550, 70, 40, new Image(
-		"res/block.png"), Color.red));
-		level.add(new DynamicWedgeElement(850, 500, 70, 40, new Image(
-		"res/block.png"), Color.red));
-		
-//		level.add(new DynamicArcElement(500, 300, 100, 50, 10, new Image("res/block.png"), Color.magenta));
-//		level.add(new DynamicArcElement(350, 300, 100, 50, 10, new Image("res/block.png"), Color.magenta));
-//		level.add(new DynamicArcElement(650, 300, 100, 50, 10, new Image("res/block.png"), Color.magenta));
+//		level = new Level();
+//		addFloor();
+//		
+//		level.add(new DynamicBlockElement(140, 500, 50, 50, blockTexture, Color.yellow));
+//		level.add(new DynamicBlockElement(200, 490, 50, 50, blockTexture, Color.yellow));
+//		level.add(new DynamicBlockElement(140, 580, 50, 50, blockTexture, Color.yellow));
+//		level.add(new DynamicBlockElement(200, 590, 50, 50, blockTexture, Color.yellow));
+//		
+//		level.add(new DynamicBlockElement(300, 500, 250, 20, blockTexture, Color.cyan));
+//		level.add(new DynamicBlockElement(280, 525, 250, 20, blockTexture, Color.cyan));
+//		
+//		level.add(new DynamicBlockElement(440, 700, 100, 30, blockTexture, Color.blue));
+//		level.add(new DynamicBlockElement(440, 660, 100, 30, blockTexture, Color.blue));
+//		level.add(new DynamicBlockElement(440, 620, 100, 30, blockTexture, Color.blue));
+//		
+//		level.add(new DynamicBlockElement(650, 600, 70, 40, blockTexture, Color.green));
+//		level.add(new DynamicBlockElement(650, 520, 70, 40, blockTexture, Color.green));
+//		level.add(new DynamicBlockElement(650, 680, 70, 40, blockTexture, Color.green));
+//		
+//		level.add(new DynamicWedgeElement(850, 600, 70, 40, blockTexture, Color.red));
+//		level.add(new DynamicWedgeElement(850, 650, 70, 40, blockTexture, Color.red));
+//		level.add(new DynamicWedgeElement(850, 550, 70, 40, blockTexture, Color.red));
+//		level.add(new DynamicWedgeElement(850, 500, 70, 40, blockTexture, Color.red));
+//		
+//		level.add(new DynamicArcElement(650, 300, 100, 50, 10, blockTexture, Color.magenta));
 	}
 
 	/**
@@ -152,13 +174,36 @@ public class InGameState extends BasicGameState implements GameState {
 			g.resetTransform();
 			g.setLineWidth(1);
 		}
+
+		if (showTarget) {
+			g.setColor(Color.black);
+			g.fillRect(38,48,114,104);
+			g.setColor(Color.white);
+			g.fillRect(39,49,112,102);
+			g.setClip(40,50,110,100);
+			g.setColor(new Color(0.3f,0.6f,0.8f));
+			g.fillRect(40,50,300,300);
+			g.setColor(Color.white);
+			g.translate(0,0);
+			g.scale(0.2f, 0.2f);
+			loadedState.getTargetState().render(g);
+			g.resetTransform();
+			g.clearClip();
+
+			big.drawString(2, 20, "Target");
+		}
 		
 		String title = "Toy Blocks";
 		int x = (container.getWidth() - big.getWidth(title)) / 2;
 		big.drawString(x, 7, title);
+
+		String cm = ""+(((int) (100 * (currentMatch))));
+		cm+="%";
+		big.drawString(810+(big.getWidth("Match")/2)-(big.getWidth(cm)/2), 60, cm);
+		big.drawString(810, 20, "Match");
 		
 		g.setFont(tiny);
-		String line = "phys2d@cokeandcode.com";
+		String line = "blocks@cokeandcode.com";
 		x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
 		g.drawString(line, x, 50);
 		line = "http://www.cokeandcode.com";
@@ -170,7 +215,7 @@ public class InGameState extends BasicGameState implements GameState {
 			g.drawString(line, x, 80);
 		
 			for (int i=0;i<messages.length;i++) {
-				
+				g.drawString(messages[i], 5, 700+(i*15)-(messages.length * 15));
 			}
 		}
 		
@@ -183,6 +228,14 @@ public class InGameState extends BasicGameState implements GameState {
 	 */
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
+		if (lastPlay >= 0) {
+			lastPlay -= delta;
+		}
+		lastCheck -= delta;
+		if (lastCheck < 0) {
+			check();
+		}
+		
 		xp -= (delta * 0.1f);
 		if (xp < -small.getWidth(instructions)) 
 		{
@@ -266,9 +319,10 @@ public class InGameState extends BasicGameState implements GameState {
 				selected.makeStill();
 				Mouse.setCursorPosition((int) selected.getX(), (int) (container.getHeight()-selected.getY()));
 				mouseMoveIgnoreCount+=5;
-				level.clearResting(selected);
+				level.clearAllResting();
 				over = null;
 				selected = null;
+				lastCheck = 1000;
 			}
 			rmb = false;
 		}
@@ -280,22 +334,127 @@ public class InGameState extends BasicGameState implements GameState {
 	public void keyPressed(int key, char c) {
 		if (key == Input.KEY_F10) {
 			editMode = !editMode;
+			if (editMode) {
+				levelData = new LevelData();
+				addMessage("Entered Edit Mode");
+			}
 		}
 		if (key == Input.KEY_F11) {
 			RESTING_BODDIES = !RESTING_BODDIES;
 		}
-		if (editMode) {
-			if (key == Input.KEY_I) {
-				addMessage("Inital state saved");
-			}
-			if (key == Input.KEY_I) {
-				addMessage("Key block selected");
-			}
-			if (key == Input.KEY_T) {
-				addMessage("Target state saved");
-			}
+		if (key == Input.KEY_F8) {
+			SHOW_MATCHES = !SHOW_MATCHES;
+		}
+		if (key == Input.KEY_F7) {
+			container.setShowFPS(!container.isShowingFPS());
 		}
 		
+		if (editMode) {
+			if (key == Input.KEY_I) {
+				levelData.setInitialState(level);
+				addMessage("Inital loadedState saved");
+			}
+			if (key == Input.KEY_K) {
+				if (over != null) {
+					levelData.setKeyElement(over);
+					addMessage("Key block selected");
+				} else {
+					addMessage("Hightlight a block to use as key to pattern");
+				}
+			}
+			if (key == Input.KEY_T) {
+				levelData.setTargetState(level);
+				addMessage("Target loadedState saved");
+			}
+			if (key == Input.KEY_S) {
+				try {
+					levelData.save(new FileOutputStream("res/levels/save"+System.currentTimeMillis()+".xml"));
+					addMessage("Level data saved");
+				} catch (IOException e) {
+					addMessage("Failed to save: "+e.getMessage());
+				}
+			}
+			if (key == Input.KEY_C) {
+				level.clear();
+				addFloor();
+				addMessage("World cleared");
+			}
+			if (key == Input.KEY_D) {
+				if (over != null) {
+					level.remove(over);
+					level.clearResting(over);
+					over = null;
+					selected = null;
+				} else {
+					addMessage("Hightlight a block to delete");
+				}
+			}
+			if (key == Input.KEY_1) {
+				if (selected == null) {
+					over = selected = new DynamicBlockElement(container.getInput().getMouseX(), 
+													   container.getInput().getMouseY(), 
+													   50, 50, blockTexture, Color.yellow);
+					level.add(selected);
+				} else {
+					addMessage("Drop the current piece first");
+				}
+			}
+			if (key == Input.KEY_2) {
+				if (selected == null) {
+					over = selected = new DynamicBlockElement(container.getInput().getMouseX(), 
+							  						   container.getInput().getMouseY(), 
+							  						   250, 20, blockTexture, Color.cyan);
+					level.add(selected);
+				} else {
+					addMessage("Drop the current piece first");
+				}
+			}
+			if (key == Input.KEY_3) {
+				if (selected == null) {
+					over = selected = new DynamicBlockElement(container.getInput().getMouseX(), 
+							  						   container.getInput().getMouseY(), 
+							  						   100, 30, blockTexture, Color.blue);
+					level.add(selected);
+				} else {
+					addMessage("Drop the current piece first");
+				}
+			}
+			if (key == Input.KEY_4) {
+				if (selected == null) {
+					over = selected = new DynamicBlockElement(container.getInput().getMouseX(), 
+							  						   container.getInput().getMouseY(), 
+							  						   70, 40, blockTexture, Color.green);
+					level.add(selected);
+				} else {
+					addMessage("Drop the current piece first");
+				}
+			}
+			if (key == Input.KEY_5) {
+				if (selected == null) {
+					over = selected = new DynamicWedgeElement(container.getInput().getMouseX(), 
+							  						   container.getInput().getMouseY(), 
+							  						   70, 40, blockTexture, Color.red);
+					level.add(selected);
+				} else {
+					addMessage("Drop the current piece first");
+				}
+			}
+			if (key == Input.KEY_6) {
+				if (selected == null) {
+					over = selected = new DynamicArcElement(container.getInput().getMouseX(), 
+							  						 container.getInput().getMouseY(), 
+							  						 100, 50, 10, blockTexture, Color.magenta);
+					level.add(selected);
+				} else {
+					addMessage("Drop the current piece first");
+				}
+			}
+		}
+
+		if (key == Input.KEY_M) {
+			container.setSoundOn(!container.isSoundOn());
+			container.setMusicOn(!container.isMusicOn());
+		}
 		if (key == Input.KEY_R) {
 			try {
 				reset();
@@ -313,6 +472,62 @@ public class InGameState extends BasicGameState implements GameState {
 		}
 		if (key == Input.KEY_ESCAPE) {
 			container.exit();
+		}
+		if (key == Input.KEY_SPACE) {
+			showTarget = !showTarget;
+		}
+		if (key == Input.KEY_0) {
+			check();
+		}
+	}
+
+	public void check() {
+		if (selected != null) {
+			return;
+		}
+		
+		float bestMatch = 0;
+		level.clearMatchingFlags();
+		
+		LevelElement element = loadedState.getKeyElement();
+		ArrayList matches = level.findMatches(element);
+		for (int i=0;i<matches.size();i++) {
+			LevelElement local = (LevelElement) matches.get(i);
+			
+			float dx = local.getX() - element.getX();
+			float dy = local.getY() - element.getY();
+			Level target = loadedState.getTargetState();
+			target.translateAll(dx, dy);
+			
+			float matchLevel = level.matches(target);
+			if (matchLevel > bestMatch) {
+				bestMatch = matchLevel;
+			}
+			target.translateAll(-dx, -dy);
+		}
+		
+		currentMatch = bestMatch;
+		lastCheck = 500;
+	}
+	
+	/**
+	 * @see rakatan.data.LevelListener#significantCollision()
+	 */
+	public void significantCollision(Body a, Body b) {
+		lastCheck = 0;
+		
+		if (selected != null) {
+			if (selected.getBody() == a) {
+				return;
+			}
+			if (selected.getBody() == b) {
+				return;
+			}
+		}
+		if (lastPlay < 0) {
+			sound.play((float) (0.7f+(Math.random() * 0.3f)),
+					   (float) (0.5f+(Math.random() * 0.5f)));
+			lastPlay = 10;
 		}
 	}
 }
