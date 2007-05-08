@@ -29,7 +29,7 @@ public class LevelSelectState extends BasicGameState {
 	private AngelCodeFont big;
 	private AngelCodeFont small;
 	private AngelCodeFont tiny;
-	private int levelCount = 2;
+	private int levelCount = 6;
 	private Image blockTexture;
 	private Image floorTexture;
 	private Rakatan game;
@@ -59,7 +59,7 @@ public class LevelSelectState extends BasicGameState {
 		for (int i=0;i<levelCount;i++) {
 
 			try {
-				states[i] = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/level"+(i+1)+".xml"), 
+				states[i] = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/level"+i+".xml"), 
 													       	   floorTexture, blockTexture);
 				
 			} catch (IOException e) {

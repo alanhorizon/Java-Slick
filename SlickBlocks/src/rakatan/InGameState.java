@@ -62,7 +62,8 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	
 	private float xp = 800;
 	private String instructions = ".. Drag with LMB to move .. Hold RMB to rotate .. Press R to reset .." +
-	                              " Press F to toggle Fullscreen .. Press Space to toggle the target .. Press M to toggle music/sound ..";
+	                              "Press Escape to choose a different level .. Press F to toggle Fullscreen .." +
+	                              "Press Space to toggle the target .. Press M to toggle music/sound ..";
 	private boolean rmb;
 	
 	private LevelElement over;
@@ -80,7 +81,8 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	private int lastCheck = 2000;
 	private float currentMatch;
 	private StateBasedGame game;
-
+	private int matched = 0;
+	
 	public void setLevel(int level) 
 	{
 		nextLevel = level;
@@ -134,7 +136,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 		floorTexture = new Image("res/floor.png");
 		selected = null;
 		try {
-			loadedState = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/level"+(nextLevel+1)+".xml"), 
+			loadedState = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/level"+nextLevel+".xml"), 
 												       	   floorTexture, blockTexture);
 			level = loadedState.getInitialState();
 			level.addListener(this);
@@ -191,7 +193,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			g.setLineWidth(1);
 		}
 
-		if (showTarget) {
+		if ((showTarget) && (nextLevel != 0)) {
 			g.setColor(Color.black);
 			g.fillRect(38,48,114,104);
 			g.setColor(Color.white);
@@ -212,12 +214,22 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			big.drawString(810+(big.getWidth("Match")/2)-(big.getWidth(cm)/2), 60, cm);
 			big.drawString(810, 20, "Match");
 		}
+
+		g.setFont(tiny);
+		if ((matched > 1000) && (nextLevel != 0)) {
+			String title = "Matched! Good Job!";
+			int x = (container.getWidth() - big.getWidth(title)) / 2;
+			float yoffset = (float) Math.sin(matched / 100.0f) * 10.0f;
+			big.drawString(x, 200-yoffset, title,Color.yellow);
+			String line = "(Press Escape to Choose Another)";
+			x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
+			g.drawString(line, x, 250);
+		}
 		
 		String title = "Toy Blocks";
 		int x = (container.getWidth() - big.getWidth(title)) / 2;
 		big.drawString(x, 7, title);
 
-		g.setFont(tiny);
 		String line = "blocks@cokeandcode.com";
 		x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
 		g.drawString(line, x, 50);
@@ -249,6 +261,12 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 		lastCheck -= delta;
 		if (lastCheck < 0) {
 			check();
+		}
+		
+		if (currentMatch == 1) {
+			matched += delta;
+		} else {
+			matched = 0;
 		}
 		
 		xp -= (delta * 0.1f);
@@ -417,6 +435,10 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 													   container.getInput().getMouseY(), 
 													   50, 50, blockTexture, Color.yellow);
 					level.add(selected);
+					xoffset = 0;
+					yoffset = 0;
+					originalRotation = 0;
+					container.setMouseGrabbed(true);
 				} else {
 					addMessage("Drop the current piece first");
 				}
@@ -427,6 +449,10 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 							  						   container.getInput().getMouseY(), 
 							  						   250, 20, blockTexture, Color.cyan);
 					level.add(selected);
+					xoffset = 0;
+					yoffset = 0;
+					originalRotation = 0;
+					container.setMouseGrabbed(true);
 				} else {
 					addMessage("Drop the current piece first");
 				}
@@ -437,6 +463,10 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 							  						   container.getInput().getMouseY(), 
 							  						   100, 30, blockTexture, Color.blue);
 					level.add(selected);
+					xoffset = 0;
+					yoffset = 0;
+					originalRotation = 0;
+					container.setMouseGrabbed(true);
 				} else {
 					addMessage("Drop the current piece first");
 				}
@@ -447,6 +477,10 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 							  						   container.getInput().getMouseY(), 
 							  						   70, 40, blockTexture, Color.green);
 					level.add(selected);
+					xoffset = 0;
+					yoffset = 0;
+					originalRotation = 0;
+					container.setMouseGrabbed(true);
 				} else {
 					addMessage("Drop the current piece first");
 				}
@@ -457,6 +491,10 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 							  						   container.getInput().getMouseY(), 
 							  						   70, 40, blockTexture, Color.red);
 					level.add(selected);
+					xoffset = 0;
+					yoffset = 0;
+					originalRotation = 0;
+					container.setMouseGrabbed(true);
 				} else {
 					addMessage("Drop the current piece first");
 				}
@@ -467,6 +505,10 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 							  						 container.getInput().getMouseY(), 
 							  						 100, 50, 10, blockTexture, Color.magenta);
 					level.add(selected);
+					xoffset = 0;
+					yoffset = 0;
+					originalRotation = 0;
+					container.setMouseGrabbed(true);
 				} else {
 					addMessage("Drop the current piece first");
 				}
