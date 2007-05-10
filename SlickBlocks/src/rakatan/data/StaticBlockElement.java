@@ -2,6 +2,7 @@ package rakatan.data;
 
 import java.io.PrintStream;
 
+import net.phys2d.raw.Body;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import net.phys2d.raw.shapes.Box;
@@ -42,7 +43,7 @@ public class StaticBlockElement extends LevelElement {
 		
 		shapes.add(new Rectangle(-(width/2)*Level.SCALE,-(height/2)*Level.SCALE,width*Level.SCALE,height*Level.SCALE));	
 	}
-
+	
 	public boolean contains(float x, float y) {
 		return false;
 	}

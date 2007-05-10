@@ -74,7 +74,7 @@ public class TitleState extends BasicGameState {
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		timer -= delta;
 		if (timer < 0) {
-			game.enterState(LevelSelectState.ID, new FadeOutTransition(Color.white), new FadeInTransition(Color.white));
+			game.enterState(ModeSelectState.ID, new FadeOutTransition(Color.white), new FadeInTransition(Color.white));
 		}
 	}
 

@@ -60,14 +60,6 @@ public abstract class LevelElement {
 		return body;
 	}
 	
-	public void clearResting() {
-		BodyList list = body.getConnected(true);
-		for (int i=0;i<list.size();i++) {
-			list.get(i).setIsResting(false);
-		}
-		body.setIsResting(false);
-	}
-	
 	public void translate(float x, float y) {
 		body.setPosition(getX()+x, getY()+y);
 	}
@@ -139,7 +131,11 @@ public abstract class LevelElement {
 	/**
 	 * @see rakatan.data.LevelElement#render(org.newdawn.slick.Graphics)
 	 */
-	public void render(Graphics g, Color c) {
+	public final void render(Graphics g, Color c) {
+		renderImpl(g,c);
+	}
+	
+	public void renderImpl(Graphics g, Color c) {
 		ROVector2f pos = body.getPosition();
 		float rot = body.getRotation();
 		

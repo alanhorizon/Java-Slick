@@ -16,19 +16,21 @@ public class Rakatan extends StateBasedGame {
 	private InGameState ingame;
 	
 	public Rakatan() {
-		super("Rakatan");
+		super("Toy Blocks");
 	}
 
 	/**
 	 * @see org.newdawn.slick.state.StateBasedGame#initStatesList(org.newdawn.slick.GameContainer)
 	 */
 	public void initStatesList(GameContainer container) throws SlickException {
+		container.setIcon("res/icon.png");
 		Music music = new Music("res/toybox.mod");
 		music.loop(1.0f,0.2f);
 
 		ingame = new InGameState();
 		
 		addState(new TitleState());
+		addState(new ModeSelectState());
 		addState(new LevelSelectState());
 		addState(ingame);
 	}

@@ -33,19 +33,15 @@ public class Level implements CollisionListener {
 		world = new World(new Vector2f(0,1f * SCALE), 30, new BruteCollisionStrategy());
 		world.enableRestingBodyDetection(0.01f, 0.000001f, 100f);
 		world.addListener(this);
+		world.setDamping(1);
 	}
 	
 	public void addListener(LevelListener listener) {
 		listeners.add(listener);
 	}
 	
-	public void clearAllResting() {
-		world.clearRestingState();
-	}
-	
 	public void clearResting(LevelElement from) {
-		//world.clearRestingState();
-		from.clearResting();
+		from.getBody().setIsResting(false);
 		world.clearArbiters(from.getBody());
 	}
 	
@@ -54,7 +50,7 @@ public class Level implements CollisionListener {
 		elements.clear();
 	}
 	
-	public int getCollisions(final LevelElement source) {
+	public ArrayList getCollisions(final LevelElement source) {
 		final ArrayList bodies = new ArrayList();
 		
 		CollisionListener listener = new CollisionListener() {
@@ -69,7 +65,7 @@ public class Level implements CollisionListener {
 		world.collide(0);
 		world.removeListener(listener);
 	
-		return bodies.size();
+		return bodies;
 	}
 	
 	public void update(int delta) {

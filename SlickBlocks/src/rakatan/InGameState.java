@@ -4,7 +4,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
+import net.phys2d.raw.BodyList;
 
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.AngelCodeFont;
@@ -82,6 +84,11 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	private float currentMatch;
 	private StateBasedGame game;
 	private int matched = 0;
+	private StaticBlockElement wall1;
+	private StaticBlockElement wall2;
+	private StaticBlockElement floor;
+	private int removeTimer;
+	private boolean balanced = false;
 	
 	public void setLevel(int level) 
 	{
@@ -128,50 +135,65 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	}
 	
 	private void addFloor() {
-		level.add(new StaticBlockElement(-500, container.getHeight()-40, container.getWidth()+1000, 50, floorTexture));
+		floor = new StaticBlockElement(-500, container.getHeight()-40, container.getWidth()+1000, 50, floorTexture);
+		level.add(floor);
 	}
 	
 	private void reset() throws SlickException {
 		blockTexture = new Image("res/block.png");
 		floorTexture = new Image("res/floor.png");
 		selected = null;
-		try {
-			loadedState = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/level"+nextLevel+".xml"), 
-												       	   floorTexture, blockTexture);
-			level = loadedState.getInitialState();
-			level.addListener(this);
-			lastPlay = 100;
-			check();
-		} catch (IOException e) {
-			Log.error(e);
-			throw new SlickException("Failed to load level", e);
+		if (nextLevel != 100) {
+			try {
+				loadedState = LoadedLevelState.load(ResourceLoader.getResourceAsStream("res/levels/level"+nextLevel+".xml"), 
+													       	   floorTexture, blockTexture);
+				level = loadedState.getInitialState();
+				level.addListener(this);
+				lastPlay = 100;
+				check();
+			} catch (IOException e) {
+				Log.error(e);
+				throw new SlickException("Failed to load level", e);
+			}
+	
+			level.add(new StaticBlockElement(-51, -500, 50, 1500, floorTexture));	
+			level.add(new StaticBlockElement(1025, -500, 50, 1500, floorTexture));
+		} else {
+			level = new Level();
+			addFloor();
+			balanced = false;
+			for (int i=0;i<13;i++) {
+				int x = (int) ((200) + (Math.random() * 500));
+				int y = 600 - (i*60);
+				int r = (int) (Math.random() * 6);
+				switch (r) {
+				case 0:
+					level.add(new DynamicBlockElement(x, y, 50, 50, blockTexture, Color.yellow));
+					break;
+				case 1:
+					level.add(new DynamicBlockElement(x, y, 250, 20, blockTexture, Color.cyan));
+					break;
+				case 2:
+					level.add(new DynamicBlockElement(x, y, 100, 30, blockTexture, Color.blue));
+					break;
+				case 3:
+					level.add(new DynamicBlockElement(x, y, 70, 40, blockTexture, Color.green));
+					break;
+				case 4:
+					level.add(new DynamicWedgeElement(x, y, 70, 40, blockTexture, Color.red));
+					break;
+				case 5:
+					level.add(new DynamicArcElement(x, y, 100, 50, 10, blockTexture, Color.magenta));
+					break;
+				}
+			}
+			
+			wall1 = new StaticBlockElement(-51, -500, 50, 1500, floorTexture);
+			wall2 = new StaticBlockElement(1025, -500, 50, 1500, floorTexture);
+			level.add(wall1);	
+			level.add(wall2);
+			removeTimer = 5000;
 		}
-		
-//		level = new Level();
-//		addFloor();
-//		
-//		level.add(new DynamicBlockElement(140, 500, 50, 50, blockTexture, Color.yellow));
-//		level.add(new DynamicBlockElement(200, 490, 50, 50, blockTexture, Color.yellow));
-//		level.add(new DynamicBlockElement(140, 580, 50, 50, blockTexture, Color.yellow));
-//		level.add(new DynamicBlockElement(200, 590, 50, 50, blockTexture, Color.yellow));
-//		
-//		level.add(new DynamicBlockElement(300, 500, 250, 20, blockTexture, Color.cyan));
-//		level.add(new DynamicBlockElement(280, 525, 250, 20, blockTexture, Color.cyan));
-//		
-//		level.add(new DynamicBlockElement(440, 700, 100, 30, blockTexture, Color.blue));
-//		level.add(new DynamicBlockElement(440, 660, 100, 30, blockTexture, Color.blue));
-//		level.add(new DynamicBlockElement(440, 620, 100, 30, blockTexture, Color.blue));
-//		
-//		level.add(new DynamicBlockElement(650, 600, 70, 40, blockTexture, Color.green));
-//		level.add(new DynamicBlockElement(650, 520, 70, 40, blockTexture, Color.green));
-//		level.add(new DynamicBlockElement(650, 680, 70, 40, blockTexture, Color.green));
-//		
-//		level.add(new DynamicWedgeElement(850, 600, 70, 40, blockTexture, Color.red));
-//		level.add(new DynamicWedgeElement(850, 650, 70, 40, blockTexture, Color.red));
-//		level.add(new DynamicWedgeElement(850, 550, 70, 40, blockTexture, Color.red));
-//		level.add(new DynamicWedgeElement(850, 500, 70, 40, blockTexture, Color.red));
-//		
-//		level.add(new DynamicArcElement(650, 300, 100, 50, 10, blockTexture, Color.magenta));
 	}
 
 	/**
@@ -193,7 +215,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			g.setLineWidth(1);
 		}
 
-		if ((showTarget) && (nextLevel != 0)) {
+		if ((showTarget) && (nextLevel != 0) && (nextLevel != 100)) {
 			g.setColor(Color.black);
 			g.fillRect(38,48,114,104);
 			g.setColor(Color.white);
@@ -216,12 +238,21 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 		}
 
 		g.setFont(tiny);
-		if ((matched > 1000) && (nextLevel != 0)) {
+		if ((matched > 1000) && (nextLevel != 0) && (nextLevel != 100)) {
 			String title = "Matched! Good Job!";
 			int x = (container.getWidth() - big.getWidth(title)) / 2;
 			float yoffset = (float) Math.sin(matched / 100.0f) * 10.0f;
 			big.drawString(x, 200-yoffset, title,Color.yellow);
 			String line = "(Press Escape to Choose Another)";
+			x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
+			g.drawString(line, x, 250);
+		}
+		if ((balanced) && (nextLevel == 100)) {
+			String title = "Balance! Nice Work!";
+			int x = (container.getWidth() - big.getWidth(title)) / 2;
+			float yoffset = (float) Math.sin(matched / 100.0f) * 10.0f;
+			big.drawString(x, 200-yoffset, title,Color.yellow);
+			String line = "(Press R for a new setup)";
 			x = (container.getWidth() - g.getFont().getWidth(line)) / 2;
 			g.drawString(line, x, 250);
 		}
@@ -246,6 +277,7 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			}
 		}
 		
+		g.drawString(floor.getBody().getConnected().size()+":"+floor.getBody().getTouching().size(), 10, 100);
 		small.drawString(xp, container.getHeight()-30, instructions);
 	}
 
@@ -255,6 +287,24 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	 */
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
+		if (wall1 != null) {
+			removeTimer -= delta;
+			if (removeTimer < 0) {
+				level.remove(wall1);
+				level.remove(wall2);
+				wall1 = null;
+				wall2 = null;
+			}
+		}
+		if (nextLevel == 100) {
+			if (selected == null) {
+				if (floor.getBody().getTouching().size() == 1) {
+					if (floor.getBody().getConnected(false).size() == 13) {
+						balanced = true;
+					}
+				}
+			}
+		}
 		if (lastPlay >= 0) {
 			lastPlay -= delta;
 		}
@@ -286,7 +336,9 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 		if (selected != null) {
 			selected.setPosition(x, y);
 			selected.setRotation(originalRotation);
-			selected.makeStill();
+			if (selected.getBody().getVelocity().getY() > 0) {
+				selected.makeStill();
+			}
 		} 
 	}
 
@@ -299,35 +351,56 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 		if (selected != null) {
 			if (rmb) {
 				float oldRot = selected.getRotation();
-				int before = level.getCollisions(selected);
+				ArrayList before = level.getCollisions(selected);
 				selected.setRotation(oldRot + (newx - oldx) * 0.01f);
-				int after = level.getCollisions(selected);
-				if (after > before) {
+				ArrayList after = level.getCollisions(selected);
+
+				boolean fine = true;
+				for (int i=0;i<after.size();i++) {
+					if (!before.contains(after.get(i))) {
+						fine = false;
+					}
+				}
+				if (!fine) {
 					selected.setRotation(oldRot);
 				} else {
 					level.clearResting(selected);
 					originalRotation = selected.getRotation();
 				}
 			} else {
+				float offsetx = ((newx - oldx) * Level.SCALE);
+				float offsety = ((newy - oldy) * Level.SCALE);
+				
 				float x = selected.getX();
 				float y = selected.getY();
-				float nx = x + ((newx - oldx) * Level.SCALE);
-				float ny = y + ((newy - oldy) * Level.SCALE);
+				float nx = x + offsetx;
+				float ny = y + offsety;
 				
-				if ((nx < 0) || (nx > 1000 * Level.SCALE)) {
+				if ((nx < 0) || (nx > 1024 * Level.SCALE)) {
 					return;
 				}
 				if ((ny < 0) || (ny > 720 * Level.SCALE)) {
 					return;
 				}
+
+				ArrayList before = level.getCollisions(selected);
+				selected.getBody().move(nx, ny);
+				ArrayList after = level.getCollisions(selected);
 				
-				int before = level.getCollisions(selected);
-				selected.setPosition(nx, ny);
-				int after = level.getCollisions(selected);
-				if (after > before) {
+				boolean fine = true;
+				for (int i=0;i<after.size();i++) {
+					if (!before.contains(after.get(i))) {
+						fine = false;
+						break;
+					}
+				}
+				if (!fine) {
 					selected.setPosition(x, y);
+					selected.makeStill();
 				} else {
 					level.clearResting(selected);
+					selected.makeStill();
+					selected.getBody().adjustVelocity(new Vector2f(offsetx, Math.max(-20, offsety)));
 				}
 			}
 		} else {
@@ -341,7 +414,6 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			if (selected != null) {
 				xoffset = x - selected.getX();
 				yoffset = y - selected.getY();
-
 				originalRotation = selected.getRotation();
 				mouseMoveIgnoreCount = 5;
 				container.setMouseGrabbed(true);
@@ -356,10 +428,8 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 		if (button == 0) {
 			container.setMouseGrabbed(false);
 			if (selected != null) {
-				selected.makeStill();
 				Mouse.setCursorPosition((int) selected.getX(), (int) (container.getHeight()-selected.getY()));
 				mouseMoveIgnoreCount+=5;
-				level.clearAllResting();
 				over = null;
 				selected = null;
 				lastCheck = 1000;
@@ -535,7 +605,11 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			}
 		}
 		if (key == Input.KEY_ESCAPE) {
-			game.enterState(LevelSelectState.ID, new FadeOutTransition(Color.white), new FadeInTransition(Color.white));
+			if ((this.nextLevel == 0) || (this.nextLevel == 100)) {
+				game.enterState(ModeSelectState.ID, new FadeOutTransition(Color.white), new FadeInTransition(Color.white));	
+			} else {
+				game.enterState(LevelSelectState.ID, new FadeOutTransition(Color.white), new FadeInTransition(Color.white));	
+			}
 		}
 		if (key == Input.KEY_SPACE) {
 			showTarget = !showTarget;
