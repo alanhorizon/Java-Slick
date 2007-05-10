@@ -277,7 +277,6 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			}
 		}
 		
-		g.drawString(floor.getBody().getConnected().size()+":"+floor.getBody().getTouching().size(), 10, 100);
 		small.drawString(xp, container.getHeight()-30, instructions);
 	}
 
