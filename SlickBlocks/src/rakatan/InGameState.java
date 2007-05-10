@@ -193,6 +193,8 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			level.add(wall1);	
 			level.add(wall2);
 			removeTimer = 5000;
+			level.addListener(this);
+			lastPlay = 100;
 		}
 	}
 
