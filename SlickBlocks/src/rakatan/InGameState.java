@@ -298,12 +298,19 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 			}
 		}
 		if (nextLevel == 100) {
+			matched += delta;
 			if (selected == null) {
 				if (floor.getBody().getTouching().size() == 1) {
 					if (floor.getBody().getConnected(false).size() == 13) {
 						balanced = true;
 					}
 				}
+			}
+		} else {
+			if (currentMatch == 1) {
+				matched += delta;
+			} else {
+				matched = 0;
 			}
 		}
 		if (lastPlay >= 0) {
@@ -312,12 +319,6 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 		lastCheck -= delta;
 		if (lastCheck < 0) {
 			check();
-		}
-		
-		if (currentMatch == 1) {
-			matched += delta;
-		} else {
-			matched = 0;
 		}
 		
 		xp -= (delta * 0.1f);
