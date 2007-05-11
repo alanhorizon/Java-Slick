@@ -427,7 +427,9 @@ public class InGameState extends BasicGameState implements GameState, LevelListe
 	}
 
 	public void mouseReleased(int button, int x, int y) {
-		if (button == 0) {
+		if (!container.getInput().isMouseButtonDown(0) && 
+			!container.getInput().isMouseButtonDown(1) && 
+			!container.getInput().isMouseButtonDown(2)) {
 			container.setMouseGrabbed(false);
 			if (selected != null) {
 				Mouse.setCursorPosition((int) selected.getX(), (int) (container.getHeight()-selected.getY()));
