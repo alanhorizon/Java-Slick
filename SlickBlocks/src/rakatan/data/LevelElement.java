@@ -237,7 +237,7 @@ public abstract class LevelElement {
 	public boolean isSimilar(LevelElement local) {
 		float positionDif = ((Vector2f) local.getBody().getPosition()).distanceSquared(getBody().getPosition());
 
-		float positionTolerance = 50;
+		float positionTolerance = 30;
 		if (positionDif > positionTolerance * positionTolerance) {
 			return false;
 		}
