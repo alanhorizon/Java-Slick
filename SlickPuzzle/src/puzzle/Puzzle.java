@@ -863,7 +863,10 @@ public class Puzzle extends BasicGame {
 						int xd = Math.abs(x - selectedx);
 						int yd = Math.abs(y - selectedy);
 						
-						if (xd+yd == 1) {
+						if ((xd == 0) && (yd == 0)) {
+							selected = false;
+							meow.play((float) (0.9f + (Math.random()*0.3f)), (float) (0.4f + (Math.random()*0.3f)));
+						} else if (xd+yd == 1) {
 							tappedx = x;
 							tappedy = y;
 							selected = false;
