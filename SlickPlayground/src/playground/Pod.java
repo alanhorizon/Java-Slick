@@ -183,7 +183,7 @@ public class Pod {
 	 * @param x The new x coordinate
 	 */
 	public void setX(int x) {
-		rect.x = x;
+		rect.setX(x);
 		this.x = x;
 	}
 
@@ -193,7 +193,7 @@ public class Pod {
 	 * @param y The new y coordinate
 	 */
 	public void setY(int y) {
-		rect.y = y;
+		rect.setY(y);
 		this.y = y;
 	}
 	
@@ -237,23 +237,23 @@ public class Pod {
 		}
 
 		if (image != null) {
-			image.draw((int) x,(int) y+offset, (int) rect.width, (int) rect.height);
+			image.draw((int) x,(int) y+offset, (int) rect.getWidth(), (int) rect.getHeight());
 		}
 		if (color != null) {
 			g.setColor(color);
-			g.fillRect((int) x+5,(int) y+offset+5, (int) rect.width-10, (int) rect.height-10);
+			g.fillRect((int) x+5,(int) y+offset+5, (int) rect.getWidth()-10, (int) rect.getHeight()-10);
 		}
 		
 		for (int i=0;i<images.size();i++) {
 			Image image = (Image) images.get(i);
-			int xp = (int) ((rect.width - image.getWidth()) / 2);
-			int yp = (int) ((rect.height - image.getHeight()) / 2);
+			int xp = (int) ((rect.getWidth() - image.getWidth()) / 2);
+			int yp = (int) ((rect.getHeight() - image.getHeight()) / 2);
 			
 			image.draw((int) (x+xp),(int) (y+yp+offset));
 		}
 		
-		int xo = (int) ((rect.width - font.getWidth(label)) / 2);
-		int yo = (int) ((rect.height - font.getHeight(label)) / 2);
+		int xo = (int) ((rect.getWidth() - font.getWidth(label)) / 2);
+		int yo = (int) ((rect.getHeight() - font.getHeight(label)) / 2);
 		
 		font.drawString((int) (x+xo), (int) (y+yo-2)+offset, label, col);
 	}
