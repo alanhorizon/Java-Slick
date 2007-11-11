@@ -61,7 +61,7 @@ public class TestSinglePanel extends BasicGame {
 	public void init(GameContainer container) throws SlickException {
 		container.setShowFPS(false);
 		container.setVSync(true);
-		container.setTargetFrameRate(50);
+		container.setTargetFrameRate(100);
 		container.getGraphics().setBackground(new Color(0.5f,0.7f,0.9f,1f));
 
 		frame = new HeadlessFrame(800,600);
