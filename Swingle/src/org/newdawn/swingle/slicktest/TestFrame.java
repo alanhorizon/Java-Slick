@@ -199,7 +199,7 @@ public class TestFrame extends BasicGame {
 	        setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
 	        
 	        JPanel p = new JPanel( new BorderLayout() );
-	        p.setBackground( java.awt.Color.blue );
+	        p.setBackground(java.awt.Color.red);
 	        JPanel tmp = new JPanel();
 	        JButton b = new JButton("Start Game");
 	        b.setFocusable(false);

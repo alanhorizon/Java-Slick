@@ -60,6 +60,8 @@ public class TestSinglePanel extends BasicGame {
 	 */
 	public void init(GameContainer container) throws SlickException {
 		container.setShowFPS(false);
+		container.setVSync(true);
+		container.setTargetFrameRate(50);
 		container.getGraphics().setBackground(new Color(0.5f,0.7f,0.9f,1f));
 
 		frame = new HeadlessFrame(800,600);
@@ -139,7 +141,9 @@ public class TestSinglePanel extends BasicGame {
 		frame.updateTexture(image.getTexture().getTextureID(), mainMenu);
 		
 		if (alpha != 0) {
-			image.draw(mainMenu.getX(),mainMenu.getY(),new Color(1,1,1f,alpha));
+			GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			image.draw(mainMenu.getX(),mainMenu.getY(),new Color(alpha,alpha,alpha,alpha));
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		}
 		
 		Texture.bindNone();

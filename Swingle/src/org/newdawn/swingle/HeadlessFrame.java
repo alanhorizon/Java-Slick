@@ -11,10 +11,14 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.color.ColorSpace;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -31,6 +35,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.ARBPixelBufferObject;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GLContext;
 
 /**
@@ -40,6 +45,15 @@ import org.lwjgl.opengl.GLContext;
  * @author kevin
  */
 public class HeadlessFrame extends JFrame {
+	/** The colour model including alpha for the GL image */
+    private static final ColorModel glAlphaColorModel = 
+    		new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
+	            new int[] {8,8,8,8},
+	            true,
+	            false,
+	            ComponentColorModel.TRANSLUCENT,
+	            DataBuffer.TYPE_BYTE);
+    
 	/** The image being updated with the contents of the GUI */
 	private BufferedImage image;
 	/** True if the window has been created */
@@ -53,7 +67,7 @@ public class HeadlessFrame extends JFrame {
 	/** The bufer used to update the text */
 	private ByteBuffer dataBuffer = null;
 	/** The data array used to read pixels from the buffered image */
-	private byte[] data;
+	private int[] data;
 	/** The current AWT mouse modifier state */
 	private int mouseModifiers;
 	/** The current AWT key modifier state */
@@ -115,10 +129,9 @@ public class HeadlessFrame extends JFrame {
 		RepaintManager.setCurrentManager(new RecordingRepaintManager());
 		RepaintManager.currentManager(null).setDoubleBufferingEnabled(false);
 
-		data = new byte[width * height * 4];
+		data = new int[width * height];
 		dataBuffer = BufferUtils.createByteBuffer(width * height * 4);
-		image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-		image.setAccelerationPriority(0);
+		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
 
 		PopupFactory.setSharedInstance(new SoftPopupFactory(this));
 
@@ -482,11 +495,7 @@ public class HeadlessFrame extends JFrame {
 	 * @param event The event to be fired at the component
 	 */
 	private void invokeEvent(final Component target, final AWTEvent event) {
-		invokeAndWait(new Runnable() {
-			public void run() {
-				target.dispatchEvent(event);
-			}
-		});
+		target.dispatchEvent(event);
 	}
 
 	/**
@@ -572,7 +581,9 @@ public class HeadlessFrame extends JFrame {
 		}
 
 		lastUpdateTime = System.currentTimeMillis();
+		
 		updateImage();
+		
 		Rectangle total = new Rectangle(0, 0, width, height);
 		if (component != null) {
 			total = component.getBounds();
@@ -580,7 +591,7 @@ public class HeadlessFrame extends JFrame {
 		update = update.intersection(total);
 		updateTextureImpl(id, update,component);
 	}
-
+	
 	/**
 	 * Update the dirty section of the texture
 	 * 
@@ -596,19 +607,29 @@ public class HeadlessFrame extends JFrame {
 		if (dirty.getHeight() < 0) {
 			return;
 		}
-
-        image.getRaster().getDataElements(dirty.x, dirty.y, dirty.width, dirty.height, data);
-        
+		
+		image.getRaster().getDataElements(dirty.x, dirty.y, dirty.width, dirty.height, data);	
+		
+		updateTextureFromDataBuffer(id, component, dirty);
+	}
+	
+	/**
+	 * Update the texture data from the buffered image
+	 * 
+	 * @param id The ID of the texture to be updatd
+	 * @param component The component that is being copied over
+	 * @param dirty The dirty rectangle to be updated
+	 */
+	private void updateTextureFromDataBuffer(int id, Component component, Rectangle dirty) {
 		if (pboSupported) {
 	        ARBPixelBufferObject.glBindBufferARB(ARBPixelBufferObject.GL_PIXEL_UNPACK_BUFFER_ARB, PBO);
 	        dataBuffer = ARBPixelBufferObject.glMapBufferARB(ARBPixelBufferObject.GL_PIXEL_UNPACK_BUFFER_ARB, 
 	        									ARBPixelBufferObject.GL_WRITE_ONLY_ARB, null);
 	        
-	        dataBuffer.put(data, 0, dirty.width * dirty.height * 4);
-        } else {
+	    	dataBuffer.order(ByteOrder.LITTLE_ENDIAN).asIntBuffer().put(data, 0, dirty.width * dirty.height);
+		} else {
         	dataBuffer.clear();
-        	dataBuffer.put(data, 0, dirty.width * dirty.height * 4);
-        	dataBuffer.flip();
+        	dataBuffer.order(ByteOrder.LITTLE_ENDIAN).asIntBuffer().put(data, 0, dirty.width * dirty.height);
         }
 
 		int xoffset = 0;
@@ -623,15 +644,15 @@ public class HeadlessFrame extends JFrame {
 	        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 	        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0,
 					             dirty.x-xoffset, dirty.y-yoffset, dirty.width,
-					             dirty.height, GL11.GL_RGBA,
+					             dirty.height, GL12.GL_BGRA,
 					             GL11.GL_UNSIGNED_BYTE, 0);
 	        ARBPixelBufferObject.glBindBufferARB(ARBPixelBufferObject.GL_PIXEL_UNPACK_BUFFER_ARB, 0);
 		} else {
 	        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 	        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0,
 					             dirty.x-xoffset, dirty.y-yoffset, dirty.width,
-					             dirty.height, GL11.GL_RGBA,
-					             GL11.GL_UNSIGNED_BYTE, (ByteBuffer) dataBuffer);
+					             dirty.height, GL12.GL_BGRA,
+					             GL11.GL_UNSIGNED_BYTE, dataBuffer);
 		}
 	}
 
