@@ -63,6 +63,9 @@ public class TestFrame {
 	public TestFrame() {
 	}
 	
+	/**
+	 * Start the test 
+	 */
 	public void start() {
 		initGL(SCREEN_WIDTH,SCREEN_HEIGHT);
 		init();
@@ -81,6 +84,12 @@ public class TestFrame {
 		}
 	}
 	
+	/**
+	 * Initialise the GL display
+	 * 
+	 * @param width The width of the display
+	 * @param height The height of the display
+	 */
 	private void initGL(int width, int height) {
 		try {
 			Display.setDisplayMode(new DisplayMode(width,height));
@@ -111,13 +120,25 @@ public class TestFrame {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 	
-    public static int createTextureID() 
+	/**
+	 * Create a GL texture ID
+	 * 
+	 * @return The GL texture ID generated
+	 */
+    public int createTextureID() 
     { 
        IntBuffer tmp = BufferUtils.createIntBuffer(1); 
        GL11.glGenTextures(tmp); 
        return tmp.get(0);
     } 
     
+    /**
+     * Create a texture to hold the swing rendering
+     * 
+     * @param width The width of the required image
+     * @param height The height of the required image
+     * @return The ID of the GL texture crated
+     */
 	public int createTexture(int width, int height) {
     	int target = GL11.GL_TEXTURE_2D;
     	
@@ -165,6 +186,9 @@ public class TestFrame {
         return textureID;
 	}
 	
+	/**
+	 * Initialise the invisible frame and Swing components
+	 */
 	public void init() {
 		frame = new HeadlessFrame(SCREEN_WIDTH,SCREEN_HEIGHT);
 		textureID = createTexture(SCREEN_WIDTH,SCREEN_HEIGHT);
@@ -210,6 +234,9 @@ public class TestFrame {
         desktop.add(iframe);
     }
 
+    /**
+     * Update based on the events fired by LWJGL. Pipe them into the headless frame.
+     */
     public void update() {
     	while (Mouse.next()) {
     		if (Mouse.getEventButton() < 0) {
@@ -234,6 +261,9 @@ public class TestFrame {
     	}
 	}
     
+    /**
+     * Render the frame then the texture thats been generated from the swing
+     */
 	public void render() {
 		frame.updateTexture(textureID);
 		
@@ -254,11 +284,6 @@ public class TestFrame {
 		GL11.glEnd();
 		
 		GL11.glDisable(GL11.GL_ALPHA_TEST);
-	}
-
-	public static void main(String[] argv) {
-		TestFrame frame = new TestFrame();
-		frame.start();
 	}
 
 	/**
@@ -309,48 +334,14 @@ public class TestFrame {
 		}
 	}
 
-//	/**
-//	 * @see org.newdawn.slick.BasicGame#mouseMoved(int, int, int, int)
-//	 */
-//	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-//		super.mouseMoved(oldx, oldy, newx, newy);
-//		
-//		frame.mouseMoved(newx, newy);
-//	}
-//
-//	/**
-//	 * @see org.newdawn.slick.BasicGame#mousePressed(int, int, int)
-//	 */
-//	public void mousePressed(int button, int x, int y) {
-//		super.mousePressed(button, x, y);
-//		
-//		frame.mousePressed(x, y, button);
-//	}
-//
-//	/**
-//	 * @see org.newdawn.slick.BasicGame#mouseReleased(int, int, int)
-//	 */
-//	public void mouseReleased(int button, int x, int y) {
-//		super.mouseReleased(button, x, y);
-//		
-//		frame.mouseReleased(x, y, button);
-//	}
-//
-//	/**
-//	 * @see org.newdawn.slick.BasicGame#keyPressed(int, char)
-//	 */
-//	public void keyPressed(int key, char c) {
-//		super.keyPressed(key, c);
-//	
-//		frame.keyPressed(key, c);
-//	}
-//
-//	/**
-//	 * @see org.newdawn.slick.BasicGame#keyReleased(int, char)
-//	 */
-//	public void keyReleased(int key, char c) {
-//		super.keyReleased(key, c);
-//		
-//		frame.keyReleased(key, c);
-//	}
+	/**
+	 * Entry point to the test
+	 * 
+	 * @param argv The arguments passed to the app
+	 */
+	public static void main(String[] argv) {
+		TestFrame frame = new TestFrame();
+		frame.start();
+	}
+
 }
