@@ -4,12 +4,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.AppGameContainer;
@@ -22,11 +20,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.ResourceLoader;
 import org.newdawn.swingle.HeadlessFrame;
-
-import com.l2fprod.gui.plaf.skin.Skin;
-import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 /**
  * A slick based test for the Swing rendering to OpenGL stuff
@@ -155,11 +149,6 @@ public class TestSinglePanel extends BasicGame {
 
 	public static void main(String[] argv) {
 		try {
-			URL url = ResourceLoader.getResource("skinlf-themepack.xml");
-			Skin skin = SkinLookAndFeel.loadThemePackDefinition(url);
-		    SkinLookAndFeel.setSkin(skin);
-			UIManager.setLookAndFeel(new SkinLookAndFeel());
-		    
 			AppGameContainer container = new AppGameContainer(new TestSinglePanel(), 800, 600, false);
 			container.start();
 		} catch (Exception e) {

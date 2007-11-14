@@ -495,7 +495,11 @@ public class HeadlessFrame extends JFrame {
 	 * @param event The event to be fired at the component
 	 */
 	private void invokeEvent(final Component target, final AWTEvent event) {
-		target.dispatchEvent(event);
+		invokeAndWait(new Runnable() {
+			public void run() {
+				target.dispatchEvent(event);		
+			}
+		});
 	}
 
 	/**

@@ -1,13 +1,9 @@
 package org.newdawn.swingle.slicktest;
 
-import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.AppGameContainer;
@@ -33,11 +28,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.ResourceLoader;
 import org.newdawn.swingle.HeadlessFrame;
-
-import com.l2fprod.gui.plaf.skin.Skin;
-import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 /**
  * A slick based test for the Swing rendering to OpenGL stuff
@@ -171,11 +162,6 @@ public class TestFrame extends BasicGame {
 
 	public static void main(String[] argv) {
 		try {
-			URL url = ResourceLoader.getResource("skinlf-themepack.xml");
-			Skin skin = SkinLookAndFeel.loadThemePackDefinition(url);
-		    SkinLookAndFeel.setSkin(skin);
-			UIManager.setLookAndFeel(new SkinLookAndFeel());
-		    
 			AppGameContainer container = new AppGameContainer(new TestFrame(), 800, 600, false);
 			container.start();
 		} catch (Exception e) {
