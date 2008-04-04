@@ -80,6 +80,8 @@ public class Alien extends Actor {
 		}
 		
 		image.drawCentered(getX(), getY()-12);
+		
+		//g.drawString(""+onGround()+" "+getX()+"x"+getY()+" "+velx, getX(), getY()-50);
 	}
 	
 	/**

@@ -9,9 +9,8 @@ import net.phys2d.raw.BodyList;
 import net.phys2d.raw.CollisionEvent;
 import net.phys2d.raw.CollisionListener;
 import net.phys2d.raw.StaticBody;
-import net.phys2d.raw.World;
+import net.phys2d.raw.shapes.Box;
 import net.phys2d.raw.shapes.Polygon;
-import net.phys2d.raw.strategies.QuadSpaceStrategy;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -264,6 +263,18 @@ public class TileEnvironment extends AbstractEnvironment {
 				Polygon poly = (Polygon) shape;
 				org.newdawn.slick.geom.Polygon p = new org.newdawn.slick.geom.Polygon();
 				ROVector2f[] verts = poly.getVertices();
+				for (int k=0;k<verts.length;k++) {
+					p.addPoint(verts[k].getX(), verts[k].getY());
+				}
+				
+				g.draw(p);
+			}
+			
+			if (shape instanceof Box) {
+				Box b = (Box) shape;
+				Vector2f[] verts = b.getPoints(body.getPosition(), body.getRotation());
+				
+				org.newdawn.slick.geom.Polygon p = new org.newdawn.slick.geom.Polygon();
 				for (int k=0;k<verts.length;k++) {
 					p.addPoint(verts[k].getX(), verts[k].getY());
 				}

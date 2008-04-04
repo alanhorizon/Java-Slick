@@ -38,7 +38,7 @@ public abstract class Actor extends AbstractEntity {
 	/** The size of the actor's collision bounds */
 	private float size;
 	/** The x component of the velocity for the current update */
-	private float velx;
+	protected float velx;
 	
 	/**
 	 * Create a new actor
@@ -160,7 +160,7 @@ public abstract class Actor extends AbstractEntity {
 			setVelocity(0, getVelY());
 		}
 		
-		falling = (getVelY() > 10) && (!onGround());
+		falling = (getVelY() > 0) && (!onGround());
 		velx = getVelX();
 	}
 	
@@ -175,7 +175,7 @@ public abstract class Actor extends AbstractEntity {
 		boolean on = onGroundImpl(body);
 		if (!on) {
 			offGroundTimer += delta;
-			if (offGroundTimer > 500) {
+			if (offGroundTimer > 100) {
 				onGround = false;
 			}
 		} else {
@@ -254,13 +254,15 @@ public abstract class Actor extends AbstractEntity {
 				// check the normal to work out which body we care about
 				// if the right body is involved and a collision has happened
 				// below it then we're on the ground
-				if (events[i].getNormal().getY() < -0) {
+				if (events[i].getNormal().getY() < -0.5) {
 					if (events[i].getBodyB() == body) {
+						//System.out.println(events[i].getPoint()+","+events[i].getNormal());
 						return true;
 					}
 				}
-				if (events[i].getNormal().getY() > 0) {
+				if (events[i].getNormal().getY() > 0.5) {
 					if (events[i].getBodyA() == body) {
+						//System.out.println(events[i].getPoint()+","+events[i].getNormal());
 						return true;
 					}
 				}
