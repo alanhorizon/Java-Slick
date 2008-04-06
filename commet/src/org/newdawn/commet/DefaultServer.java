@@ -56,6 +56,9 @@ public abstract class DefaultServer {
 		}
 	}
 	
+	/**
+	 * Check for new connections.
+	 */
 	public void checkConnect() {
 		try {
 			// check for new connections, we keep looping until there arn't any more
@@ -76,6 +79,9 @@ public abstract class DefaultServer {
 		}
 	}
 	
+	/**
+	 * Read all the channels passing off the data to data recieved 
+	 */
 	public void readChannels() {
 		// cycle through all the channels attempting to read from them. It's very important
 		// that all channels are read each time since the only way we can detect closure
@@ -107,13 +113,28 @@ public abstract class DefaultServer {
 		}
 	}
 	
+	/**
+	 * Notification that a channel connected to the server
+	 * 
+	 * @param channel The channel that connected
+	 */
 	protected void channelConnected(TransportChannel channel) {
 	}
-	
+
+	/**
+	 * Notification that a channel disconnected from the server
+	 * 
+	 * @param channel The channel that disconnected
+	 */
 	protected void channelDisconnected(TransportChannel channel) {
 	}
 	
+	/**
+	 * Notification that data has been recieved from a channel
+	 * 
+	 * @param channel The channel the data came from
+	 * @param data The data recieved
+	 */
 	protected void dataRecieved(TransportChannel channel, ByteBuffer data) {
-		
 	}
 }

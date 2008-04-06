@@ -41,7 +41,7 @@ public class BroadcastServer extends DefaultServer {
 	 * given index
 	 * 
 	 * @param data The data to send
-	 * @param index The index of the channel to exclude
+	 * @param ignoreChannelID The ID of the channel to exclude
 	 */
 	protected void sendToAll(ByteBuffer data, int ignoreChannelID) {
 		// then we're going to tell all the other players about the data. In this 
@@ -74,13 +74,26 @@ public class BroadcastServer extends DefaultServer {
 		}
 	}
 
+	/**
+	 * Check if a set of data should be broadcast to other clients
+	 * 
+	 * @param channel The channel the data was recieved on
+	 * @param data The data to be broadcast
+	 * @return True if the data should be broadcast to other clients
+	 */
 	protected boolean broadcastData(TransportChannel channel, ByteBuffer data) {
 		return true;
 	}
 	
+	/**
+	 * @see org.newdawn.commet.DefaultServer#channelConnected(org.newdawn.commet.transport.TransportChannel)
+	 */
 	protected void channelConnected(TransportChannel channel) {
 	}
 	
+	/**
+	 * @see org.newdawn.commet.DefaultServer#channelDisconnected(org.newdawn.commet.transport.TransportChannel)
+	 */
 	protected void channelDisconnected(TransportChannel channel) {
 	}
 }

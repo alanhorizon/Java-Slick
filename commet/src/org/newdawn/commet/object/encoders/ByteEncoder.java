@@ -9,11 +9,11 @@ import org.newdawn.commet.object.FieldEncoder;
 
 /**
  * Encoder to set a field based on recieved data, and send data based on the state of a field
- * whose type is "int".
+ * whose type is "byte".
  * 
  * @author kevin
  */
-public class IntegerEncoder implements FieldEncoder {
+public class ByteEncoder implements FieldEncoder {
 	/** The field to be set/get */
 	private Field field;
 	
@@ -22,7 +22,7 @@ public class IntegerEncoder implements FieldEncoder {
 	 * 
 	 * @param field The field to be maintained
 	 */
-	public IntegerEncoder(Field field) {
+	public ByteEncoder(Field field) {
 		this.field = field;
 		field.setAccessible(true);
 	}
@@ -32,7 +32,7 @@ public class IntegerEncoder implements FieldEncoder {
 	 */
 	public void decode(DataInputStream din, Object value) throws IOException {
 		try {
-			field.setInt(value, din.readInt());
+			field.setByte(value, din.readByte());
 		} catch (IllegalArgumentException e) {
 			throw new IOException("Failed to set: "+field);
 		} catch (IllegalAccessException e) {
@@ -45,7 +45,7 @@ public class IntegerEncoder implements FieldEncoder {
 	 */
 	public void encode(DataOutputStream dout, Object value) throws IOException {
 		try {
-			dout.writeInt(field.getInt(value));
+			dout.writeByte(field.getByte(value));
 		} catch (IllegalArgumentException e) {
 			throw new IOException("Failed to get: "+field);
 		} catch (IllegalAccessException e) {

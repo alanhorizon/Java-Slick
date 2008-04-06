@@ -79,7 +79,6 @@ public class MessageBroadcastServer extends BroadcastServer {
 	 */
 	@Override
 	protected void channelDisconnected(TransportChannel channel) {
-		// TODO Auto-generated method stub
 		super.channelDisconnected(channel);
 		
 		channelDisconnected(channelMap.remove(channel));
@@ -97,9 +96,21 @@ public class MessageBroadcastServer extends BroadcastServer {
 		return true;
 	}
 
+	/**
+	 * Notification that a channel has been connected to the server. A simple override 
+	 * for those using message channels.
+	 * 
+	 * @param channel The channel that was connected
+	 */
 	protected void channelConnected(MessageChannel channel) {
 	}
-	
+
+	/**
+	 * Notification that a channel has been disconnected from the server. A simple override 
+	 * for those using message channels.
+	 * 
+	 * @param channel The channel that was disconnected
+	 */
 	protected void channelDisconnected(MessageChannel channel) {
 	}
 }
