@@ -12,6 +12,9 @@ import java.util.HashMap;
 public class ClassEncoderRegistry {
 	/** The map of cached encoders */
 	private static HashMap<Class<?>, ObjectEncoder> encoders = new HashMap<Class<?>, ObjectEncoder>();
+
+	/** The map of cached encoders */
+	private static HashMap<Class<?>, ObjectEncoder> encodersNoAnnotations = new HashMap<Class<?>, ObjectEncoder>();
 	
 	/**
 	 * Get an encoder for a given object type
@@ -21,11 +24,28 @@ public class ClassEncoderRegistry {
 	 * @throws ClassEncodingException Indicates that the particular class type can not be encoded
 	 */
 	public static ObjectEncoder getEncoder(Class<?> clazz) throws ClassEncodingException {
-		ObjectEncoder encoder = encoders.get(clazz);
+		return getEncoder(clazz, false);
+	}
+	
+	/**
+	 * Get an encoder for a given object type
+	 * 
+	 * @param clazz The class whose encoder is required
+	 * @param allFields True if all fields should be encoded regardless of annotation
+	 * @return The encoder that can be used to encode instances of the given class
+	 * @throws ClassEncodingException Indicates that the particular class type can not be encoded
+	 */
+	public static ObjectEncoder getEncoder(Class<?> clazz, boolean allFields) throws ClassEncodingException {
+		HashMap<Class<?>, ObjectEncoder> map = encoders;
+		if (allFields) {
+			map = encodersNoAnnotations;
+		}
+		
+		ObjectEncoder encoder = map.get(clazz);
 		
 		if (encoder == null) {
-			encoder = new ObjectEncoder(clazz);
-			encoders.put(clazz, encoder);
+			encoder = new ObjectEncoder(clazz, allFields);
+			map.put(clazz, encoder);
 		}
 		
 		return encoder;

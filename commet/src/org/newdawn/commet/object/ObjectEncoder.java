@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -47,24 +48,35 @@ public class ObjectEncoder {
 	 * Create a new object encoder for the given class 
 	 * 
 	 * @param clazz The object type to be encoded
+	 * @param allFields True if all fields should be encoded regardless of annotation
 	 * @throws ClassEncodingException Indicates an inability to encode the given type
 	 * of object.
 	 */
-	public ObjectEncoder(Class clazz) throws ClassEncodingException {
+	public ObjectEncoder(Class clazz, boolean allFields) throws ClassEncodingException {
 		Field[] fields = clazz.getDeclaredFields();
-		processFields(fields);
+		processFields(fields, allFields);
 	}
 	
 	/**
 	 * Process all the fields and create encoders for the appropriate ones
 	 * 
 	 * @param fields The fields to process
+	 * @param allFields True if all fields should be encoded regardless of annotation
 	 * @throws ClassEncodingException Indicates an inability to encode one of the fields
 	 */
-	private void processFields(Field[] fields) throws ClassEncodingException {
+	private void processFields(Field[] fields, boolean allFields) throws ClassEncodingException {
 		for (int i=0;i<fields.length;i++) {
+			// don't process static fields
+			if ((fields[i].getModifiers() & Modifier.STATIC) != 0) {
+				continue;
+			}
+			// don't process transient fields
+			if ((fields[i].getModifiers() & Modifier.TRANSIENT) != 0) {
+				continue;
+			}
+			
 			NetworkField network = fields[i].getAnnotation(NetworkField.class);
-			if (network != null) {
+			if ((network != null) || (allFields)) {
 				addFieldEncoder(fields[i]);
 			}
 		}
