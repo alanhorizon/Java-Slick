@@ -19,7 +19,7 @@ public class NetworkSpaceTest implements NetworkSpaceListener {
 	public static void main(String[] argv) throws IOException {
 		// configure the type of networking we want to use across any 
 		// transports created
-		TransportFactory.configureMode(TransportFactory.UDP);
+		NetworkSpace.configureMode(NetworkSpace.UDP);
 		
 		// create a network space connecting it to the remote server
 		// thats hosting the space

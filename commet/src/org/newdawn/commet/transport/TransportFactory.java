@@ -17,7 +17,7 @@ public class TransportFactory {
 	public static final int UDP = 2;
 
 	/** The current type of transport that will be created */
-	public static int mode = UDP;
+	public static int mode = TCP;
 	
 	/**
 	 * Configure the transport to be produced. 

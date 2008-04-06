@@ -15,8 +15,22 @@ import org.newdawn.commet.transport.TransportFactory;
 import org.newdawn.commet.util.Log;
 
 public class NetworkSpace {
+	/** The TCP transport layer indicator */
+	public static final int TCP = TransportFactory.TCP;
+	/** The UDP transport layer indicator */
+	public static final int UDP = TransportFactory.UDP;
+	
 	public static final int LOCAL_AUTHORITY = 1;
 	public static final int REMOTE_AUTHORITY = 2;
+
+	/**
+	 * Configure the transport to be produced. 
+	 * 
+	 * @param m The transport layer indicator. Should be one of {@link #TCP} or {@link #UDP}
+	 */
+	public static void configureMode(int m) {
+		TransportFactory.configureMode(m);
+	}
 	
 	private ArrayList<SharedObject> shared = new ArrayList<SharedObject>();
 	private ArrayList<MessageChannel> channels = new ArrayList<MessageChannel>();

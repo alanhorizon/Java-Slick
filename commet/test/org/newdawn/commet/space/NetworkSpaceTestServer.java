@@ -85,6 +85,8 @@ public class NetworkSpaceTestServer extends NetworkSpaceServer implements Networ
 	 * @throws IOException Indicates a failure to start the server
 	 */
 	public static void main(String[] arg) throws IOException {
+		NetworkSpace.configureMode(NetworkSpace.UDP);
+		
 		NetworkSpaceTestServer server = new NetworkSpaceTestServer(12345);
 		while (true) {
 			server.update(10);
