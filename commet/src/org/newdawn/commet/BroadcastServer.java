@@ -15,7 +15,7 @@ import org.newdawn.commet.util.Log;
  * 
  * @author kevin
  */
-public abstract class BroadcastServer extends DefaultServer {
+public class BroadcastServer extends DefaultServer {
 	/**
 	 * Create a simple broadcast server
 	 * 

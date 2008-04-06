@@ -63,6 +63,7 @@ public class TCPChannel implements TransportChannel {
 		allowedToRead = 4;
 		
 		channel.configureBlocking(false);
+		channel.socket().setTcpNoDelay(true);
 	}
 	
 	/**
@@ -73,6 +74,7 @@ public class TCPChannel implements TransportChannel {
 	 */
 	public TCPChannel(SocketChannel channel, short id) throws IOException {
 		this.channel = channel;
+		channel.configureBlocking(false);
 		channel.socket().setTcpNoDelay(true);
 		
 		this.id = id;
@@ -114,16 +116,18 @@ public class TCPChannel implements TransportChannel {
 	 * @return The length encode data byte[] read or null if data isn't yet read
 	 */
 	private byte[] readLE() throws IOException {
-		dataBuffer.clear();
-		dataBuffer.limit(allowedToRead);
-		int count = channel.read(dataBuffer);
-		
-		if (count < 0) {
-			throw new IOException("Disconnection detected");
+		if (allowedToRead > 0) {
+			dataBuffer.clear();
+			dataBuffer.limit(allowedToRead);
+			int count = channel.read(dataBuffer);
+			
+			if (count < 0) {
+				throw new IOException("Disconnection detected");
+			}
+			
+			allowedToRead -= count;
+			input.add(dataBuffer.array(),0,count);
 		}
-		
-		allowedToRead -= count;
-		input.add(dataBuffer.array(),0,count);
 
 		if (waitingForLength) {
 			if (input.available() >= 2) {
@@ -138,7 +142,7 @@ public class TCPChannel implements TransportChannel {
 				input.read(read,0,length);
 
 				waitingForLength = true;
-				allowedToRead = 4;
+				allowedToRead = 2;
 				return read;
 			}
 		}
