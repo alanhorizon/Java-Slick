@@ -70,6 +70,7 @@ public class TCPChannel implements TransportChannel {
 	 * Create a channel a recieved as a connection on a server
 	 * 
 	 * @param channel The TCP channel recieved on the server 
+	 * @param id The server provided ID for this channel
 	 * @throws IOException Indicates a failure to configure the channel
 	 */
 	public TCPChannel(SocketChannel channel, short id) throws IOException {
@@ -114,6 +115,7 @@ public class TCPChannel implements TransportChannel {
 	 * Internal read of length encoded data
 	 * 
 	 * @return The length encode data byte[] read or null if data isn't yet read
+	 * @throws IOException Indicates a failure to read the length encoded data
 	 */
 	private byte[] readLE() throws IOException {
 		if (allowedToRead > 0) {
@@ -177,7 +179,13 @@ public class TCPChannel implements TransportChannel {
 	}
 
 	/**
-	 * @see org.newdawn.netsession.transport.TransportChannel#write(java.nio.ByteBuffer[], boolean)
+	 * Write a set of data out to the channel
+	 * 
+	 * @param datas The set of data to write out
+	 * @param reliable True if the data must arrive at the other end. Unreliable data
+	 * transfer can be more efficient.
+	 * @throws IOException Indicates a failure to write the data out, normally due to the
+	 * channel being closed.
 	 */
 	public void write(ByteBuffer[] datas, boolean reliable) throws IOException {
 		ByteBuffer[] withLen = new ByteBuffer[datas.length+1];

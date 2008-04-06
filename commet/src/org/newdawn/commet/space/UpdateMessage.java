@@ -7,18 +7,36 @@ import java.util.ArrayList;
 
 import org.newdawn.commet.message.Message;
 
+/**
+ * A message describing the update to the network space
+ * 
+ * @author kevin
+ */
 public class UpdateMessage implements Message {
+	/** The ID of the message type */
 	public static final short ID = 1002;
 	
+	/** The list of shared objects to be sent in this update */
 	private ArrayList<SharedObject> objectsToSend = new ArrayList<SharedObject>();
 	
+	/**
+	 * Create a new empty message - used on reception
+	 */
 	public UpdateMessage() {	
 	}
 	
+	/**
+	 * Add a shared object to be sent in this update
+	 * 
+	 * @param object The object to sent in this update
+	 */
 	public void add(SharedObject object) {
 		objectsToSend.add(object);
 	}
 	
+	/**
+	 * @see org.newdawn.commet.message.Message#decode(java.io.DataInputStream)
+	 */
 	public void decode(DataInputStream din) throws IOException {
 		NetworkSpace space = NetworkSpaceHolder.getDefaultSpace();
 		int count = din.readShort();
@@ -34,6 +52,9 @@ public class UpdateMessage implements Message {
 		}
 	}
 
+	/**
+	 * @see org.newdawn.commet.message.Message#encode(java.io.DataOutputStream)
+	 */
 	public void encode(DataOutputStream dout) throws IOException {
 		NetworkSpace space = NetworkSpaceHolder.getDefaultSpace();
 		dout.writeShort(objectsToSend.size());
@@ -46,6 +67,9 @@ public class UpdateMessage implements Message {
 		}
 	}
 
+	/**
+	 * @see org.newdawn.commet.message.Message#getID()
+	 */
 	public short getID() {
 		return ID;
 	}

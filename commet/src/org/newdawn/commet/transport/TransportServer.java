@@ -23,6 +23,8 @@ public interface TransportServer {
 	 * Wait for some activity within this server. Either a new connection
 	 * arriving or some data arriving on a channel that has been accepted
 	 * by this server. 
+	 * 
+	 * @throws IOException Indicates an IO failure while waiting.
 	 */
 	public void waitForActivity() throws IOException;
 
@@ -35,6 +37,7 @@ public interface TransportServer {
 	 * 
 	 * @param timeout The time in ms to wait before returning anyway
 	 * @return True if some activity occured, false if we timed out
+	 * @throws IOException Indicates an IO failure while waiting.
 	 */
 	public boolean waitForActivity(int timeout) throws IOException;
 	

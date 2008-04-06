@@ -310,7 +310,13 @@ public class UDPChannel implements TransportChannel {
 	}
 
 	/**
-	 * @see org.newdawn.netsession.transport.TransportChannel#write(java.nio.ByteBuffer[], boolean)
+	 * Write a set of data out to the channel
+	 * 
+	 * @param datas The set of data to write out
+	 * @param reliable True if the data must arrive at the other end. Unreliable data
+	 * transfer can be more efficient.
+	 * @throws IOException Indicates a failure to write the data out, normally due to the
+	 * channel being closed.
 	 */
 	public void write(ByteBuffer[] datas, boolean reliable) throws IOException {
 		if (closed) {
