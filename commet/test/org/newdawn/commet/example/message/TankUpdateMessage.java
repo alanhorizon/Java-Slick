@@ -1,10 +1,11 @@
-package org.newdawn.commet.message;
+package org.newdawn.commet.example.message;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import org.newdawn.commet.example.Tank;
+import org.newdawn.commet.message.Message;
 
 public class TankUpdateMessage implements Message {
 	public static final int ID = 1;

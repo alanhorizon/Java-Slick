@@ -1,4 +1,4 @@
-package org.newdawn.commet.lowlevel;
+package org.newdawn.commet.example.lowlevel;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

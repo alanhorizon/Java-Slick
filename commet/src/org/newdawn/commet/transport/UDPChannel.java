@@ -21,6 +21,8 @@ public class UDPChannel implements TransportChannel {
 	private static final int TIMEOUT = 10000;
 	/** The timeout between sending NACKs */
 	private static final int RESEND_INTERVAL = 500;
+	/** The timeout for connection */
+	private static final int CONNECT_TIMEOUT = 5000;
 	
 	/** The server this channel is using to send data */
 	private UDPServer server;
@@ -83,6 +85,16 @@ public class UDPChannel implements TransportChannel {
 		clientSide = true;
 		
 		sendStart();
+		
+		int timeout = 0;
+		while (id == -1) {
+			server.read();
+			try { Thread.sleep(50); } catch (Exception e) {}
+			timeout++;
+			if (timeout > CONNECT_TIMEOUT / 50) {
+				throw new IOException("Timeout on connect");
+			}
+		}
 	}
 
 	/**
@@ -273,7 +285,12 @@ public class UDPChannel implements TransportChannel {
 			return -1;
 		}
 		
-		server.read();
+		try {
+			server.read();
+		} catch (IOException e) {
+			close();
+			throw e;
+		}
 		
 		if (blocking) {
 			while (recv[nextRead] == null) {

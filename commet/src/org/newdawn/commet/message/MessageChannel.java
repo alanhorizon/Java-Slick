@@ -25,6 +25,10 @@ public class MessageChannel {
 		this.factory = factory;
 	}
 	
+	public TransportChannel getTransport() {
+		return channel;
+	}
+	
 	public Message read() throws IOException {
 		buffer.clear();
 		int read = channel.read(buffer);

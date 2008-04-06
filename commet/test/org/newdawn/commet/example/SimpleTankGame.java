@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import org.newdawn.commet.message.MessageTankClient;
+import org.newdawn.commet.example.message.MessageTankClient;
 import org.newdawn.commet.util.Log;
 
 public class SimpleTankGame extends JFrame implements KeyListener, MouseListener, MouseMotionListener {

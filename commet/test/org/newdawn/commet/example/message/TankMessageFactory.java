@@ -1,6 +1,9 @@
-package org.newdawn.commet.message;
+package org.newdawn.commet.example.message;
 
 import java.io.IOException;
+
+import org.newdawn.commet.message.Message;
+import org.newdawn.commet.message.MessageFactory;
 
 public class TankMessageFactory implements MessageFactory {
 

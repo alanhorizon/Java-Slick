@@ -1,8 +1,10 @@
-package org.newdawn.commet.message;
+package org.newdawn.commet.example.message;
 
 import java.io.IOException;
 
-import org.newdawn.commet.lowlevel.LowLevelTankServer;
+import org.newdawn.commet.example.lowlevel.LowLevelTankServer;
+import org.newdawn.commet.message.MessageBroadcastServer;
+import org.newdawn.commet.message.MessageChannel;
 import org.newdawn.commet.util.Log;
 
 public class MessageTankServer extends MessageBroadcastServer {

@@ -1,4 +1,4 @@
-package org.newdawn.commet.message;
+package org.newdawn.commet.example.message;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -8,6 +8,8 @@ import java.util.HashMap;
 import org.newdawn.commet.example.Arena;
 import org.newdawn.commet.example.Tank;
 import org.newdawn.commet.example.TankGameClient;
+import org.newdawn.commet.message.Message;
+import org.newdawn.commet.message.MessageChannel;
 import org.newdawn.commet.transport.TransportChannel;
 
 public class MessageTankClient implements TankGameClient {
