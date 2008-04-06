@@ -6,8 +6,15 @@ import org.newdawn.commet.message.Message;
 import org.newdawn.commet.message.MessageChannel;
 import org.newdawn.commet.transport.TransportFactory;
 
+/**
+ * A test network space game client syncing it's own Blob game entities.
+ * 
+ * @author kevin
+ */
 public class NetworkSpaceTest implements NetworkSpaceListener {
+	/** The interval of updates from the client (ms) */
 	private static final int UPDATE_INTERVAL = 250;
+	/** The display showing the state of our in game blobs */
 	private static Display blobs = new Display("Client");
 	
 	/**

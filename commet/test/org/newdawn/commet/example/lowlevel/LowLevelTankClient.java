@@ -11,17 +11,32 @@ import org.newdawn.commet.example.TankGameClient;
 import org.newdawn.commet.transport.TransportChannel;
 import org.newdawn.commet.transport.TransportFactory;
 
+/**
+ * A tank client implementation using the lowest level transport
+ * 
+ * @author kevin
+ */
 public class LowLevelTankClient implements TankGameClient {
+	/** The arena being synced */
 	private Arena arena;
+	/** The channel being connected to the server */
 	private TransportChannel channel;
+	/** The list of tanks held lcoally */
 	private ArrayList<Tank> localTanks = new ArrayList<Tank>();
 	
+	/** The buffered used to encode/decode data */
 	private ByteBuffer data = ByteBuffer.allocate(4096);
+	/** The interval at which updates are sent */
 	private int updateInterval = 400;
+	/** The timer controlling the interval */
 	private int updateTimer = 0;
 	
+	/** The tanks held based on their IDs */
 	private HashMap<Integer, Tank> tanks = new HashMap<Integer, Tank>();
 	
+	/**
+	 * @see org.newdawn.commet.example.TankGameClient#addTank(org.newdawn.commet.example.Tank)
+	 */
 	public void addTank(Tank tank) {
 		arena.addTank(tank);
 		localTanks.add(tank);
@@ -30,12 +45,18 @@ public class LowLevelTankClient implements TankGameClient {
 		// on first update the tank will be created for everyone else
 	}
 
+	/**
+	 * @see org.newdawn.commet.example.TankGameClient#configure(java.lang.String, int, org.newdawn.commet.example.Arena)
+	 */
 	public void configure(String host, int port, Arena arena) throws IOException {
 		this.arena = arena;
 		
 		channel = TransportFactory.createChannel(host, port);
 	}
 
+	/**
+	 * @see org.newdawn.commet.example.TankGameClient#update(int)
+	 */
 	public void update(int delta) throws IOException {
 		updateTimer -= delta;
 		if (updateTimer < 0) {

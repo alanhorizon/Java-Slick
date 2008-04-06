@@ -7,8 +7,19 @@ import org.newdawn.commet.message.MessageBroadcastServer;
 import org.newdawn.commet.message.MessageChannel;
 import org.newdawn.commet.util.Log;
 
+/**
+ * A tank game server implemented using message passing
+ * 
+ * @author kevin
+ */
 public class MessageTankServer extends MessageBroadcastServer {
 
+	/**
+	 * Create a new tank server
+	 * 
+	 * @param port The port on which the server should run
+	 * @throws IOException Indicates a failure to start the server
+	 */
 	public MessageTankServer(int port) throws IOException {
 		super(new TankMessageFactory(), port);
 	}

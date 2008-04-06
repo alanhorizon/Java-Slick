@@ -13,12 +13,25 @@ import javax.swing.JTextField;
 import org.newdawn.commet.message.Message;
 import org.newdawn.commet.message.MessageChannel;
 
+/**
+ * Tiny client for a quick chat example. Creates and maintains a connection. Displays
+ * a test entry and text area for chat.
+ * 
+ * @author kevin
+ */
 public class ChatClient extends JFrame {
+	/** The text output */
 	private JTextArea area = new JTextArea(80,20);
+	/** The text input */
 	private JTextField in = new JTextField();
+	/** The channel we're using to communicate with the server */
 	private MessageChannel channel;
+	/** The generated user name */
 	private String name = "User"+System.currentTimeMillis();
 	
+	/**
+	 * Create a new chat client 
+	 */
 	public ChatClient() {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -41,6 +54,9 @@ public class ChatClient extends JFrame {
 		setResizable(false);
 	}
 	
+	/**
+	 * Send a chat message based on the text in the input field
+	 */
 	private void sendChat() {
 		String text = in.getText();
 		in.setText("");
@@ -56,12 +72,24 @@ public class ChatClient extends JFrame {
 		}
 	}
 	
+	/**
+	 * Append text to the text area working round Swing failings.
+	 * 
+	 * @param sender The name of the person sending
+	 * @param text The text the person sent
+	 */
 	private void append(String sender, String text) {
 		String line = sender+":"+text+"\n";
 		area.append(line);
 		area.select(area.getText().length(), area.getText().length());
 		
 	}
+	
+	/**
+	 * Connect to the server
+	 * 
+	 * @throws IOException Indicates a failure to connect
+	 */
 	public void connect() throws IOException {
 		channel = new MessageChannel(new ChatMessageFactory(), "localhost", 12345);
 		System.out.println("Connected with ID: "+channel.getChannelID());
@@ -80,6 +108,12 @@ public class ChatClient extends JFrame {
 		}
 	}
 	
+	/**
+	 * Entry point to the client
+	 * 
+	 * @param argv The arguments passed in
+ 	 * @throws IOException Indicates a failure to connect
+	 */
 	public static void main(String[] argv) throws IOException {
 		ChatClient client = new ChatClient();
 		client.connect();

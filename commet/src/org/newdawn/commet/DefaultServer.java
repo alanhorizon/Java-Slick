@@ -51,9 +51,16 @@ public abstract class DefaultServer {
 				return;
 			}
 			
-			checkConnect();
-			readChannels();
+			update();
 		}
+	}
+	
+	/**
+	 * Poll the server, check for new connections and new data
+	 */
+	public void update() {
+		checkConnect();
+		readChannels();
 	}
 	
 	/**
