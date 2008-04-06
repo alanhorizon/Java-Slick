@@ -1,4 +1,4 @@
-package org.newdawn.commet.example.message;
+package org.newdawn.commet.tankexamples.message;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

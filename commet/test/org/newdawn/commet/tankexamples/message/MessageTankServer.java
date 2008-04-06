@@ -1,10 +1,10 @@
-package org.newdawn.commet.example.message;
+package org.newdawn.commet.tankexamples.message;
 
 import java.io.IOException;
 
-import org.newdawn.commet.example.lowlevel.LowLevelTankServer;
 import org.newdawn.commet.message.MessageBroadcastServer;
 import org.newdawn.commet.message.MessageChannel;
+import org.newdawn.commet.tankexamples.lowlevel.LowLevelTankServer;
 import org.newdawn.commet.util.Log;
 
 /**

@@ -1,4 +1,4 @@
-package org.newdawn.commet.example.space;
+package org.newdawn.commet.tankexamples.space;
 
 import java.io.IOException;
 import java.util.HashMap;

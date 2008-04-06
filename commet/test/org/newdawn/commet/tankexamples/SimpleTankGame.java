@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import org.newdawn.commet.example.space.SpaceTankClient;
+import org.newdawn.commet.tankexamples.space.SpaceTankClient;
 import org.newdawn.commet.util.Log;
 
 /**
