@@ -1,19 +1,22 @@
 package org.newdawn.commet.space;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.newdawn.commet.message.Message;
 import org.newdawn.commet.message.MessageChannel;
 import org.newdawn.commet.message.MessageFactory;
+import org.newdawn.commet.object.ClassEncodingException;
 import org.newdawn.commet.transport.TransportChannel;
 import org.newdawn.commet.transport.TransportFactory;
 import org.newdawn.commet.util.Log;
 
 public class NetworkSpace {
-	private static final int LOCAL_AUTHORITY = 1;
-	private static final int REMOTE_AUTHORITY = 2;
+	public static final int LOCAL_AUTHORITY = 1;
+	public static final int REMOTE_AUTHORITY = 2;
 	
 	private ArrayList<SharedObject> shared = new ArrayList<SharedObject>();
 	private ArrayList<MessageChannel> channels = new ArrayList<MessageChannel>();
@@ -24,13 +27,14 @@ public class NetworkSpace {
 	
 	private int updateInterval;
 	private int updateTimer;
-	private MessageFactory factory = new SpaceMessageFactory();
+	private SpaceMessageFactory factory = new SpaceMessageFactory();
 	
 	private short nextID = 1;
 	private short channelID = 0;
 	
 	private ArrayList<NetworkSpaceListener> listeners = new ArrayList<NetworkSpaceListener>();
 	private boolean broadcast;
+	private int spaceID;
 	
 	public NetworkSpace(String host, int port, int updateInterval) throws IOException {
 		this(TransportFactory.createChannel(host, port), updateInterval);
@@ -58,6 +62,24 @@ public class NetworkSpace {
 		
 		// server side
 		broadcast = true;
+		
+		spaceID = NetworkSpaceHolder.registerSpace(this);
+	}
+	
+	public void setMessageFactory(SpaceMessageFactory factory) {
+		this.factory = factory;
+	}
+	
+	public short getLocalOwnerID() {
+		if (channels.size() == 1) {
+			return (short) channels.get(0).getChannelID();
+		}
+		
+		return 0;
+	}
+	
+	SharedObject getSharedObjectByID(int id) {
+		return idMap.get(id);
 	}
 	
 	public void addListener(NetworkSpaceListener listener) {
@@ -91,7 +113,11 @@ public class NetworkSpace {
 		short objId = nextID++;
 		short ownerID = channelID;
 		
-		addSharedObject(new SharedObject(obj, objId, ownerID, authority));
+		try {
+			addSharedObject(new SharedObject(obj, objId, ownerID, authority));
+		} catch (ClassEncodingException e) {
+			throw new RuntimeException("Cannot encode "+obj, e);
+		}
 		sendMessage(new CreateMessage(obj.getClass().getName(), objId, ownerID), -1);
 	}
 	
@@ -142,22 +168,28 @@ public class NetworkSpace {
 		updateTimer -= delta;
 		if (updateTimer < 0) {
 			updateTimer = updateInterval;
+			sendUpdates();
 		}
 		
 		for (int i=0;i<channels.size();i++) {
 			try {
 				Message message = channels.get(i).read();
 				if (message != null) {
-					if (broadcast) {
-						System.out.println(message);
-					}
-					
 					switch (message.getID()) {
 					case CreateMessage.ID:
 						create((CreateMessage) message);
 						break;
 					case DestroyMessage.ID:
 						destroy((DestroyMessage) message);
+						break;
+					case UpdateMessage.ID:
+						// do nothing, the logic is contained
+						// within the update message
+						break;
+					default:
+						for (int j=0;j<listeners.size();j++) {
+							listeners.get(j).customMessageRecieved(channels.get(i), message);
+						}
 						break;
 					}
 				}
@@ -174,7 +206,7 @@ public class NetworkSpace {
 				i--;
 				
 				for (int j=0;j<listeners.size();j++) {
-					listeners.get(j).channelDisconnected(channel.getTransport());
+					listeners.get(j).channelDisconnected(channel);
 				}
 			}
 		}
@@ -182,9 +214,17 @@ public class NetworkSpace {
 	
 	private void create(CreateMessage message) throws IOException {
 		try {
-			Object obj = Class.forName(message.getClassName()).newInstance();
-			addSharedObject(new SharedObject(obj, message.getObjectID(), 
-												  message.getOwnerID(), REMOTE_AUTHORITY));
+			Class clazz = Class.forName(message.getClassName());
+			Constructor con = clazz.getDeclaredConstructor(new Class[0]);
+			con.setAccessible(true);
+			Object obj = con.newInstance(new Object[0]);
+			
+			try { 
+				addSharedObject(new SharedObject(obj, message.getObjectID(), 
+													  message.getOwnerID(), REMOTE_AUTHORITY));
+			} catch (ClassEncodingException e) {
+				throw new RuntimeException("Cannot encode "+obj, e);
+			}
 			
 			if (broadcast) {
 				short objId = message.getObjectID();
@@ -197,6 +237,14 @@ public class NetworkSpace {
 		} catch (IllegalAccessException e) {
 			throw new IOException(e.getMessage());
 		} catch (ClassNotFoundException e) {
+			throw new IOException(e.getMessage());
+		} catch (SecurityException e) {
+			throw new IOException(e.getMessage());
+		} catch (NoSuchMethodException e) {
+			throw new IOException(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			throw new IOException(e.getMessage());
+		} catch (InvocationTargetException e) {
 			throw new IOException(e.getMessage());
 		}
 	}
@@ -226,5 +274,23 @@ public class NetworkSpace {
 	
 	private int getCombinedID(short objectID, short ownerID) {
 		return (ownerID << 16) + objectID;
+	}
+	
+	private void sendUpdates() {
+		UpdateMessage update = new UpdateMessage();
+		
+		for (int i=0;i<shared.size();i++) {
+			if ((broadcast) || (shared.get(i).getAuthority() == LOCAL_AUTHORITY)) {
+				update.add(shared.get(i));
+			}
+		}
+		
+		for (int i=0;i<channels.size();i++) {
+			try {
+				channels.get(i).write(update, true);
+			} catch (IOException e) {
+				Log.error(e);
+			}
+		}
 	}
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.newdawn.commet.object.ClassEncoderRegistry;
+import org.newdawn.commet.object.ClassEncodingException;
 import org.newdawn.commet.object.FieldEncoder;
 import org.newdawn.commet.object.ObjectEncoder;
 
@@ -13,7 +14,7 @@ public class ObjectFieldEncoder implements FieldEncoder {
 	private ObjectEncoder encoder;
 	private Field field;
 	
-	public ObjectFieldEncoder(Field field) {
+	public ObjectFieldEncoder(Field field) throws ClassEncodingException {
 		this.field = field;
 		field.setAccessible(true);
 		encoder = ClassEncoderRegistry.getEncoder(field.getType());

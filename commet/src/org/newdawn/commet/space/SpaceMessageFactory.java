@@ -13,6 +13,8 @@ public class SpaceMessageFactory implements MessageFactory {
 			return new CreateMessage();
 		case DestroyMessage.ID:
 			return new DestroyMessage();
+		case UpdateMessage.ID:
+			return new UpdateMessage();
 		}
 		
 		throw new RuntimeException("Unknown network space message ID: "+id);
