@@ -3,13 +3,13 @@ package org.newdawn.commet.example.space;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.newdawn.commet.example.Arena;
-import org.newdawn.commet.example.Tank;
-import org.newdawn.commet.example.TankGameClient;
 import org.newdawn.commet.message.Message;
 import org.newdawn.commet.message.MessageChannel;
 import org.newdawn.commet.space.NetworkSpace;
 import org.newdawn.commet.space.NetworkSpaceListener;
+import org.newdawn.commet.tankexamples.Arena;
+import org.newdawn.commet.tankexamples.Tank;
+import org.newdawn.commet.tankexamples.TankGameClient;
 
 /**
  * A tank client implementation that syncs everything through a network space
@@ -27,7 +27,7 @@ public class SpaceTankClient implements TankGameClient, NetworkSpaceListener {
 	private NetworkSpace space;
 	
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#addTank(org.newdawn.commet.example.Tank)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#addTank(org.newdawn.commet.tankexamples.Tank)
 	 */
 	public void addTank(Tank tank) {
 		// when we add a tank we just add it to the space. We'll be notified of the 
@@ -36,7 +36,7 @@ public class SpaceTankClient implements TankGameClient, NetworkSpaceListener {
 	}
 
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#configure(java.lang.String, int, org.newdawn.commet.example.Arena)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#configure(java.lang.String, int, org.newdawn.commet.tankexamples.Arena)
 	 */
 	public void configure(String host, int port, Arena arena)
 			throws IOException {
@@ -49,7 +49,7 @@ public class SpaceTankClient implements TankGameClient, NetworkSpaceListener {
 	}
 
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#update(int)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#update(int)
 	 */
 	public void update(int delta) throws IOException {
 		space.update(delta);

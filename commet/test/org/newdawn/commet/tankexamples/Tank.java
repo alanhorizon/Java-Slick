@@ -1,4 +1,4 @@
-package org.newdawn.commet.example;
+package org.newdawn.commet.tankexamples;
 
 import org.newdawn.commet.object.NetworkField;
 

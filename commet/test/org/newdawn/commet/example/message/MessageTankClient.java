@@ -5,11 +5,11 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.newdawn.commet.example.Arena;
-import org.newdawn.commet.example.Tank;
-import org.newdawn.commet.example.TankGameClient;
 import org.newdawn.commet.message.Message;
 import org.newdawn.commet.message.MessageChannel;
+import org.newdawn.commet.tankexamples.Arena;
+import org.newdawn.commet.tankexamples.Tank;
+import org.newdawn.commet.tankexamples.TankGameClient;
 import org.newdawn.commet.transport.TransportChannel;
 
 /**
@@ -34,7 +34,7 @@ public class MessageTankClient implements TankGameClient {
 	private Arena arena;
 	
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#addTank(org.newdawn.commet.example.Tank)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#addTank(org.newdawn.commet.tankexamples.Tank)
 	 */
 	public void addTank(Tank tank) {
 		arena.addTank(tank);
@@ -44,7 +44,7 @@ public class MessageTankClient implements TankGameClient {
 	}
 
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#configure(java.lang.String, int, org.newdawn.commet.example.Arena)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#configure(java.lang.String, int, org.newdawn.commet.tankexamples.Arena)
 	 */
 	public void configure(String host, int port, Arena arena) throws IOException {
 		this.arena = arena;
@@ -52,7 +52,7 @@ public class MessageTankClient implements TankGameClient {
 	}
 
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#update(int)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#update(int)
 	 */
 	public void update(int delta) throws IOException {
 		updateTimer -= delta;

@@ -4,8 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import org.newdawn.commet.example.Tank;
 import org.newdawn.commet.message.Message;
+import org.newdawn.commet.tankexamples.Tank;
 
 /**
  * A message updating the state of a given tank

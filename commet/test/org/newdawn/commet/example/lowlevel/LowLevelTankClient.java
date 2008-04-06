@@ -5,9 +5,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.newdawn.commet.example.Arena;
-import org.newdawn.commet.example.Tank;
-import org.newdawn.commet.example.TankGameClient;
+import org.newdawn.commet.tankexamples.Arena;
+import org.newdawn.commet.tankexamples.Tank;
+import org.newdawn.commet.tankexamples.TankGameClient;
 import org.newdawn.commet.transport.TransportChannel;
 import org.newdawn.commet.transport.TransportFactory;
 
@@ -35,7 +35,7 @@ public class LowLevelTankClient implements TankGameClient {
 	private HashMap<Integer, Tank> tanks = new HashMap<Integer, Tank>();
 	
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#addTank(org.newdawn.commet.example.Tank)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#addTank(org.newdawn.commet.tankexamples.Tank)
 	 */
 	public void addTank(Tank tank) {
 		arena.addTank(tank);
@@ -46,7 +46,7 @@ public class LowLevelTankClient implements TankGameClient {
 	}
 
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#configure(java.lang.String, int, org.newdawn.commet.example.Arena)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#configure(java.lang.String, int, org.newdawn.commet.tankexamples.Arena)
 	 */
 	public void configure(String host, int port, Arena arena) throws IOException {
 		this.arena = arena;
@@ -55,7 +55,7 @@ public class LowLevelTankClient implements TankGameClient {
 	}
 
 	/**
-	 * @see org.newdawn.commet.example.TankGameClient#update(int)
+	 * @see org.newdawn.commet.tankexamples.TankGameClient#update(int)
 	 */
 	public void update(int delta) throws IOException {
 		updateTimer -= delta;
