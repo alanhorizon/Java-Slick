@@ -4,15 +4,34 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+/**
+ * Daft initial test to try out transport channels
+ * 
+ * @author kevin
+ */
 public class BasicTest {
+	/**
+	 * The channels that have been registered with the server 
+	 */
 	private static ArrayList<TransportChannel> channels = new ArrayList<TransportChannel>();
 	
+	/**
+	 * Add a client to the list
+	 * 
+	 * @param channel The channel connected
+	 * @throws IOException Indicates a failure to configure the channel
+	 */
 	private static void addClient(TransportChannel channel) throws IOException {
 		System.out.println("Connected: "+channel.getRemoteSocketAddress());
 		channel.configureBlocking(false);
 		channels.add(channel);
 	}
 	
+	/**
+	 * Print out a byte array
+	 * 
+	 * @param data The byte array to display
+	 */
 	private static void print(byte[] data) {
 		System.out.print("[");
 		for (int i=0;i<data.length;i++) {
@@ -21,6 +40,9 @@ public class BasicTest {
 		System.out.println("]");
 	}
 	
+	/**
+	 * Check all the clients that have connected to the server for new data
+	 */
 	private static void pollClients() {
 		for (int i=0;i<channels.size();i++) {
 			TransportChannel channel = (TransportChannel) channels.get(i);
@@ -42,6 +64,12 @@ public class BasicTest {
 		}
 	}
 	
+	/**
+	 * Entry point to the test
+	 * 
+	 * @param argv The arguments passed in to the test
+	 * @throws IOException Indicates a failure to create clients or servers
+	 */ 
 	public static void main(String[] argv) throws IOException {
 		TransportFactory.configureMode(TransportFactory.TCP);
 		final TransportServer server = TransportFactory.createServer(10200);

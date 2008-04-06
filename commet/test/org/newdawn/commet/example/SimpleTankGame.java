@@ -15,17 +15,37 @@ import javax.swing.JFrame;
 import org.newdawn.commet.example.message.MessageTankClient;
 import org.newdawn.commet.util.Log;
 
+/**
+ * A java 2D based "tank game". In fact the tanks are just drawn as rectangles
+ * at the right location and orientation.
+ * 
+ * @author kevin
+ */
 public class SimpleTankGame extends JFrame implements KeyListener, MouseListener, MouseMotionListener {
+	/** The arena the tanks fight it out in */
 	private Arena arena = new Arena();
+	/** The client connected to the game server */
 	private TankGameClient client;
+	/** The tank we're controlling locally */
 	private Tank localTank;
+	/** The last time an update occured */
 	private long lastUpdate = System.currentTimeMillis();
 	
+	/** True if we're pushing the left key */
 	private boolean left;
+	/** True if we're pushing the right key */
 	private boolean right;
+	/** True if we're pushing the up key */
 	private boolean up;
+	/** True if we're pushing the down key */
 	private boolean down;
 	
+	/**
+	 * Create a new game
+	 * 
+	 * @param client The client to connect to the server
+	 * @throws IOException Indicates the initial configuration of the client failed
+	 */
 	public SimpleTankGame(TankGameClient client) throws IOException {
 		super("Tank Game");
 		
@@ -45,6 +65,9 @@ public class SimpleTankGame extends JFrame implements KeyListener, MouseListener
 		setVisible(true);
 	}
 	
+	/**
+	 * Start the game loop
+	 */
 	public void start() {
 		createBufferStrategy(2);
 		BufferStrategy strategy = getBufferStrategy();
@@ -80,6 +103,9 @@ public class SimpleTankGame extends JFrame implements KeyListener, MouseListener
 		}
 	}
 	
+	/**
+	 * Update the game, check controls, poll the network etc
+	 */
 	private void update() {
 		int delta = (int) (System.currentTimeMillis() - lastUpdate);
 		lastUpdate = System.currentTimeMillis();
@@ -105,6 +131,9 @@ public class SimpleTankGame extends JFrame implements KeyListener, MouseListener
 		}
 	}
 
+	/**
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_A) {
 			left = true;
@@ -120,6 +149,9 @@ public class SimpleTankGame extends JFrame implements KeyListener, MouseListener
 		}
 	}
 
+	/**
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_A) {
 			left = false;
@@ -135,33 +167,64 @@ public class SimpleTankGame extends JFrame implements KeyListener, MouseListener
 		}
 	}
 
+	/**
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
 	public void keyTyped(KeyEvent e) {
 	}
 
+	/**
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	/**
+	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+	 */
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	/**
+	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+	 */
 	public void mouseExited(MouseEvent e) {
 	}
 
+	/**
+	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+	 */
 	public void mousePressed(MouseEvent e) {
 	}
 
+	/**
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
 	public void mouseReleased(MouseEvent e) {
 	}
 
+	/**
+	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+	 */
 	public void mouseDragged(MouseEvent e) {
 	}
 
+	/**
+	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 */
 	public void mouseMoved(MouseEvent e) {
 	}
 
+	/**
+	 * Entry point to the tank "game"
+	 * 
+	 * @param argv The arguments passed in
+	 * @throws IOException Indicates a failure to connect to the game server
+	 */
 	public static void main(String argv[]) throws IOException {
 		//SimpleTankGame game = new SimpleTankGame(new LowLevelTankClient());
 		SimpleTankGame game = new SimpleTankGame(new MessageTankClient());
+		
 		game.start();
 	}
 }
