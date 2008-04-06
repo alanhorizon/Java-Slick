@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import org.newdawn.commet.example.message.MessageTankClient;
+import org.newdawn.commet.example.space.SpaceTankClient;
 import org.newdawn.commet.util.Log;
 
 /**
@@ -223,7 +223,8 @@ public class SimpleTankGame extends JFrame implements KeyListener, MouseListener
 	 */
 	public static void main(String argv[]) throws IOException {
 		//SimpleTankGame game = new SimpleTankGame(new LowLevelTankClient());
-		SimpleTankGame game = new SimpleTankGame(new MessageTankClient());
+		//SimpleTankGame game = new SimpleTankGame(new MessageTankClient());
+		SimpleTankGame game = new SimpleTankGame(new SpaceTankClient());
 		
 		game.start();
 	}

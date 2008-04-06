@@ -22,6 +22,12 @@ public class Tank {
 	private float turretAng = 20;
 	
 	/**
+	 * Default constructor for network space use
+	 */
+	public Tank() {
+	}
+	
+	/**
 	 * Configure the tank 
 	 * 
 	 * @param x The x position of the tank
