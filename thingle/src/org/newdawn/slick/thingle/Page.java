@@ -6,6 +6,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.thingle.internal.InputHandler;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.thingle.internal.slick.SlickBinding;
@@ -44,6 +45,10 @@ public class Page extends ActionHandler {
 		addComponents(ref, handler);
 	}
 	
+	public void setDrawDesktop(boolean drawDesktop) {
+		thinlet.setDrawDesktop(drawDesktop);
+	}
+	
 	public Thinlet getThinlet() {
 		return thinlet;
 	}
@@ -73,7 +78,9 @@ public class Page extends ActionHandler {
 	}
 	
 	public void render(Graphics g) {
+		SlickCallable.enterSafeBlock();
 		thinlet.paint(new SlickBinding(g), container.getWidth(), container.getHeight());	
+		SlickCallable.leaveSafeBlock();
 	}
 	
 	public void layout() {

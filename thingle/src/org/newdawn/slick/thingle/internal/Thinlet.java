@@ -87,6 +87,8 @@ public class Thinlet implements Runnable, Serializable {
 	private transient Object tooltipowner;
 	//private transient int pressedkey;
 	
+	private boolean drawDesktop = true;
+	
 	private static final int DRAG_ENTERED = AWTEvent.RESERVED_ID_MAX + 1;
 	private static final int DRAG_EXITED = AWTEvent.RESERVED_ID_MAX + 2;
 	
@@ -177,6 +179,15 @@ public class Thinlet implements Runnable, Serializable {
 		repaint();
 	}
 
+	/**
+	 * True if we should draw the desktop in the background
+	 * 
+	 * @param drawDesktop True if we should draw the desktop in the background
+	 */
+	public void setDrawDesktop(boolean drawDesktop) {
+		this.drawDesktop = drawDesktop;
+	}
+	
 	/**
 	 * Sets the only one font used everywhere, and revalidates the whole UI.
 	 * Scrollbar width/height, spinbox, and combobox button width,
@@ -1652,8 +1663,10 @@ public class Thinlet implements Runnable, Serializable {
 			}
 		}
 		else if ("desktop" == classname) {
-			paintRect(g, 0, 0, bounds.width, bounds.height,
-				c_border, c_bg, false, false, false, false, true);
+			if (drawDesktop) {
+				paintRect(g, 0, 0, bounds.width, bounds.height,
+					c_border, c_bg, false, false, false, false, true);
+			}
 			paintReverse(g, clipx, clipy, clipwidth, clipheight,
 				get(component, ":comp"), enabled);
 			//g.setColor(Color.red); if (clip != null) g.drawRect(clipx, clipy, clipwidth, clipheight);

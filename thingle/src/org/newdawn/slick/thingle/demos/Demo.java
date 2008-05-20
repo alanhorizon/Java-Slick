@@ -118,7 +118,7 @@ public class Demo extends ActionHandler {
 	public void insertList(Object list) {
 		Object item = Thinlet.create("item");
 		setString(item, "text", "New item");
-		setIcon(item, "icon", getIcon("/icon/library.gif"));
+		setIcon(item, "icon", getIcon("res/icon/library.gif"));
 		add(list, item, 0);
 //		System.out.println("> click " + System.currentTimeMillis());
 //		try { Thread.sleep(5000); } catch (InterruptedException ie) {}
