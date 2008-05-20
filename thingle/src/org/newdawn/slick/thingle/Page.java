@@ -25,6 +25,7 @@ public class Page extends ActionHandler {
 		container.getInput().setDoubleClickInterval(50);
 		
 		thinlet = new Thinlet();
+		thinlet.setKeyFocus(true);
 		theme = new Theme();
 		setColors();
 		inputHandler = new InputHandler(thinlet);

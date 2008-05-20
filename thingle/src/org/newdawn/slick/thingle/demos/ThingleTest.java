@@ -18,13 +18,13 @@ public class ThingleTest extends BasicGame {
 	
 	public void init(GameContainer container) throws SlickException {
 		container.setShowFPS(false);
-		//container.setVSync(true);
+		container.setVSync(true);
 		
-		page = new Page(container); //, "res/demo.xml", new Demo());
+		page = new Page(container, "res/demo.xml", new Demo());
 		Theme theme = new Theme();
-		theme.setBackground(new Color(0.6f,0.6f,1f,0.1f));
+		theme.setBackground(new Color(0.6f,0.6f,1f,1f));
 		theme.setBorder(new Color(0,0,0.5f));
-		
+		theme.setFocus(new Color(0,0,0));
 		page.setTheme(theme);
 		
 		page.enable();

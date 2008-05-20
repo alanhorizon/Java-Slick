@@ -17,7 +17,6 @@
 package org.newdawn.slick.thingle.internal;
 
 import java.awt.AWTEvent;
-import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -41,6 +40,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
@@ -2616,6 +2616,70 @@ public class Thinlet implements Runnable, Serializable {
 			MouseEvent.MOUSE_PRESSED, mousepressed, pressedpart);
 	}
 	
+	boolean keyPressed(char keychar, int keycode, Modifiers mods, boolean typed) {
+		if (focusinside && ((popupowner != null) || (focusowner != null))) {
+			hideTip(); // remove tooltip
+			
+			boolean control = mods.isControlDown;
+			boolean shiftDown = mods.isShiftDown;
+			boolean altDown = mods.isAltDown;
+			boolean consume = false;
+			
+			int modifiers = 0;
+			if (mods.isControlDown) {
+				modifiers += KeyEvent.CTRL_DOWN_MASK;
+			}
+			if (mods.isShiftDown) {
+				modifiers += KeyEvent.SHIFT_DOWN_MASK;
+			}
+			if (mods.isAltDown) {
+				modifiers += KeyEvent.ALT_DOWN_MASK;
+			}
+			
+			if ((!typed) &&
+				processKeyPress((popupowner != null) ? popupowner : focusowner,
+						shiftDown, control, modifiers,
+					control ? 0 : keychar, keycode)) {
+				consume = true;
+			}
+			else if (((keycode == Input.KEY_TAB) ||
+					((keycode == Input.KEY_F6) && (altDown || control))) && typed) {
+				boolean outgo = (keycode == Input.KEY_F6);
+				if (!shiftDown ? setNextFocusable(focusowner, outgo) :
+						setPreviousFocusable(focusowner, outgo)) {
+					consume = true;
+				} else if (MOUSE_WHEEL != 0) { // 1.4
+					if (!shiftDown) {
+						transferFocus();
+					}
+					else { try {
+						getClass().getMethod("transferFocusBackward", null). invoke(this, null);
+					} catch (Exception exc) { /* never */ } }
+				}
+				repaint(focusowner);
+				closeup();
+			}
+			else if (keycode == Input.KEY_F8) {
+				for (Object splitpane = focusowner;
+						splitpane != null; splitpane = getParent(splitpane)) {
+					if (getClass(splitpane) == "splitpane") {
+						setFocus(splitpane); repaint(splitpane); 
+						consume = true; 
+						break; //middle
+					}
+				}
+			}
+			else if ((!typed) && ((keychar != 0)) &&
+					checkMnemonic(focusowner, true, null, keychar, keycode, modifiers)) {
+				consume = true;
+			}
+			
+			return consume;
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Dispatches mouse, key, focus, and component events occurring on the
 	 * <i>Thinlet</i> component internally
@@ -2623,64 +2687,7 @@ public class Thinlet implements Runnable, Serializable {
 	protected void processEvent(AWTEvent e) {
 		// evm (touchscreen) events: entered/moved/pressed -> dragged -> dragged/released/exited
 		int id = e.getID();
-		if ((id == MouseEvent.MOUSE_ENTERED) || (id == MouseEvent.MOUSE_MOVED) ||
-				(id == MouseEvent.MOUSE_EXITED) || (id == MouseEvent.MOUSE_PRESSED) ||
-				(id == MouseEvent.MOUSE_DRAGGED) || (id == MouseEvent.MOUSE_RELEASED)) {
-			MouseEvent me = null; //(MouseEvent) e;
-			int x = 0; // me.getX();
-			int y = 0; //me.getY();
-			int clickcount = 0;//me.getClickCount();
-			boolean shiftdown = false;//me.isShiftDown();
-			boolean controldown = false;//me.isControlDown();
-			boolean popuptrigger = (id == MouseEvent.MOUSE_PRESSED); // isPopupTrigger is platform dependent
-			if (id == MouseEvent.MOUSE_ENTERED) {
-				if (mousepressed == null) {
-					findComponent(content, x, y);
-					handleMouseEvent(x, y, clickcount, shiftdown, controldown, popuptrigger,
-						MouseEvent.MOUSE_ENTERED, mouseinside, insidepart);
-				}
-			}
-			else if (id == MouseEvent.MOUSE_EXITED) {
-				if (mousepressed == null) {
-					Object mouseexit = mouseinside;
-					Object exitpart = insidepart;
-					mouseinside = insidepart = null;
-					handleMouseEvent(x, y, clickcount, shiftdown, controldown, popuptrigger,
-						MouseEvent.MOUSE_EXITED, mouseexit, exitpart);
-				}
-			}
-			else if (id == MouseEvent.MOUSE_DRAGGED) {
-				hideTip(); // remove tooltip
-				Object previnside = mouseinside;
-				Object prevpart = insidepart;
-				findComponent(content, x, y);
-				boolean same = (previnside == mouseinside) && (prevpart == insidepart);
-				boolean isin = (mousepressed == mouseinside) && (pressedpart == insidepart);
-				boolean wasin = (mousepressed == previnside) && (pressedpart == prevpart);
-				
-				if (wasin && !isin) {
-					handleMouseEvent(x, y, clickcount, shiftdown, controldown, popuptrigger,
-						MouseEvent.MOUSE_EXITED, mousepressed, pressedpart);
-				}
-				else if (!same && (popupowner != null) && !wasin) {
-					handleMouseEvent(x, y, clickcount, shiftdown, controldown, popuptrigger,
-						DRAG_EXITED, previnside, prevpart);
-				}
-				if (isin && !wasin) {
-					handleMouseEvent(x, y, clickcount, shiftdown, controldown, popuptrigger,
-						MouseEvent.MOUSE_ENTERED, mousepressed, pressedpart);
-				}
-				else if (!same && (popupowner != null) && !isin) {
-					handleMouseEvent(x, y, clickcount, shiftdown, controldown, popuptrigger,
-						DRAG_ENTERED, mouseinside, insidepart);
-				}
-				if (isin == wasin) {
-					handleMouseEvent(x, y, clickcount, shiftdown, controldown, popuptrigger,
-						MouseEvent.MOUSE_DRAGGED, mousepressed, pressedpart);
-				}
-			}
-		}
-		else if (id == MOUSE_WHEEL) {
+		if (id == MOUSE_WHEEL) {
 			Rectangle port = getRectangle(mouseinside, ":port");
 			if (port != null) { // is scrollable
 				// TODO hide tooltip?
@@ -2700,62 +2707,12 @@ public class Thinlet implements Runnable, Serializable {
 				} catch (Exception exc) { /* never */ }
 			}
 		}
-		else if ((id == KeyEvent.KEY_PRESSED) || (id == KeyEvent.KEY_TYPED)) {
-			if (focusinside && ((popupowner != null) || (focusowner != null))) {
-				hideTip(); // remove tooltip
-				KeyEvent ke = (KeyEvent) e;
-				int keychar = ke.getKeyChar();
-				boolean control = (keychar <= 0x1f) ||
-					((keychar >= 0x7f) && (keychar <= 0x9f)) ||
-					(keychar >= 0xffff) || ke.isControlDown();
-				int keycode = control ? ke.getKeyCode() : 0;
-				
-				if ((control == (id == KeyEvent.KEY_PRESSED)) &&
-					processKeyPress((popupowner != null) ? popupowner : focusowner,
-						ke.isShiftDown(), ke.isControlDown(), ke.getModifiers(),
-						control ? 0 : keychar, keycode)) {
-					ke.consume();
-				}
-				else if ((keycode == KeyEvent.VK_TAB) ||
-						((keycode == KeyEvent.VK_F6) && (ke.isAltDown() || ke.isControlDown()))) {
-					boolean outgo = (keycode == KeyEvent.VK_F6);
-					if (!ke.isShiftDown() ? setNextFocusable(focusowner, outgo) :
-							setPreviousFocusable(focusowner, outgo)) {
-						ke.consume();
-					} else if (MOUSE_WHEEL != 0) { // 1.4
-						if (!ke.isShiftDown()) {
-							transferFocus();
-						}
-						else { try {
-							getClass().getMethod("transferFocusBackward", null). invoke(this, null);
-						} catch (Exception exc) { /* never */ } }
-					}
-					repaint(focusowner);
-					closeup();
-				}
-				else if (keycode == KeyEvent.VK_F8) {
-					for (Object splitpane = focusowner;
-							splitpane != null; splitpane = getParent(splitpane)) {
-						if (getClass(splitpane) == "splitpane") {
-							setFocus(splitpane); repaint(splitpane); ke.consume(); break; //middle
-						}
-					}
-				}
-				else if ((id == KeyEvent.KEY_PRESSED) && ((keychar != 0) || ke.isActionKey()) &&
-						checkMnemonic(focusowner, true, null, ke.getKeyCode(), ke.getModifiers())) {
-					ke.consume();
-				}
-			}
-		}
-		else if (id == FocusEvent.FOCUS_LOST) {
-			focusinside = false;
-			if (focusowner != null) { repaint(focusowner); }
+	}
+	
+	public void setKeyFocus(boolean focus) {
+		this.focusinside = focus;
+		if (!focus) {
 			closeup();
-		}
-		else if (id == FocusEvent.FOCUS_GAINED) {
-			focusinside = true;
-			if (focusowner == null) { setFocus(content); }
-				else { repaint(focusowner); }
 		}
 	}
 	
@@ -2774,10 +2731,10 @@ public class Thinlet implements Runnable, Serializable {
 			boolean shiftdown, boolean controldown, int modifiers, int keychar, int keycode) {
 		String classname = getClass(component);
 		if ("button" == classname) {
-			if (keychar == KeyEvent.VK_SPACE ||
-					((keycode == KeyEvent.VK_ENTER) &&
+			if (keychar == ' ' ||
+					((keycode == Input.KEY_ENTER) &&
 						(get(component, "type") == "default")) ||
-					((keycode == KeyEvent.VK_ESCAPE) && //...
+					((keycode == Input.KEY_ESCAPE) && //...
 						(get(component, "type") == "cancel"))) {
 				//pressedkey = keychar;
 				invoke(component, null, "action");
@@ -2786,7 +2743,7 @@ public class Thinlet implements Runnable, Serializable {
 			}
 		}
 		else if (("checkbox" == classname) || ("togglebutton" == classname)) {
-			if (keychar == KeyEvent.VK_SPACE) {
+			if (keychar == ' ') {
 				changeCheck(component, true);
 				repaint(component);
 				return true;
@@ -2801,27 +2758,27 @@ public class Thinlet implements Runnable, Serializable {
 					setInteger(component, "selected", -1, -1);
 					return true;
 				}
-				if ((keychar == KeyEvent.VK_SPACE) || (keycode == KeyEvent.VK_DOWN)) {
+				if ((keychar == ' ') || (keycode == Input.KEY_DOWN)) {
 					popupCombo(component);
 				}
 				//+findText
 				else return false;
 			}
 			else {
-				if ((keycode == KeyEvent.VK_UP) ||
-						(keycode == KeyEvent.VK_DOWN) || (keycode == KeyEvent.VK_PAGE_UP) ||
-						(keycode == KeyEvent.VK_PAGE_DOWN) ||
-						(keycode == KeyEvent.VK_HOME) || (keycode == KeyEvent.VK_END)) {
+				if ((keycode == Input.KEY_UP) ||
+						(keycode == Input.KEY_DOWN) || (keycode == Input.KEY_PRIOR) ||
+						(keycode == Input.KEY_NEXT) ||
+						(keycode == Input.KEY_HOME) || (keycode == Input.KEY_END)) {
 					Object next = getListItem(component, combolist, keycode,
 						get(combolist, ":lead"), false);
 					if (next != null) {
 						setInside(combolist, next, true);
 					}
 				}
-				else if ((keycode == KeyEvent.VK_ENTER) || (keychar == KeyEvent.VK_SPACE)) {
+				else if ((keycode == Input.KEY_ENTER) || (keychar == ' ')) {
 					closeCombo(component, combolist, get(combolist, ":lead")); //Alt+Up
 				}
-				else if (keycode == KeyEvent.VK_ESCAPE) {
+				else if (keycode == Input.KEY_ESCAPE) {
 					closeCombo(component, combolist, null);
 				}
 				else if (!processField(component, shiftdown, controldown, modifiers,
@@ -2847,16 +2804,16 @@ public class Thinlet implements Runnable, Serializable {
 			int istart = start;
 			int iend = end;
 			String insert = null;
-			if ((keycode == KeyEvent.VK_HOME) && !controldown) {
+			if ((keycode == Input.KEY_HOME) && !controldown) {
 				while ((iend > 0) && (chars[iend - 1] != '\n')) { iend--; }
 				if (!shiftdown) { istart = iend; }
 			}
-			else if ((keycode == KeyEvent.VK_END) && !controldown) {
+			else if ((keycode == Input.KEY_END) && !controldown) {
 				while ((iend < chars.length) && (chars[iend] != '\n')) { iend++; }
 				if (!shiftdown) { istart = iend; }
 			}
-			else if ((keycode == KeyEvent.VK_UP) || (keycode == KeyEvent.VK_PAGE_UP) ||
-					(keycode == KeyEvent.VK_DOWN) || (keycode == KeyEvent.VK_PAGE_DOWN)) {
+			else if ((keycode == Input.KEY_UP) || (keycode == Input.KEY_PRIOR) ||
+					(keycode == Input.KEY_DOWN) || (keycode == Input.KEY_NEXT)) {
 				Font currentfont = (Font) get(component, "font");
 				FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 				int fh = fm.getHeight();
@@ -2866,11 +2823,11 @@ public class Thinlet implements Runnable, Serializable {
 						linestart = i + 1; y += fh;
 					}
 				}
-				if (keycode == KeyEvent.VK_UP) { y -= fh; }
-				else if (keycode == KeyEvent.VK_DOWN) { y += fh; }
+				if (keycode == Input.KEY_UP) { y -= fh; }
+				else if (keycode == Input.KEY_DOWN) { y += fh; }
 				else {
 					int dy = getRectangle(component, ":port").height;
-					y += (keycode == KeyEvent.VK_PAGE_UP) ? -dy : dy; // VK_PAGE_DOWN
+					y += (keycode == Input.KEY_PRIOR) ? -dy : dy; // VK_PAGE_DOWN
 				}
 				int x = fm.charsWidth(chars, linestart, iend - linestart);
 				iend = getCaretLocation(component, x, y, true, false);
@@ -2882,10 +2839,10 @@ public class Thinlet implements Runnable, Serializable {
 				getString(component, "text", ""), insert, istart, iend, start, end);
 		}
 		else if ("tabbedpane" == classname) {
-			if ((keycode == KeyEvent.VK_RIGHT) || (keycode == KeyEvent.VK_DOWN) ||
-					(keycode == KeyEvent.VK_LEFT) || (keycode == KeyEvent.VK_UP)) {
+			if ((keycode == Input.KEY_RIGHT) || (keycode == Input.KEY_DOWN) ||
+					(keycode == Input.KEY_LEFT) || (keycode == Input.KEY_UP)) {
 				int selected = getInteger(component, "selected", 0);
-				boolean increase = (keycode == KeyEvent.VK_RIGHT) || (keycode == KeyEvent.VK_DOWN);
+				boolean increase = (keycode == Input.KEY_RIGHT) || (keycode == Input.KEY_DOWN);
 				int newvalue = selected;
 				int n = increase ? getItemCountImpl(component, ":comp") : 0;
 				int d = (increase ? 1 : -1);						
@@ -2903,8 +2860,8 @@ public class Thinlet implements Runnable, Serializable {
 			}
 		}
 		else if ("spinbox" == classname) {
-			if ((keycode == KeyEvent.VK_UP) || (keycode == KeyEvent.VK_DOWN)) {
-				processSpin(component, (keycode == KeyEvent.VK_UP)? "up" : "down");
+			if ((keycode == Input.KEY_UP) || (keycode == Input.KEY_DOWN)) {
+				processSpin(component, (keycode == Input.KEY_UP)? "up" : "down");
 				return true;
 			}
 			return processField(component, shiftdown, controldown, modifiers,
@@ -2913,23 +2870,23 @@ public class Thinlet implements Runnable, Serializable {
 		else if ("slider" == classname) {
 			int value = getInteger(component, "value", 0);
 			int d = 0;
-			if ((keycode == KeyEvent.VK_HOME) || (keycode == KeyEvent.VK_LEFT) ||
-					(keycode == KeyEvent.VK_UP) || (keycode == KeyEvent.VK_PAGE_UP)) {
+			if ((keycode == Input.KEY_HOME) || (keycode == Input.KEY_LEFT) ||
+					(keycode == Input.KEY_UP) || (keycode == Input.KEY_PRIOR)) {
 				d = getInteger(component, "minimum", 0) - value;
-				if ((keycode == KeyEvent.VK_LEFT) || (keycode == KeyEvent.VK_UP)) {
+				if ((keycode == Input.KEY_LEFT) || (keycode == Input.KEY_UP)) {
 					d = Math.max(d, -getInteger(component, "unit", 5));
 				}
-				else if (keycode == KeyEvent.VK_PAGE_UP) {
+				else if (keycode == Input.KEY_PRIOR) {
 					d = Math.max(d, -getInteger(component, "block", 25));
 				}
 			}
-			else if ((keycode == KeyEvent.VK_END) || (keycode == KeyEvent.VK_RIGHT) ||
-					(keycode == KeyEvent.VK_DOWN) || (keycode == KeyEvent.VK_PAGE_DOWN)) {
+			else if ((keycode == Input.KEY_END) || (keycode == Input.KEY_RIGHT) ||
+					(keycode == Input.KEY_DOWN) || (keycode == Input.KEY_NEXT)) {
 				d = getInteger(component, "maximum", 100) - value;
-				if ((keycode == KeyEvent.VK_RIGHT) || (keycode == KeyEvent.VK_DOWN)) {
+				if ((keycode == Input.KEY_RIGHT) || (keycode == Input.KEY_DOWN)) {
 					d = Math.min(d, getInteger(component, "unit", 5));
 				}
-				else if (keycode == KeyEvent.VK_PAGE_DOWN) {
+				else if (keycode == Input.KEY_NEXT) {
 					d = Math.min(d, getInteger(component, "block", 25));
 				}
 			}
@@ -2942,19 +2899,19 @@ public class Thinlet implements Runnable, Serializable {
 		else if ("splitpane" == classname) {
 			int divider = getInteger(component, "divider", -1);
 			int d = 0;
-			if (keycode == KeyEvent.VK_HOME) {
+			if (keycode == Input.KEY_HOME) {
 				d = -divider;
 			}
-			else if ((keycode == KeyEvent.VK_LEFT) || (keycode == KeyEvent.VK_UP)) {
+			else if ((keycode == Input.KEY_LEFT) || (keycode == Input.KEY_UP)) {
 				d = Math.max(-10, -divider);
 			}
-			else if ((keycode == KeyEvent.VK_END) ||
-					(keycode == KeyEvent.VK_RIGHT) || (keycode == KeyEvent.VK_DOWN)) {
+			else if ((keycode == Input.KEY_END) ||
+					(keycode == Input.KEY_RIGHT) || (keycode == Input.KEY_DOWN)) {
 				boolean horizontal = ("vertical" != get(component, "orientation"));
 				Rectangle bounds = getRectangle(component, "bounds");
 				int max = (horizontal ? bounds.width : bounds.height) - 5;				
 				d = max - divider;
-				if (keycode != KeyEvent.VK_END) {
+				if (keycode != Input.KEY_END) {
 					d = Math.min(d, 10);
 				}
 			}
@@ -2968,7 +2925,7 @@ public class Thinlet implements Runnable, Serializable {
 		}
 		else if ("tree" == classname) {
 			//? clear childs' selection, select this is its 	subnode was selected
-			if (keycode == KeyEvent.VK_LEFT) {
+			if (keycode == Input.KEY_LEFT) {
 				Object lead = get(component, ":lead");
 				if ((get(lead, ":comp") != null) && getBoolean(lead, "expanded", true)) { // collapse
 					setBoolean(lead, "expanded", false, true);
@@ -2987,7 +2944,7 @@ public class Thinlet implements Runnable, Serializable {
 				}
 			}
 			//? for interval mode select its all subnode or deselect all after
-			else if (keycode == KeyEvent.VK_RIGHT) {
+			else if (keycode == Input.KEY_RIGHT) {
 				Object lead = get(component, ":lead");
 				Object node = get(lead, ":comp");
 				if (node != null) {
@@ -3021,9 +2978,9 @@ public class Thinlet implements Runnable, Serializable {
 				selected = get(previous, "selected");
 			}
 
-			if ((keycode == KeyEvent.VK_UP) || (keycode == KeyEvent.VK_DOWN)) {
+			if ((keycode == Input.KEY_UP) || (keycode == Input.KEY_DOWN)) {
 				Object next = getMenu(hotpopup,
-					selected, keycode == KeyEvent.VK_DOWN, true);
+					selected, keycode == Input.KEY_DOWN, true);
 				if (next != null) {
 					set(hotpopup, "selected", null);
 					popupMenu(hotpopup);
@@ -3031,7 +2988,7 @@ public class Thinlet implements Runnable, Serializable {
 					repaint(hotpopup);
 				}
 			}
-			else if (keycode == KeyEvent.VK_LEFT) {
+			else if (keycode == Input.KEY_LEFT) {
 				if (previous != null) { // close the last :popup
 					selected = get(previous, "selected");
 					set(previous, "selected", null);
@@ -3049,7 +3006,7 @@ public class Thinlet implements Runnable, Serializable {
 					}
 				}
 			}
-			else if (keycode == KeyEvent.VK_RIGHT) {
+			else if (keycode == Input.KEY_RIGHT) {
 				if ((previous != null) && (selected == null)) { // ?
 					set(last, "selected", get(get(last, "menu"), ":comp"));
 					repaint(last); // , selected
@@ -3068,9 +3025,9 @@ public class Thinlet implements Runnable, Serializable {
 					}
 				}
 			}
-			else if ((keycode == KeyEvent.VK_ENTER) ||
-					(keychar == KeyEvent.VK_SPACE) || (keycode == KeyEvent.VK_ESCAPE)) {
-				if ((keycode != KeyEvent.VK_ESCAPE) &&
+			else if ((keycode == Input.KEY_ENTER) ||
+					(keychar == ' ') || (keycode == Input.KEY_ESCAPE)) {
+				if ((keycode != Input.KEY_ESCAPE) &&
 						getBoolean(selected, "enabled", true)) {
 					if ((selected != null) && (getClass(selected) == "checkboxmenuitem")) {
 						changeCheck(selected, false);
@@ -3151,28 +3108,29 @@ public class Thinlet implements Runnable, Serializable {
 		int istart = start;
 		int iend = end;
 		String insert = null;
-		if (editable && (keychar != 0) &&
+		
+		if (editable && (keychar > 10) &&
 			//((modifiers == 0) || (modifiers == InputEvent.SHIFT_MASK))) {
 			(modifiers != InputEvent.ALT_MASK)) {
 			insert = String.valueOf((char) keychar);
 		}
-		else if (editable && (keycode == KeyEvent.VK_ENTER)) {
+		else if (editable && (keycode == Input.KEY_ENTER)) {
 			if (multiline) { insert = "\n"; }
 				else { return invoke(component, null, "perform"); }
 		}
-		else if (editable && (keycode == KeyEvent.VK_BACK_SPACE)) {
+		else if (editable && (keycode == Input.KEY_BACK)) {
 			insert = "";
 			if (start == end) { istart -= 1; }
 		}
-		else if (keycode == KeyEvent.VK_END) {
+		else if (keycode == Input.KEY_END) {
 			iend = text.length();
 			if (!shiftdown) { istart = iend; }
 		}
-		else if (keycode == KeyEvent.VK_HOME) {
+		else if (keycode == Input.KEY_HOME) {
 			iend = 0;
 			if (!shiftdown) { istart = iend; }
 		}
-		else if (keycode == KeyEvent.VK_LEFT) {
+		else if (keycode == Input.KEY_LEFT) {
 			if (controldown) {
 				for (int i = 0; i < 2; i++) {
 					while ((iend > 0) && ((i != 0) ==
@@ -3183,7 +3141,7 @@ public class Thinlet implements Runnable, Serializable {
 			}
 			if (!shiftdown) { istart = iend; }
 		}
-		else if (keycode == KeyEvent.VK_RIGHT) {
+		else if (keycode == Input.KEY_RIGHT) {
 			if (controldown) {
 				for (int i = 0; i < 2; i++) {
 					while ((iend < text.length()) && ((i == 0) ==
@@ -3194,20 +3152,20 @@ public class Thinlet implements Runnable, Serializable {
 			}
 			if (!shiftdown) { istart = iend; }
 		}
-		else if (editable && (keycode == KeyEvent.VK_DELETE)) {
+		else if (editable && (keycode == Input.KEY_DELETE)) {
 			insert = "";
 			if (start == end) { iend += 1; }
 		}
 		else if (controldown &&
-				((keycode == KeyEvent.VK_A) || (keycode == 0xBF))) {
+				((keycode == Input.KEY_A) || (keycode == 0xBF))) {
 			istart = 0; // KeyEvent.VK_SLASH
 			iend = text.length();
 		}
 		else if (controldown && (keycode == 0xDC)) {
 			istart = iend = text.length(); // KeyEvent.VK_BACK_SLASH
 		}
-		else if ((editable && !hidden && controldown && (keycode == KeyEvent.VK_X)) ||
-				(!hidden && controldown && (keycode == KeyEvent.VK_C))) {
+		else if ((editable && !hidden && controldown && (keycode == Input.KEY_X)) ||
+				(!hidden && controldown && (keycode == Input.KEY_C))) {
 			if (start != end) {
 				clipboard = text.substring(
 					Math.min(start, end), Math.max(start, end));
@@ -3215,10 +3173,10 @@ public class Thinlet implements Runnable, Serializable {
 //					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
 //						new StringSelection(clipboard), null);
 				} catch (Exception exc) {}
-				if (keycode == KeyEvent.VK_X) { insert = ""; } else { return true; }
+				if (keycode == Input.KEY_X) { insert = ""; } else { return true; }
 			}
 		}
-		else if (editable && controldown && (keycode == KeyEvent.VK_V)) {
+		else if (editable && controldown && (keycode == Input.KEY_V)) {
 			try {
 				insert = (String) Sys.getClipboard(); 
 			} catch (Exception exc) {
@@ -3288,10 +3246,10 @@ public class Thinlet implements Runnable, Serializable {
 
 	private boolean processList(Object component, boolean shiftdown, boolean controldown,
 			int keychar, int keycode, boolean recursive) {
-		if ((keycode == KeyEvent.VK_UP) || // select previous/next/first/... item
-				(keycode == KeyEvent.VK_DOWN) || (keycode == KeyEvent.VK_PAGE_UP) ||
-				(keycode == KeyEvent.VK_PAGE_DOWN) ||
-				(keycode == KeyEvent.VK_HOME) || (keycode == KeyEvent.VK_END)) {
+		if ((keycode == Input.KEY_UP) || // select previous/next/first/... item
+				(keycode == Input.KEY_DOWN) || (keycode == Input.KEY_PRIOR) ||
+				(keycode == Input.KEY_NEXT) ||
+				(keycode == Input.KEY_HOME) || (keycode == Input.KEY_END)) {
 			Object lead = get(component, ":lead");
 			Object row = getListItem(component, component, keycode, lead, recursive);
 			if (row != null) {
@@ -3306,18 +3264,18 @@ public class Thinlet implements Runnable, Serializable {
 				return true;
 			}
 		}
-		else if (keycode == KeyEvent.VK_LEFT) {
+		else if (keycode == Input.KEY_LEFT) {
 			return processScroll(component, "left");
 		}
-		else if (keycode == KeyEvent.VK_RIGHT) {
+		else if (keycode == Input.KEY_RIGHT) {
 			return processScroll(component, "right");
 		}
-		else if (keychar == KeyEvent.VK_SPACE) { // select the current item
+		else if (keychar == ' ') { // select the current item
 			select(component, get(component, ":lead"), recursive, shiftdown, controldown); //...
 			return true;
 		}
 		else if (controldown) {
-			if (((keycode == KeyEvent.VK_A) || (keycode == 0xBF)) && //KeyEvent.VK_SLASH
+			if (((keycode == Input.KEY_A) || (keycode == 0xBF)) && //KeyEvent.VK_SLASH
 					(getString(component, "selection", "single") != "single")) { // select all
 				selectAll(component, true, recursive);
 				return true;
@@ -3373,35 +3331,35 @@ public class Thinlet implements Runnable, Serializable {
 	private Object getListItem(Object component, Object scrollpane,
 			int keycode, Object lead, boolean recursive) {
 		Object row = null;
-		if (keycode == KeyEvent.VK_UP) {
+		if (keycode == Input.KEY_UP) {
 			for (Object prev = get(component, ":comp"); prev != lead;
 					prev = getNextItem(component, prev, recursive)) {
 				row = prev; // component -> getParent(lead)
 			}
 		}
-		else if (keycode == KeyEvent.VK_DOWN) {
+		else if (keycode == Input.KEY_DOWN) {
 			row = (lead == null) ? get(component, ":comp") :
 				getNextItem(component, lead, recursive);
 		}
-		else if ((keycode == KeyEvent.VK_PAGE_UP) ||
-				(keycode == KeyEvent.VK_PAGE_DOWN)) {
+		else if ((keycode == Input.KEY_PRIOR) ||
+				(keycode == Input.KEY_NEXT)) {
 			Rectangle view = getRectangle(scrollpane, ":view");
 			Rectangle port = getRectangle(scrollpane, ":port");
 			Rectangle rl = (lead != null) ? getRectangle(lead, "bounds") : null;
-			int vy = (keycode == KeyEvent.VK_PAGE_UP) ?
+			int vy = (keycode == Input.KEY_PRIOR) ?
 				view.y : (view.y + port.height);
-			if ((keycode == KeyEvent.VK_PAGE_UP) &&
+			if ((keycode == Input.KEY_PRIOR) &&
 					(rl != null) && (rl.y <= view.y)) {
 				vy -= port.height;
 			}
-			if ((keycode == KeyEvent.VK_PAGE_DOWN) &&
+			if ((keycode == Input.KEY_NEXT) &&
 					(rl != null) && (rl.y + rl.height >= view.y + port.height)) {
 				vy += port.height;
 			}
 			for (Object item = get(component, ":comp"); item != null;
 					item = getNextItem(component, item, recursive)) {
 				Rectangle r = getRectangle(item, "bounds");
-				if (keycode == KeyEvent.VK_PAGE_UP) {
+				if (keycode == Input.KEY_PRIOR) {
 					row = item;
 					if (r.y + r.height > vy) { break; }
 				} else {
@@ -3410,10 +3368,10 @@ public class Thinlet implements Runnable, Serializable {
 				}
 			}
 		}
-		else if (keycode == KeyEvent.VK_HOME) {
+		else if (keycode == Input.KEY_HOME) {
 			row = get(component, ":comp");
 		}
-		else if (keycode == KeyEvent.VK_END) {
+		else if (keycode == Input.KEY_END) {
 			for (Object last = lead; last != null;
 					last = getNextItem(component, last, recursive)) {
 				row = last;
@@ -4268,7 +4226,7 @@ public class Thinlet implements Runnable, Serializable {
 		mouseinside = component;
 		x -= bounds.x; y -= bounds.y;
 		String classname = getClass(component);
-
+		
 		if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true) && (x <= bounds.width - block)) {
 				Image icon = getIcon(component, "icon", null);
@@ -4394,6 +4352,7 @@ public class Thinlet implements Runnable, Serializable {
 				}
 			}
 		}
+		
 		return true;
 	}
 
@@ -5088,14 +5047,14 @@ public class Thinlet implements Runnable, Serializable {
 	 * @return true if the char was consumed
 	 */
 	private boolean checkMnemonic(Object component,
-			boolean parent, Object checked, int keycode, int modifiers) {
+			boolean parent, Object checked, char keychar, int keycode, int modifiers) {
 		if ((component == null) || !getBoolean(component, "visible", true) ||
 				!getBoolean(component, "enabled", true)) { //+ enabled comp in disabled parent
 			return false;
 		}
 		String classname = getClass(component);
 		if ("label" == classname) {
-			if (hasMnemonic(component, keycode, modifiers)) {
+			if (hasMnemonic(component, keychar, modifiers)) {
 				Object labelfor = get(component, "for");
 				if (labelfor != null) {
 					requestFocus(labelfor);
@@ -5105,16 +5064,16 @@ public class Thinlet implements Runnable, Serializable {
 		}
 		else if ("button" == classname) {
 			if (((modifiers == 0) &&
-				(((keycode == KeyEvent.VK_ENTER) && (get(component, "type") == "default")) ||
-				((keycode == KeyEvent.VK_ESCAPE) && (get(component, "type") == "cancel")))) ||
-					hasMnemonic(component, keycode, modifiers)) {
+				(((keycode == Input.KEY_ENTER) && (get(component, "type") == "default")) ||
+				((keycode == Input.KEY_ESCAPE) && (get(component, "type") == "cancel")))) ||
+					hasMnemonic(component, keychar, modifiers)) {
 				invoke(component, null, "action");
 				repaint(component);
 				return true;
 			}
 		}
 		else if (("checkbox" == classname) || ("togglebutton" == classname)) {
-			if (hasMnemonic(component, keycode, modifiers)) {
+			if (hasMnemonic(component, keychar, modifiers)) {
 				changeCheck(component, true);
 				repaint(component);
 				return true;
@@ -5122,8 +5081,8 @@ public class Thinlet implements Runnable, Serializable {
 		}
 		else if ("menubar" == classname) {
 			for (Object menu = get(component, ":comp"); menu != null; menu = get(menu, ":next")) {
-				if (hasMnemonic(menu, keycode, modifiers) ||
-						((modifiers == 0) && (keycode == KeyEvent.VK_F10))) {
+				if (hasMnemonic(menu, keychar, modifiers) ||
+						((modifiers == 0) && (keycode == Input.KEY_F10))) {
 					closeup();
 					set(component, "selected", menu);
 					popupMenu(component);
@@ -5140,7 +5099,7 @@ public class Thinlet implements Runnable, Serializable {
 		else if ("tabbedpane" == classname) {
 			int selected = getInteger(component, "selected", 0); int i = 0;
 			for (Object tab = get(component, ":comp"); tab != null; tab = get(tab, ":next")) {
-				if (hasMnemonic(tab, keycode, modifiers)) {
+				if (hasMnemonic(tab, keychar, modifiers)) {
 					if (selected != i) {
 						setInteger(component, "selected", i, 0);
 						repaint(component);
@@ -5152,7 +5111,7 @@ public class Thinlet implements Runnable, Serializable {
 			}
 			Object comp = get(getItem(component, selected), ":comp");
 			if ((comp != null) && (comp != checked) &&
-					checkMnemonic(comp, false, null, keycode, modifiers)) {
+					checkMnemonic(comp, false, null, keychar, keycode, modifiers)) {
 				return true;
 			}
 		}
@@ -5161,13 +5120,13 @@ public class Thinlet implements Runnable, Serializable {
 				("dialog" == classname) || ("splitpane" == classname) ||
 				("menubar" == classname) || ("menu" == classname)) {
 			for (Object comp = get(component, ":comp"); comp != null; comp = get(comp, ":next")) {
-				if ((comp != checked) && checkMnemonic(comp, false, null, keycode, modifiers)) { return true; }
+				if ((comp != checked) && checkMnemonic(comp, false, null, keychar, keycode, modifiers)) { return true; }
 			}
 		}
 		// check parent
 		if (parent && (("dialog" != classname) || !getBoolean(component, "modal", false))) {
 			if (checkMnemonic(getParent(component), true,
-					("tab" == classname) ? checked : component, keycode, modifiers)) { return true; }
+					("tab" == classname) ? checked : component, keychar, keycode, modifiers)) { return true; }
 		}
 		return false;
 	}
@@ -5178,13 +5137,13 @@ public class Thinlet implements Runnable, Serializable {
 	 * @param modifiers
 	 * @return true if the component has the given mnemonic
 	 */
-	private boolean hasMnemonic(Object component, int keycode, int modifiers) {
-		if (modifiers == InputEvent.ALT_MASK) {
+	private boolean hasMnemonic(Object component, char keychar, int modifiers) {
+		if (modifiers == KeyEvent.ALT_DOWN_MASK) {
 			int index = getInteger(component, "mnemonic", -1);
 			if (index != -1) {
 				String text = getString(component, "text", null);
 				return (text != null) && (text.length() > index) &&
-					(Character.toUpperCase(text.charAt(index)) == keycode);
+					(Character.toUpperCase(text.charAt(index)) == Character.toUpperCase(keychar));
 			}
 		}
 		return false;
@@ -5987,7 +5946,7 @@ public class Thinlet implements Runnable, Serializable {
 					try {
 							modifiers = modifiers | InputEvent.class.getField(token + "_MASK").getInt(null);
 					} catch (Exception exc) { // not mask value
-						keycode = KeyEvent.class.getField("VK_" + token).getInt(null);
+						keycode = 0; // KeyEvent.class.getField("VK_" + token).getInt(null);
 					}
 				}
 				keystroke = new Long(((long) modifiers) << 32 | keycode);

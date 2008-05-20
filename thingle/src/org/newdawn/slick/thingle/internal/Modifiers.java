@@ -6,6 +6,8 @@ public class Modifiers {
 	public boolean isShiftDown;
 	public boolean isPopupTrigger;
 	public boolean isControlDown;
+	public boolean isAltDown;
+	
 	private Input input;
 	
 	public Modifiers(Input input) {	
@@ -16,5 +18,6 @@ public class Modifiers {
 		isPopupTrigger = input.isMouseButtonDown(2);
 		isShiftDown = input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT);
 		isControlDown = input.isKeyDown(Input.KEY_LCONTROL) || input.isKeyDown(Input.KEY_RCONTROL);
+		isAltDown = input.isKeyDown(Input.KEY_LALT) || input.isKeyDown(Input.KEY_RALT);
 	}
 }

@@ -4,6 +4,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.util.InputAdapter;
 
 public class InputHandler extends InputAdapter {
+
 	private Thinlet thinlet;
 	private Modifiers mods;
 	private Input input;
@@ -58,6 +59,22 @@ public class InputHandler extends InputAdapter {
 	public void setInput(Input input) {
 		this.input = input;
 		mods = new Modifiers(input);
+	}
+	
+	/**
+	 * @see org.newdawn.slick.util.InputAdapter#keyPressed(int, char)
+	 */
+	public void keyPressed(int key, char c) {
+		mods.update();
+		thinlet.keyPressed(c, key, mods, false);
+	}
+
+	/**
+	 * @see org.newdawn.slick.util.InputAdapter#keyReleased(int, char)
+	 */
+	public void keyReleased(int key, char c) {
+		super.keyReleased(key, c);
+		thinlet.keyPressed(c, key, mods, true);
 	}
 	
 }
