@@ -42,14 +42,19 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.thingle.internal.slick.Modifiers;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
 
 /**
- * This version has been ported to use Slick for rendering and input
+ * This version has been ported to use Slick for rendering and input.Note that this class
+ * will not be documented. It's huge and a bit of a mess but provides a great bit of 
+ * functionality.
+ * 
+ * @author Robert Bajzat
+ * @author Kevin Glass (slick ports)
  */
 public class Thinlet implements Runnable, Serializable {
-
 	private transient Font font;
 	private transient Color c_bg;
 	private transient Color c_text;
@@ -2553,7 +2558,7 @@ public class Thinlet implements Runnable, Serializable {
 		return true;
 	}
 
-	void mouseDragged(int x, int y, Modifiers mods) {
+	public void mouseDragged(int x, int y, Modifiers mods) {
 		hideTip(); // remove tooltip
 		Object previnside = mouseinside;
 		Object prevpart = insidepart;
@@ -2584,7 +2589,7 @@ public class Thinlet implements Runnable, Serializable {
 		}
 	}
 	
-	void mouseMoved(int x, int y, Modifiers mods) {
+	public void mouseMoved(int x, int y, Modifiers mods) {
 		Object previnside = mouseinside;
 		Object prevpart = insidepart;
 		findComponent(content, x, y);
@@ -2600,7 +2605,7 @@ public class Thinlet implements Runnable, Serializable {
 		}
 	}
 	
-	void mouseReleased(int x, int y, Modifiers mods) {
+	public void mouseReleased(int x, int y, Modifiers mods) {
 		hideTip(); // remove tooltip
 		Object mouserelease = mousepressed;
 		Object releasepart = pressedpart;
@@ -2614,7 +2619,7 @@ public class Thinlet implements Runnable, Serializable {
 		}
 	}
 	
-	void mousePressed(int x, int y, int clickCount, Modifiers mods) {
+	public void mousePressed(int x, int y, int clickCount, Modifiers mods) {
 		if (popupowner != null) { // remove popup
 			String classname = getClass(mouseinside);
 			if ((popupowner != mouseinside) &&
@@ -2629,7 +2634,7 @@ public class Thinlet implements Runnable, Serializable {
 			MouseEvent.MOUSE_PRESSED, mousepressed, pressedpart);
 	}
 	
-	boolean keyPressed(char keychar, int keycode, Modifiers mods, boolean typed) {
+	public boolean keyPressed(char keychar, int keycode, Modifiers mods, boolean typed) {
 		if (focusinside && ((popupowner != null) || (focusowner != null))) {
 			hideTip(); // remove tooltip
 			
@@ -2697,30 +2702,30 @@ public class Thinlet implements Runnable, Serializable {
 	 * Dispatches mouse, key, focus, and component events occurring on the
 	 * <i>Thinlet</i> component internally
 	 */
-	protected void processEvent(AWTEvent e) {
-		// evm (touchscreen) events: entered/moved/pressed -> dragged -> dragged/released/exited
-		int id = e.getID();
-		if (id == MOUSE_WHEEL) {
-			Rectangle port = getRectangle(mouseinside, ":port");
-			if (port != null) { // is scrollable
-				// TODO hide tooltip?
-				Rectangle bounds = getRectangle(mouseinside, "bounds");	
-				try { // mouse wheel is supported since 1.4 thus it use reflection
-					if (wheelrotation == null) {
-						wheelrotation = e.getClass().getMethod("getWheelRotation", null);
-					}
-					int rotation = ((Integer) wheelrotation.invoke(e, null)).intValue();
-					
-					if (port.x + port.width < bounds.width) { // has vertical scrollbar
-						processScroll(mouseinside, (rotation > 0) ? "down" : "up"); //TODO scroll panels too
-					}
-					else if (port.y + port.height < bounds.height) { // has horizontal scrollbar
-						processScroll(mouseinside, (rotation > 0) ? "right" : "left");
-					}
-				} catch (Exception exc) { /* never */ }
-			}
-		}
-	}
+//	protected void processEvent(AWTEvent e) {
+//		// evm (touchscreen) events: entered/moved/pressed -> dragged -> dragged/released/exited
+//		int id = e.getID();
+//		if (id == MOUSE_WHEEL) {
+//			Rectangle port = getRectangle(mouseinside, ":port");
+//			if (port != null) { // is scrollable
+//				// TODO hide tooltip?
+//				Rectangle bounds = getRectangle(mouseinside, "bounds");	
+//				try { // mouse wheel is supported since 1.4 thus it use reflection
+//					if (wheelrotation == null) {
+//						wheelrotation = e.getClass().getMethod("getWheelRotation", null);
+//					}
+//					int rotation = ((Integer) wheelrotation.invoke(e, null)).intValue();
+//					
+//					if (port.x + port.width < bounds.width) { // has vertical scrollbar
+//						processScroll(mouseinside, (rotation > 0) ? "down" : "up"); //TODO scroll panels too
+//					}
+//					else if (port.y + port.height < bounds.height) { // has horizontal scrollbar
+//						processScroll(mouseinside, (rotation > 0) ? "right" : "left");
+//					}
+//				} catch (Exception exc) { /* never */ }
+//			}
+//		}
+//	}
 	
 	public void setKeyFocus(boolean focus) {
 		this.focusinside = focus;

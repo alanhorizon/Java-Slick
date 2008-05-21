@@ -14,6 +14,17 @@ import org.newdawn.slick.util.ResourceLoader;
  */
 public class Demo extends ActionHandler {
 
+	/** The dialog created on search */
+	private Object dialog;
+	/** The current colour settings */
+	private Object sl_red, sl_green, sl_blue;
+	/** The current HSB settings */
+	private Object tf_hue, tf_saturation, tf_brightness;
+	/** The current HSB settings */
+	private Object pb_hue, pb_saturation, pb_brightness;
+	/** The colour of the label */
+	private Object rgb_label;
+
 	/**
 	 * Loads the xml file
 	 */
@@ -23,6 +34,9 @@ public class Demo extends ActionHandler {
 	/**
 	 * Called if the demo.xml was loaded,
 	 * it fills the textarea from a resource file
+	 * 
+	 * @param textarea The text area into which the text should be loaded
+	 * @throws Exception Indicates a failure loading the text
 	 */
 	public void loadText(Object textarea) throws Exception {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -43,6 +57,9 @@ public class Demo extends ActionHandler {
 
 	/**
 	 * Updates textarea's editable property depending on a checkbox state
+	 * 
+	 * @param textarea The text area to be modified
+	 * @param editable True if the text area should be editable
 	 */
 	public void changeEditable(boolean editable, Object textarea) {
 		setBoolean(textarea, "editable", editable);
@@ -50,15 +67,18 @@ public class Demo extends ActionHandler {
 
 	/**
 	 * Updates textarea's enabled property
+	 * 
+	 * @param textarea The text area to be modified
+	 * @param enabled True if the text area should be editable
 	 */
 	public void changeEnabled(boolean enabled, Object textarea) {
 		setBoolean(textarea, "enabled", enabled);
 	}
 
-	Object dialog;
-
 	/**
 	 * Shows the modal find dialog, creates only one dialog instance
+	 * 
+	 * @throws Exception Indicates a failure to create the dialog
 	 */
 	public void showDialog() throws Exception {
 		if (dialog == null) {
@@ -70,6 +90,11 @@ public class Demo extends ActionHandler {
 	/**
 	 * Updates the textarea's selection range,
 	 * and add the search string to the history 
+	 * 
+	 * @param combobox The box in which the criteria was entered
+	 * @param what The search string
+	 * @param match True if we should match case
+	 * @param down True if we search down the text
 	 */
 	public void findText(Object combobox, String what,
 			boolean match, boolean down) {
@@ -114,18 +139,21 @@ public class Demo extends ActionHandler {
 	
 	/**
 	 * Insert a new item into the list
+	 * 
+	 * @param list Insert a new item into the list
 	 */
 	public void insertList(Object list) {
 		Object item = Thinlet.create("item");
 		setString(item, "text", "New item");
 		setIcon(item, "icon", getIcon("res/icon/library.gif"));
 		add(list, item, 0);
-//		System.out.println("> click " + System.currentTimeMillis());
-//		try { Thread.sleep(5000); } catch (InterruptedException ie) {}
 	}
 
 	/**
 	 * Removes the selected items from the list
+	 * 
+	 * @param delete The item to delete
+	 * @param list The list to delete from
 	 */
 	public void deleteList(Object delete, Object list) {
 		for (int i = getCount(list) - 1; i >= 0; i--) {
@@ -139,6 +167,9 @@ public class Demo extends ActionHandler {
 	
 	/**
 	 * Delete button's state depends on the list selection
+	 * 
+	 * @param list The list to change the selection in
+	 * @param delete The item to delete
 	 */
 	public void changeSelection(Object list, Object delete) {
 		setBoolean(delete, "enabled", getSelectedIndex(list) != -1);
@@ -146,6 +177,10 @@ public class Demo extends ActionHandler {
 
 	/**
 	 * Clears list selection and updates the selection model
+	 * 
+	 * @param list The list to set the selection on
+	 * @param selection The currently selected object
+	 * @param delete True if deleteion should be allowed
 	 */
 	public void setSelection(Object list, String selection, Object delete) {
 		for (int i = getCount(list) - 1; i >= 0; i--) {
@@ -155,11 +190,23 @@ public class Demo extends ActionHandler {
 		setBoolean(delete, "enabled", false);
 	}
 	
+	/**
+	 * Notification that slider value changed
+	 * 
+	 * @param value The value that was changed
+	 * @param spinbox The spinbox to update
+	 */
 	public void sliderChanged(int value, Object spinbox) {
 		setString(spinbox, "text", String.valueOf(value));
 		hsbChanged();
 	}
 	
+	/**
+	 * Notification that spinbox value has been changd
+	 * 
+	 * @param text The new text in the spin box
+	 * @param slider The slider to be updated
+	 */
 	public void spinboxChanged(String text, Object slider) {
 		try {
 			int value = Integer.parseInt(text);
@@ -170,11 +217,20 @@ public class Demo extends ActionHandler {
 		} catch (NumberFormatException nfe) { Log.error(nfe); }
 	}
 	
-	private Object sl_red, sl_green, sl_blue;
-	private Object tf_hue, tf_saturation, tf_brightness;
-	private Object pb_hue, pb_saturation, pb_brightness;
-	private Object rgb_label;
-	
+	/**
+	 * Store the values of the current HSB widget
+	 * 
+	 * @param sl_red The red component
+	 * @param sl_green The green component
+	 * @param sl_blue The blue component 
+	 * @param tf_hue The hue
+	 * @param tf_saturation The saturation
+	 * @param tf_brightness The brightness
+	 * @param pb_hue The hue
+	 * @param pb_saturation The saturation
+	 * @param pb_brightness The brightness
+	 * @param rgb_label The RGB value of the label
+	 */
 	public void storeWidgets(Object sl_red, Object sl_green, Object sl_blue,
 			Object tf_hue, Object tf_saturation, Object tf_brightness,
 			Object pb_hue, Object pb_saturation, Object pb_brightness, Object rgb_label) {
@@ -190,6 +246,9 @@ public class Demo extends ActionHandler {
 		this.rgb_label = rgb_label;
 	}
 	
+	/**
+	 * Notification that HSB changed
+	 */
 	private void hsbChanged() {
 		int red = getInteger(sl_red, "value");
 		int green = getInteger(sl_green, "value");

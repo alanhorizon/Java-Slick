@@ -1,12 +1,28 @@
 package org.newdawn.slick.thingle.internal;
 
-
+/**
+ * A simple rectangle implementation for thingle
+ * 
+ * @author kevin
+ */
 public class Rectangle {
+	/** The x coordiante of the top left hand corner */
 	public int x;
+	/** The y coordiante of the top left hand corner */
 	public int y;
+	/** The width of the rectangle */
 	public int width;
+	/** The height of the rectangle */
 	public int height;
 	
+	/**
+	 * Create a new rectangle
+	 * 
+	 * @param x The x coordinate of the top left hand corner
+	 * @param y The y coordinate of the top left hand corner
+	 * @param width The width of the rectangle
+	 * @param height The height of the rectangle
+	 */
 	public Rectangle(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
@@ -14,6 +30,13 @@ public class Rectangle {
 		this.height = height;
 	}
 	
+	/**
+	 * Check if this rectangle contains the given point
+	 * 
+	 * @param xp The x coordiante of the point to check
+	 * @param yp The y coordiante of the point to check
+	 * @return True if the rectangle includes the given point
+	 */
 	public boolean contains(int xp, int yp) {
 		if (xp < x) {
 			return false;
@@ -32,6 +55,12 @@ public class Rectangle {
 		return true;
 	}
 	
+	/**
+	 * Check if this rectangle intersects another
+	 * 
+	 * @param other The other rectangle to check against
+	 * @return True if this rectangle intersects this one
+	 */
 	public boolean intersects(Rectangle other) {
 		if ((x > (other.x + other.width)) || ((x + width) < other.x)) {
 			return false;
@@ -43,6 +72,12 @@ public class Rectangle {
         return true;	
 	}
 	
+	/**
+	 * Get the intersection of this rectangle with another
+	 * 
+	 * @param other The other rectangle to intersect with
+	 * @return The rectangle that is the intersection
+	 */
 	public Rectangle intersection(Rectangle other) {
 		if (!intersects(other)) {
 			return new Rectangle(0,0,0,0);

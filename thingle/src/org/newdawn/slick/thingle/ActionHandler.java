@@ -10,20 +10,31 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.thingle.internal.Dimension;
 import org.newdawn.slick.thingle.internal.Thinlet;
 
-public class ActionHandler {
+/**
+ * Super class of all handlers of actions fired from Thingle UIs
+ * 
+ * @author kevin
+ */
+public abstract class ActionHandler {
+	/** The thinlet instance firing events */
 	private Thinlet thinlet;
 	
+	/**
+	 * Create a new action handler
+	 */
 	public ActionHandler() {
 	}
 	
+	/**
+	 * Set the thinlet instance in use
+	 * 
+	 * @param thinlet The thinlet firing the events
+	 */
 	public void setThinlet(Thinlet thinlet) {
 		this.thinlet = thinlet;
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param value
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setBoolean(java.lang.Object, java.lang.String, boolean)
 	 */
 	protected void setBoolean(Object component, String key, boolean value) {
@@ -31,9 +42,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param value
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setChoice(java.lang.Object, java.lang.String, java.lang.String)
 	 */
 	protected void setChoice(Object component, String key, String value) {
@@ -41,9 +49,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param color
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setColor(java.lang.Object, java.lang.String, org.newdawn.slick.Color)
 	 */
 	protected void setColor(Object component, String key, Color color) {
@@ -51,15 +56,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param background
-	 * @param text
-	 * @param textbackground
-	 * @param border
-	 * @param disable
-	 * @param hover
-	 * @param press
-	 * @param focus
-	 * @param select
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setColors(int, int, int, int, int, int, int, int, int)
 	 */
 	protected void setColors(int background, int text, int textbackground, int border, int disable, int hover, int press, int focus, int select) {
@@ -67,8 +63,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param font
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setFont(java.lang.Object, org.newdawn.slick.Font)
 	 */
 	protected void setFont(Object component, Font font) {
@@ -76,9 +70,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param font
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setFont(java.lang.Object, java.lang.String, org.newdawn.slick.Font)
 	 */
 	protected void setFont(Object component, String key, Font font) {
@@ -86,9 +77,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param icon
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setIcon(java.lang.Object, java.lang.String, org.newdawn.slick.Image)
 	 */
 	protected void setIcon(Object component, String key, Image icon) {
@@ -96,9 +84,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param value
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setInteger(java.lang.Object, java.lang.String, int)
 	 */
 	protected void setInteger(Object component, String key, int value) {
@@ -106,9 +91,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param value
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setKeystroke(java.lang.Object, java.lang.String, java.lang.String)
 	 */
 	protected void setKeystroke(Object component, String key, String value) {
@@ -116,11 +98,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param value
-	 * @param root
-	 * @param handler
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setMethod(java.lang.Object, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	protected void setMethod(Object component, String key, String value, Object root, Object handler) {
@@ -128,7 +105,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param resourcebundle
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setResourceBundle(java.util.ResourceBundle)
 	 */
 	protected void setResourceBundle(ResourceBundle resourcebundle) {
@@ -136,9 +112,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param value
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#setString(java.lang.Object, java.lang.String, java.lang.String)
 	 */
 	protected void setString(Object component, String key, String value) {
@@ -146,9 +119,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getBoolean(java.lang.Object, java.lang.String)
 	 */
 	protected boolean getBoolean(Object component, String key) {
@@ -156,9 +126,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getChoice(java.lang.Object, java.lang.String)
 	 */
 	protected String getChoice(Object component, String key) {
@@ -166,9 +133,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getColor(java.lang.Object, java.lang.String)
 	 */
 	protected Color getColor(Object component, String key) {
@@ -176,8 +140,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getCount(java.lang.Object)
 	 */
 	protected int getCount(Object component) {
@@ -185,7 +147,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getDesktop()
 	 */
 	protected Object getDesktop() {
@@ -193,9 +154,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getIcon(java.lang.Object, java.lang.String)
 	 */
 	protected Image getIcon(Object component, String key) {
@@ -203,9 +161,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param path
-	 * @param preload
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getIcon(java.lang.String, boolean)
 	 */
 	protected Image getIcon(String path, boolean preload) {
@@ -213,8 +168,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param path
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getIcon(java.lang.String)
 	 */
 	protected Image getIcon(String path) {
@@ -222,9 +175,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getInteger(java.lang.Object, java.lang.String)
 	 */
 	protected int getInteger(Object component, String key) {
@@ -232,9 +182,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param index
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getItem(java.lang.Object, int)
 	 */
 	protected Object getItem(Object component, int index) {
@@ -242,8 +189,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getItems(java.lang.Object)
 	 */
 	protected Object[] getItems(Object component) {
@@ -251,8 +196,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getParent(java.lang.Object)
 	 */
 	protected Object getParent(Object component) {
@@ -260,7 +203,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getPreferredSize()
 	 */
 	protected Dimension getPreferredSize() {
@@ -268,9 +210,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getProperty(java.lang.Object, java.lang.Object)
 	 */
 	protected Object getProperty(Object component, Object key) {
@@ -278,8 +217,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getSelectedIndex(java.lang.Object)
 	 */
 	protected int getSelectedIndex(Object component) {
@@ -287,8 +224,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getSelectedItem(java.lang.Object)
 	 */
 	protected Object getSelectedItem(Object component) {
@@ -296,8 +231,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getSelectedItems(java.lang.Object)
 	 */
 	protected Object[] getSelectedItems(Object component) {
@@ -305,7 +238,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getSize()
 	 */
 	protected Dimension getSize() {
@@ -313,9 +245,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getString(java.lang.Object, java.lang.String)
 	 */
 	protected String getString(Object component, String key) {
@@ -323,9 +252,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#getWidget(java.lang.Object, java.lang.String)
 	 */
 	protected Object getWidget(Object component, String key) {
@@ -333,9 +259,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param name
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#find(java.lang.Object, java.lang.String)
 	 */
 	protected Object find(Object component, String name) {
@@ -343,8 +266,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param name
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#find(java.lang.String)
 	 */
 	protected Object find(String name) {
@@ -352,9 +273,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param parent
-	 * @param component
-	 * @param index
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#add(java.lang.Object, java.lang.Object, int)
 	 */
 	protected void add(Object parent, Object component, int index) {
@@ -362,8 +280,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param parent
-	 * @param component
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#add(java.lang.Object, java.lang.Object)
 	 */
 	protected void add(Object parent, Object component) {
@@ -371,7 +287,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#add(java.lang.Object)
 	 */
 	protected void add(Object component) {
@@ -379,10 +294,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param inputstream
-	 * @param handler
-	 * @return
-	 * @throws IOException
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#parse(java.io.InputStream, java.lang.Object)
 	 */
 	protected Object parse(InputStream inputstream, Object handler) throws IOException {
@@ -390,9 +301,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param inputstream
-	 * @return
-	 * @throws IOException
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#parse(java.io.InputStream)
 	 */
 	protected Object parse(InputStream inputstream) throws IOException {
@@ -400,10 +308,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param path
-	 * @param handler
-	 * @return
-	 * @throws IOException
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#parse(java.lang.String, java.lang.Object)
 	 */
 	protected Object parse(String path, Object handler) throws IOException {
@@ -411,9 +315,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param path
-	 * @return
-	 * @throws IOException
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#parse(java.lang.String)
 	 */
 	protected Object parse(String path) throws IOException {
@@ -421,9 +322,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @param key
-	 * @param value
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#putProperty(java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
 	protected void putProperty(Object component, Object key, Object value) {
@@ -431,7 +329,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * 
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#requestFocus()
 	 */
 	protected void requestFocus() {
@@ -439,8 +336,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
-	 * @return
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#requestFocus(java.lang.Object)
 	 */
 	protected boolean requestFocus(Object component) {
@@ -448,7 +343,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#remove(java.lang.Object)
 	 */
 	protected void remove(Object component) {
@@ -456,7 +350,6 @@ public class ActionHandler {
 	}
 
 	/**
-	 * @param component
 	 * @see org.newdawn.slick.thingle.internal.Thinlet#removeAll(java.lang.Object)
 	 */
 	protected void removeAll(Object component) {

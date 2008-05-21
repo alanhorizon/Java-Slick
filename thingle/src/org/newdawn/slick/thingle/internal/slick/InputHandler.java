@@ -1,14 +1,28 @@
-package org.newdawn.slick.thingle.internal;
+package org.newdawn.slick.thingle.internal.slick;
 
 import org.newdawn.slick.Input;
+import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.util.InputAdapter;
 
+/** 
+ * The input handler responsible for translating from Slick input events
+ * to the thinlet event model
+ * 
+ * @author kevin
+ */
 public class InputHandler extends InputAdapter {
-
+	/** The thinlet instance events should be sent to */
 	private Thinlet thinlet;
+	/** The current modifiers state (alt, shift etc) */
 	private Modifiers mods;
+	/** The input we're listening to */
 	private Input input;
 	
+	/**
+	 * Create a new handler that maps between slick input and thinlet
+	 * 
+	 * @param thinlet The thinlet instance we're sending events to
+	 */
 	public InputHandler(Thinlet thinlet) {
 		this.thinlet = thinlet;
 	}
@@ -36,6 +50,7 @@ public class InputHandler extends InputAdapter {
 	 */
 	public void mousePressed(int button, int x, int y) {
 		mods.update();
+		mouseMoved(x,y,x,y);
 		thinlet.mousePressed(x, y, 1, mods);
 	}
 
@@ -44,6 +59,7 @@ public class InputHandler extends InputAdapter {
 	 */
 	public void mouseReleased(int button, int x, int y) {
 		mods.update();
+		mouseMoved(x,y,x,y);
 		thinlet.mouseReleased(x, y, mods);
 	}
 
