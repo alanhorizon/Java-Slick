@@ -57,6 +57,13 @@
 		 basedir="." includes="res/**"/>
 	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="src" includes="version"/>
+		 
+	<zip destfile="lib/${game.name}-src.zip" 
+		 basedir="src"/>
+	<zip update="true" destfile="lib/${game.name}-src.zip" 
+		 basedir="." includes="res"/>
+	<zip update="true" destfile="lib/${game.name}-src.zip" 
+		 basedir="." includes="build.xml"/>
 </target>
 
 <target name="build-game-webstart" depends="build-game">
@@ -80,6 +87,12 @@
 		 
 	<scp todir="${username}:${password}@${host}:${dir}/downloads" 
 		 file="lib/${game.name}.jar"
+		 trust="true"
+		 port="122"
+		 verbose="true"/>
+		 
+	<scp todir="${username}:${password}@${host}:${dir}/downloads" 
+		 file="lib/${game.name}-src.zip"
 		 trust="true"
 		 port="122"
 		 verbose="true"/>
