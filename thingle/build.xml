@@ -15,8 +15,8 @@
 <target name="init">
 	<property name="username" value="kevin"/>
 	<property name="host" value="bob.newdawnsoftware.com"/>
-	<property name="dir" value="/home/kevin/public_html/cokeandcode.com/demos/thingle"/>
-	<property name="webstartURL" value="http://www.cokeandcode.com/demos/thingle"/>
+	<property name="dir" value="/home/kevin/public_html/slick/thingle"/>
+	<property name="webstartURL" value="http://slick.cokeandcode.com/thingle"/>
 	<property name="homepage" value="http://www.cokeandcode.com"/>
 	<property name="vendor" value="Coke And Code"/>
 	
@@ -38,6 +38,11 @@
  Build the java source to the Slick Demo Platformer
 -->
 <target name="build-game" depends="init">
+	<propertyfile file="src/version">
+		<entry key="build" type="int" operation="+" value="1"/>
+    </propertyfile>
+    <property file="src/version" prefix="version"/>
+    
 	<delete dir="lib/${game.name}.jar"/>
 	<javac debug="true" srcdir="src" destdir="${build.dir}/classes" target="1.5" source="1.5">
 		<src path="src"/>
@@ -50,6 +55,8 @@
 		 basedir="${build.dir}/classes"/>
 	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="." includes="res/**"/>
+	<jar update="true" destfile="lib/${game.name}.jar" 
+		 basedir="src" includes="version"/>
 </target>
 
 <target name="build-game-webstart" depends="build-game">
@@ -67,6 +74,12 @@
 	
 	<scp todir="${username}:${password}@${host}:${dir}" 
 		 file="webstart/${game.name}.jar"
+		 trust="true"
+		 port="122"
+		 verbose="true"/>
+		 
+	<scp todir="${username}:${password}@${host}:${dir}/downloads" 
+		 file="lib/${game.name}.jar"
 		 trust="true"
 		 port="122"
 		 verbose="true"/>
