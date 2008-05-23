@@ -250,6 +250,12 @@ public class FileChooser extends ActionHandler {
 				if (!name1.startsWith(".") && name2.startsWith(".")) {
 					return 1;
 				}
+				if ((file1.getName().length() == 0) && (file2.getName().length() != 0)) {
+					return -1;
+				}
+				if ((file2.getName().length() == 0) && (file1.getName().length() != 0)) {
+					return 1;
+				}
 				
 				return name1.compareToIgnoreCase(name2);
 			}
