@@ -2625,6 +2625,21 @@ public class Thinlet implements Runnable, Serializable {
 		}
 	}
 	
+	public void mouseWheelMoved(int rotation, Modifiers mods) {
+		Rectangle port = getRectangle(mouseinside, ":port");
+		if (port != null) { // is scrollable
+			// TODO hide tooltip?
+			Rectangle bounds = getRectangle(mouseinside, "bounds");	
+			try { 
+				if (port.x + port.width < bounds.width) { // has vertical scrollbar
+					processScroll(mouseinside, (rotation > 0) ? "down" : "up"); //TODO scroll panels too
+				}
+				else if (port.y + port.height < bounds.height) { // has horizontal scrollbar
+					processScroll(mouseinside, (rotation > 0) ? "right" : "left");
+				}
+			} catch (Exception exc) { /* never */ }
+		}
+	}
 	public void mousePressed(int x, int y, int clickCount, Modifiers mods) {
 		if (popupowner != null) { // remove popup
 			String classname = getClass(mouseinside);

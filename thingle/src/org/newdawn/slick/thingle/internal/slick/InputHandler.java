@@ -72,6 +72,8 @@ public class InputHandler extends InputAdapter {
 	 * @see org.newdawn.slick.util.InputAdapter#mouseWheelMoved(int)
 	 */
 	public void mouseWheelMoved(int change) {
+		mods.update();
+		thinlet.mouseWheelMoved(-change, mods);
 	}
 
 	/**
