@@ -31,6 +31,11 @@ public class InputHandler extends InputAdapter {
 	 * @see org.newdawn.slick.util.InputAdapter#mouseClicked(int, int, int, int)
 	 */
 	public void mouseClicked(int button, int x, int y, int clickCount) {
+		if (clickCount == 2) {
+			mods.update();
+			mouseMoved(x,y,x,y);
+			thinlet.mousePressed(x, y, 2, mods);
+		}
 	}
 
 	/**

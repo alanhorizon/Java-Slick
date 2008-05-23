@@ -15,7 +15,7 @@ import org.newdawn.slick.thingle.Theme;
  * 
  * @author kevin
  */
-public class ThingleTest extends BasicGame {
+public class LoginTest extends BasicGame {
 	/** The UI page being displayed */
 	private Page page;
 	/** The image to display in the background */
@@ -24,8 +24,8 @@ public class ThingleTest extends BasicGame {
 	/**
 	 * Create a new test
 	 */
-	public ThingleTest() {
-		super("Thingle Demo");
+	public LoginTest() {
+		super("Thingle Simple Demo");
 	}
 	
 	/**
@@ -39,13 +39,13 @@ public class ThingleTest extends BasicGame {
 		image = new Image("res/logo.png");
 		container.getGraphics().setBackground(Color.white);
 		
-		page = new Page(container, "res/demo.xml", new Demo());
+		page = new Page(container, "res/login.xml", new Login());
 		Theme theme = new Theme();
 		theme.setBackground(new Color(0.6f,0.6f,1f,1f));
 		theme.setBorder(new Color(0,0,0.5f));
 		theme.setFocus(new Color(0,0,0));
 		page.setTheme(theme);
-		page.setDrawDesktop(true);
+		page.setDrawDesktop(false);
 		
 		page.enable();
 	}
@@ -68,7 +68,7 @@ public class ThingleTest extends BasicGame {
 	 */
 	public static void main(String[] argv) {
 		try {
-			AppGameContainer container = new AppGameContainer(new ThingleTest(), 600, 600, false);
+			AppGameContainer container = new AppGameContainer(new LoginTest(), 600, 600, false);
 			container.start();
 		} catch (Throwable e) {
 			e.printStackTrace();

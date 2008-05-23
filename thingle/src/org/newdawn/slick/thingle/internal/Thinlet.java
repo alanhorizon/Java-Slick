@@ -2424,6 +2424,12 @@ public class Thinlet implements Runnable, Serializable {
 		}
 
 		String text = getString(component, "text", null);
+		if (getClass(component) == "combobox") {
+			if (text != null) {
+				text = text.trim();
+			}
+		}
+		
 		Image icon = getIcon(component, "icon", null);
 		if ((text == null) && (icon == null)) { return; }
 	
@@ -3127,12 +3133,12 @@ public class Thinlet implements Runnable, Serializable {
 		int iend = end;
 		String insert = null;
 		
-		if (editable && (keychar > 10) &&
+		if (editable && (keychar > 15) &&
 			//((modifiers == 0) || (modifiers == InputEvent.SHIFT_MASK))) {
 			(modifiers != InputEvent.ALT_MASK)) {
 			insert = String.valueOf((char) keychar);
 		}
-		else if (editable && (keycode == Input.KEY_ENTER)) {
+		else if (editable && (keycode == Input.KEY_RETURN))  {
 			if (multiline) { insert = "\n"; }
 				else { return invoke(component, null, "perform"); }
 		}
@@ -3834,6 +3840,7 @@ public class Thinlet implements Runnable, Serializable {
 						repaint(component, Math.min(bounds.x, mx), Math.min(bounds.y, my),
 							bounds.width + Math.abs(mx - bounds.x), bounds.height + Math.abs(my - bounds.y));
 						bounds.x = mx; bounds.y = my;
+						doLayout(component);
 					}
 				}
 			}

@@ -1,31 +1,34 @@
 package org.newdawn.slick.thingle.demos;
 
+import java.io.File;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.thingle.Page;
-import org.newdawn.slick.thingle.Theme;
+import org.newdawn.slick.thingle.util.FileChooser;
+import org.newdawn.slick.thingle.util.FileChooserListener;
 
 /**
  * The big test demo that has multiple tabs, sub-dialogs etc
  * 
  * @author kevin
  */
-public class ThingleTest extends BasicGame {
-	/** The UI page being displayed */
-	private Page page;
+public class FileChooserTest extends BasicGame {
 	/** The image to display in the background */
 	private Image image;
+	/** The file chooser under test */
+	private FileChooser chooser;
 	
 	/**
 	 * Create a new test
 	 */
-	public ThingleTest() {
-		super("Thingle Demo");
+	public FileChooserTest() {
+		super("Thingle File Chooser Demo");
 	}
 	
 	/**
@@ -35,30 +38,47 @@ public class ThingleTest extends BasicGame {
 		container.setShowFPS(false);
 		//container.setVSync(true);
 		//container.setTargetFrameRate(100);
+		container.getGraphics().setBackground(new Color(0.5f,0.7f,1.0f));
 		
 		image = new Image("res/logo.png");
-		container.getGraphics().setBackground(Color.white);
-		
-		page = new Page(container, "res/demo.xml", new Demo());
-		Theme theme = new Theme();
-		theme.setBackground(new Color(0.6f,0.6f,1f,1f));
-		theme.setBorder(new Color(0,0,0.5f));
-		theme.setFocus(new Color(0,0,0));
-		page.setTheme(theme);
-		page.setDrawDesktop(true);
-		
-		page.enable();
+		newChooser(container);
+	}
+	
+	/**
+	 * Create a new chooser example
+	 * 
+	 * @throws SlickException Indicates a failure to load resources
+	 */
+	private void newChooser(GameContainer container) throws SlickException {
+		chooser = new FileChooser("Open..", "Open", container, new FileChooserListener() {
+
+			public void chooserCanceled() {
+				System.out.println("CANCEL");
+			}
+
+			public void fileSelected(File file) {
+				System.out.println("Selected file: "+file);
+			}
+			
+		});
+		chooser.show();
 	}
 	
 	public void update(GameContainer container, int delta)
 			throws SlickException {
+		if (!chooser.isVisible()) {
+			if (container.getInput().isKeyPressed(Input.KEY_SPACE)) {
+				newChooser(container);
+			}
+		}
 	}
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
-		image.draw(100,200);
-		page.render(g);
+		image.draw(100,10);
+		chooser.render(g);
 		g.drawString("FPS: "+container.getFPS(), 530, 2);
+		g.drawString("Press Space for a new File Chooser", 100, 550);
 	}
 
 	/**
@@ -68,7 +88,7 @@ public class ThingleTest extends BasicGame {
 	 */
 	public static void main(String[] argv) {
 		try {
-			AppGameContainer container = new AppGameContainer(new ThingleTest(), 600, 600, false);
+			AppGameContainer container = new AppGameContainer(new FileChooserTest(), 600, 600, false);
 			container.start();
 		} catch (Throwable e) {
 			e.printStackTrace();

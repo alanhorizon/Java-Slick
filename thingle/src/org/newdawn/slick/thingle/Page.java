@@ -2,7 +2,7 @@ package org.newdawn.slick.thingle;
 
 import java.io.IOException;
 
-import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -38,8 +38,7 @@ public class Page extends ActionHandler {
 	public Page(GameContainer container) throws SlickException {
 		this.container = container;
 		
-		container.getGraphics().setBackground(Color.white);
-		container.getInput().setDoubleClickInterval(50);
+		container.getInput().setDoubleClickInterval(250);
 		
 		thinlet = new Thinlet();
 		thinlet.setKeyFocus(true);
@@ -147,9 +146,11 @@ public class Page extends ActionHandler {
 	 * @param g The graphics context to render to
 	 */
 	public void render(Graphics g) {
+		Font font = g.getFont();
 		SlickCallable.enterSafeBlock();
 		thinlet.paint(new SlickBinding(g), container.getWidth(), container.getHeight());	
 		SlickCallable.leaveSafeBlock();
+		g.setFont(font);
 	}
 	
 	/**
@@ -171,5 +172,6 @@ public class Page extends ActionHandler {
 	 */
 	public void disable() {
 		container.getInput().removeListener(inputHandler);
+		container.getInput().clearKeyPressedRecord();
 	}
 }
