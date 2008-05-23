@@ -83,7 +83,7 @@ public class FileChooser extends ActionHandler {
 		this.title = title;
 		this.currentDir = currentDir;
 		
-		page = new Page(container, "org/newdawn/slick/thingle/util/filechooser.xml", this);
+		page = new Page(container, "utilres/filechooser.xml", this);
 		page.setTheme(theme);
 		page.setDrawDesktop(false);
 	}
@@ -231,12 +231,12 @@ public class FileChooser extends ActionHandler {
 				
 			if (files[i].isDirectory()) {
 				if (files[i].getName().equals("")) {
-					setIcon(item, "icon", getIcon("org/newdawn/slick/thingle/util/disk.gif"));
+					setIcon(item, "icon", getIcon("utilres/disk.gif"));
 				} else {
-					setIcon(item, "icon", getIcon("org/newdawn/slick/thingle/util/folder.gif"));
+					setIcon(item, "icon", getIcon("utilres/folder.gif"));
 				}
 			} else {
-				setIcon(item, "icon", getIcon("org/newdawn/slick/thingle/util/document.gif"));
+				setIcon(item, "icon", getIcon("utilres/document.gif"));
 			}
 			
 			add(filesList, item);

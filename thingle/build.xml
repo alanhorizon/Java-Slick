@@ -56,12 +56,16 @@
 	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="." includes="res/**"/>
 	<jar update="true" destfile="lib/${game.name}.jar" 
+		 basedir="." includes="utilres/**"/>
+	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="src" includes="version"/>
 		 
 	<zip destfile="lib/${game.name}-src.zip" 
 		 basedir="src"/>
 	<zip update="true" destfile="lib/${game.name}-src.zip" 
 		 basedir="." includes="res"/>
+	<zip update="true" destfile="lib/${game.name}-src.zip" 
+		 basedir="." includes="utilres"/>
 	<zip update="true" destfile="lib/${game.name}-src.zip" 
 		 basedir="." includes="build.xml"/>
 </target>
@@ -71,6 +75,13 @@
 	<input message="KeyStorePW:" addproperty="keystore.password"/>
 	
 	<copyandsign jar="${game.name}.jar"/>
+		 
+	<jar destfile="lib/${game.name}.jar" 
+		 basedir="${build.dir}/classes"/>
+	<jar update="true" destfile="lib/${game.name}.jar" 
+		 basedir="." includes="utilres/**"/>
+	<jar update="true" destfile="lib/${game.name}.jar" 
+		 basedir="src" includes="version"/>
 </target>
 
 <!--

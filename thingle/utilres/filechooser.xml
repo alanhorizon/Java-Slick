@@ -6,7 +6,7 @@
 	<label text="Look In" colspan="1" alignment="left" />
 	<combobox name="dir" colspan="3" valign="center" editable="false" 
 			  action="changeChooser(dir)" weightx="10"/>
-	<button name="up" colspan="1" text="" icon="org/newdawn/slick/thingle/util/button_up.gif"
+	<button name="up" colspan="1" text="" icon="utilres/button_up.gif"
 			type="default" action="goUp()"/>
 		
 	<list name="files" selection="single" colspan="5" weightx="1" weighty="1" 
