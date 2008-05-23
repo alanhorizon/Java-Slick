@@ -244,6 +244,13 @@ public class FileChooser extends ActionHandler {
 				String name1 = view.getSystemDisplayName(file1);
 				String name2 = view.getSystemDisplayName(file2);
 				
+				if (name1.startsWith(".") && !name2.startsWith(".")) {
+					return -1;
+				}
+				if (!name1.startsWith(".") && name2.startsWith(".")) {
+					return 1;
+				}
+				
 				return name1.compareToIgnoreCase(name2);
 			}
 			

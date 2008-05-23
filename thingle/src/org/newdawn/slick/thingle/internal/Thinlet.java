@@ -3850,7 +3850,12 @@ public class Thinlet implements Runnable, Serializable {
 				}
 				else if (id == MouseEvent.MOUSE_DRAGGED) {
 					repaint(component);
+					
+					
 					Rectangle bounds = getRectangle(component, "bounds");
+					int beforewidth = bounds.width;
+					int beforeheight = bounds.height;
+					
 					if ((part == ":nw") || (part == ":n") || (part == ":ne")) {
 						bounds.y += y - referencey; bounds.height -= y - referencey;
 					}
@@ -3863,6 +3868,14 @@ public class Thinlet implements Runnable, Serializable {
 					if ((part == ":nw") || (part == ":w") || (part == ":sw")) {
 						bounds.x += x - referencex; bounds.width -= x - referencex;
 					}
+					
+					if (bounds.width < getInteger(component, "minwidth")) {
+						bounds.width = getInteger(component, "minwidth");
+					}
+					if (bounds.height < getInteger(component, "minheight")) {
+						bounds.height = getInteger(component, "minheight");
+					}
+					
 					referencex = x; referencey = y;
 					doLayout(component); repaint(component);
 				}
@@ -6448,6 +6461,8 @@ public class Thinlet implements Runnable, Serializable {
 				{ "boolean", "scrollable", "validate", Boolean.FALSE } },
 			"desktop", "component", null,
 			"dialog", "panel", new Object[][] {
+				{ "integer", "minwidth", "validate", integer0 },
+				{ "integer", "minheight", "validate", integer0 },
 				{ "boolean", "modal", null, Boolean.FALSE },
 				{ "boolean", "resizable", null, Boolean.FALSE },
 				{ "boolean", "closable", "paint", Boolean.FALSE },
