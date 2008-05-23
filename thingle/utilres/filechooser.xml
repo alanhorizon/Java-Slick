@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dialog name="chooser" text="Login" modal="true" columns="5" 
 	    top="4" left="4" bottom="4" right="4" gap="4" init="initDialog(chooser)" 
-	    width="400" height="300" resizable="true">
+	    width="400" height="300" resizable="true"
+	    minwidth="300" minheight="200">
 	
 	<label text="Look In" colspan="1" alignment="left" />
 	<combobox name="dir" colspan="3" valign="center" editable="false" 
