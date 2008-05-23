@@ -139,6 +139,17 @@ public class Page extends ActionHandler {
 		
 		layout();
 	}
+
+	public void addComponents(String ref, Object actionHandler) throws SlickException {
+		try {
+			thinlet.add(thinlet.parse(ResourceLoader.getResourceAsStream(ref), actionHandler));
+		} catch (IOException e) {
+			Log.error(e);
+			throw new SlickException("Failed to load: "+ref, e);
+		}
+		
+		layout();
+	}
 	
 	/**
 	 * Render the page to the given graphics context
