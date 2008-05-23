@@ -2,6 +2,8 @@ package org.newdawn.slick.thingle.util;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.filechooser.FileSystemView;
 
@@ -220,17 +222,46 @@ public class FileChooser extends ActionHandler {
 		
 		File[] files = currentDir.listFiles();
 		filesListed.clear();
+		
+		ArrayList allFiles = new ArrayList();
 		for (int i=0;i<files.length;i++) {
-			if (view.isHiddenFile(files[i])) {
-				continue;
-			}
-			Object item = Thinlet.create("item");
-			String text = view.getSystemDisplayName(files[i]);
-			setString(item, "text", text);
-			filesListed.add(files[i]);
+			allFiles.add(files[i]);
+		}
+		
+		Collections.sort(allFiles, new Comparator() {
+
+			public int compare(Object arg0, Object arg1) {
+				File file1 = (File) arg0;
+				File file2 = (File) arg1;
 				
-			if (files[i].isDirectory()) {
-				if (files[i].getName().equals("")) {
+				if (file1.isDirectory() && !file2.isDirectory()) {
+					return -1;
+				}
+				if (file2.isDirectory() && !file1.isDirectory()) {
+					return 1;
+				}
+				
+				String name1 = view.getSystemDisplayName(file1);
+				String name2 = view.getSystemDisplayName(file2);
+				
+				return name1.compareToIgnoreCase(name2);
+			}
+			
+		});
+			
+		for (int i=0;i<allFiles.size();i++) {
+//			if (view.isHiddenFile(files[i])) {
+//				continue;
+//			}
+			File file = (File) allFiles.get(i);
+			
+			Object item = Thinlet.create("item");
+			String text = view.getSystemDisplayName(file);
+			setString(item, "text", text);
+			filesListed.add(file);
+				
+			if (file.isDirectory()) {
+				if (file.getName().equals("")) {
 					setIcon(item, "icon", getIcon("utilres/disk.gif"));
 				} else {
 					setIcon(item, "icon", getIcon("utilres/folder.gif"));
