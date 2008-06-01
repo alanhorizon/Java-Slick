@@ -63,6 +63,8 @@ public class LoginTest extends BasicGame {
 			throws SlickException {
 		image.draw(100,200);
 		page.render(g);
+		
+		g.setColor(Color.black);
 		g.drawString("FPS: "+container.getFPS(), 530, 2);
 	}
 

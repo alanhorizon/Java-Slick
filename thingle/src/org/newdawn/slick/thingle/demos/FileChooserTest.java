@@ -77,6 +77,8 @@ public class FileChooserTest extends BasicGame {
 			throws SlickException {
 		image.draw(100,10);
 		chooser.render(g);
+		
+		g.setColor(Color.black);
 		g.drawString("FPS: "+container.getFPS(), 530, 2);
 		g.drawString("Press Space for a new File Chooser", 100, 550);
 	}

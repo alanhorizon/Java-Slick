@@ -51,4 +51,37 @@ public class Widget {
 	public void setText(String text) {
 		thinlet.setString(component, "text", text);
 	}
+	
+	/**
+	 * Set the icon to be displayed on the component
+	 * 
+	 * @param iconRef The icon to be displayed on the component
+	 */
+	public void setIcon(String iconRef) {
+		thinlet.setIcon(component, "icon", thinlet.getIcon(iconRef));
+	}
+	
+	/**
+	 * Add an item to a list component.
+	 * 
+	 * @param text The text to display on the component
+	 * @return The item component added
+	 */
+	public Widget addItem(String text) {
+		Object handle = Thinlet.create("item");
+		Widget item = new Widget(thinlet, handle);
+		item.setText(text);
+
+		thinlet.add(component, handle);
+		return item;
+	}
+	
+	/**
+	 * Remove an item from a component
+	 * 
+	 * @param item The item to remove
+	 */
+	public void removeItem(Widget item) {
+		thinlet.remove(item);
+	}
 }

@@ -3,6 +3,7 @@ package org.newdawn.slick.thingle;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -150,10 +151,12 @@ public class Page {
 	 */
 	public void render(Graphics g) {
 		Font font = g.getFont();
+		Color col = g.getColor();
 		SlickCallable.enterSafeBlock();
 		thinlet.paint(new SlickBinding(g), container.getWidth(), container.getHeight());	
 		SlickCallable.leaveSafeBlock();
 		g.setFont(font);
+		g.setColor(col);
 	}
 	
 	/**

@@ -27,6 +27,15 @@ public class SlickBinding implements ThinletGraphics {
 	}
 	
 	/**
+	 * Return the graphics context to which we're drawing
+	 * 
+	 * @return The graphics context to which we're rendering
+	 */
+	public Graphics getGraphics() {
+		return g;
+	}
+	
+	/**
 	 * @see org.newdawn.slick.thingle.internal.ThinletGraphics#getFont()
 	 */
 	public Font getFont() {

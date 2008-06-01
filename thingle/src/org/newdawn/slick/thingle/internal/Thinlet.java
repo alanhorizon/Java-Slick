@@ -1648,12 +1648,17 @@ public class Thinlet implements Runnable, Serializable {
 					3, 3 + titleheight, bounds.width - 6, bounds.height - 6 - titleheight,
 					g, true, true, true, true, 'b');
 			} else { // panel
-				boolean border = getBoolean(component, "border", false);
-				paint(component, 0, titleheight / 2, bounds.width, bounds.height - (titleheight / 2),
-					g, border, border, border, border, enabled ? 'e' : 'd');
-				paint(component, 0, 0, bounds.width, titleheight, // panel title
-					g, clipx, clipy, clipwidth, clipheight, false, false, false, false,
-					0, 3, 0, 3, false, enabled ? 'x' : 'd', "left", false, false);
+				WidgetRenderer renderer = (WidgetRenderer) get(component, "renderer");
+				if (renderer != null) {
+					renderer.paint(this, g, component, bounds);
+				} else {
+					boolean border = getBoolean(component, "border", false);
+					paint(component, 0, titleheight / 2, bounds.width, bounds.height - (titleheight / 2),
+						g, border, border, border, border, enabled ? 'e' : 'd');
+					paint(component, 0, 0, bounds.width, titleheight, // panel title
+						g, clipx, clipy, clipwidth, clipheight, false, false, false, false,
+						0, 3, 0, 3, false, enabled ? 'x' : 'd', "left", false, false);
+				}
 			}
 			
 			if (get(component, ":port") != null) {
@@ -5744,6 +5749,14 @@ public class Thinlet implements Runnable, Serializable {
 			lasts.addElement(definition);
 			lasts.addElement(value);
 		}
+		else if ("class" == definition[0]) {
+			try {
+				set(component, key, Class.forName(value).newInstance());
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new UnsupportedEncodingException("Unable to instance class: " + value);
+			} 
+		}
 		else if ("property" == definition[0]) {
 			StringTokenizer st = new StringTokenizer(value, ";");
 			while (st.hasMoreTokens()) {
@@ -6472,6 +6485,7 @@ public class Thinlet implements Runnable, Serializable {
 				{ "integer", "gap", "validate", integer0 },
 				{ "string", "text", "validate", null },
 				{ "icon", "icon", "validate", null },
+				{ "class", "renderer" } , 
 				{ "boolean", "border", "validate", Boolean.FALSE },
 				{ "boolean", "scrollable", "validate", Boolean.FALSE } },
 			"desktop", "component", null,

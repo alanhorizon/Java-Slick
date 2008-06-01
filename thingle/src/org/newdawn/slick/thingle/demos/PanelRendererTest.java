@@ -9,13 +9,14 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
+import org.newdawn.slick.thingle.Widget;
 
 /**
  * The big test demo that has multiple tabs, sub-dialogs etc
  * 
  * @author kevin
  */
-public class ThingleTest extends BasicGame {
+public class PanelRendererTest extends BasicGame {
 	/** The UI page being displayed */
 	private Page page;
 	/** The image to display in the background */
@@ -24,8 +25,8 @@ public class ThingleTest extends BasicGame {
 	/**
 	 * Create a new test
 	 */
-	public ThingleTest() {
-		super("Thingle Demo");
+	public PanelRendererTest() {
+		super("Panel Renderer Demo");
 	}
 	
 	/**
@@ -33,19 +34,17 @@ public class ThingleTest extends BasicGame {
 	 */
 	public void init(GameContainer container) throws SlickException {
 		container.setShowFPS(false);
-		//container.setVSync(true);
-		//container.setTargetFrameRate(100);
 		
 		image = new Image("res/logo.png");
 		container.getGraphics().setBackground(Color.white);
 		
-		page = new Page(container, "res/demo.xml", new Demo());
+		page = new Page(container, "res/panel.xml", new Login());
 		Theme theme = new Theme();
 		theme.setBackground(new Color(0.6f,0.6f,1f,1f));
 		theme.setBorder(new Color(0,0,0.5f));
 		theme.setFocus(new Color(0,0,0));
 		page.setTheme(theme);
-		page.setDrawDesktop(true);
+		page.setDrawDesktop(false);
 		
 		page.enable();
 	}
@@ -70,7 +69,7 @@ public class ThingleTest extends BasicGame {
 	 */
 	public static void main(String[] argv) {
 		try {
-			AppGameContainer container = new AppGameContainer(new ThingleTest(), 600, 600, false);
+			AppGameContainer container = new AppGameContainer(new PanelRendererTest(), 600, 600, false);
 			container.start();
 		} catch (Throwable e) {
 			e.printStackTrace();
