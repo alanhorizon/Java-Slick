@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<panel columns="1" gap="4">
+<panel columns="1" gap="4" init="init(thinlet)">
 	<menubar weightx="1">
 		<menu text="File" mnemonic="0">
 		 <menuitem text="New" icon="res/icon/new.gif" mnemonic="0" />

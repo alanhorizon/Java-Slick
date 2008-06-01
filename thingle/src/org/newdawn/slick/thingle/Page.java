@@ -1,6 +1,7 @@
 package org.newdawn.slick.thingle;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
@@ -19,7 +20,7 @@ import org.newdawn.slick.util.ResourceLoader;
  * 
  * @author kevin
  */
-public class Page extends ActionHandler {
+public class Page {
 	/** The game container the page is rendering in */
 	private GameContainer container;
 	/** The thinlet instance in use */
@@ -28,6 +29,9 @@ public class Page extends ActionHandler {
 	private InputHandler inputHandler;
 	/** The colour theme applied */
 	private Theme theme;
+	
+	/** The cache of widgets from this page */
+	private HashMap widgets = new HashMap();
 	
 	/**
 	 * Create new a new UI page
@@ -69,7 +73,7 @@ public class Page extends ActionHandler {
 	 * @param handler The object to respond to events from the GUI specified in the ref XML
 	 * @throws SlickException Indicates a failure to create thinlet
 	 */
-	public Page(GameContainer container, String ref, ActionHandler handler) throws SlickException {
+	public Page(GameContainer container, String ref, Object handler) throws SlickException {
 		this(container);
 		
 		addComponents(ref, handler);
@@ -128,18 +132,6 @@ public class Page extends ActionHandler {
 	 * @param ref The reference to the XML file
   	 * @throws SlickException Indicates a failure to load the XML
 	 */
-	public void addComponents(String ref, ActionHandler actionHandler) throws SlickException {
-		try {
-			actionHandler.setThinlet(thinlet);
-			thinlet.add(thinlet.parse(ResourceLoader.getResourceAsStream(ref), actionHandler));
-		} catch (IOException e) {
-			Log.error(e);
-			throw new SlickException("Failed to load: "+ref, e);
-		}
-		
-		layout();
-	}
-
 	public void addComponents(String ref, Object actionHandler) throws SlickException {
 		try {
 			thinlet.add(thinlet.parse(ResourceLoader.getResourceAsStream(ref), actionHandler));
@@ -184,5 +176,27 @@ public class Page extends ActionHandler {
 	public void disable() {
 		container.getInput().removeListener(inputHandler);
 		container.getInput().clearKeyPressedRecord();
+	}
+	
+	/**
+	 * Get a widget in the page
+	 * 
+	 * @param name The name of the widget to retrieve
+ 	 * @return The widget or null if no widget by that name could be found
+	 */
+	public Widget getWidget(String name) {
+		Widget ret = (Widget) widgets.get(name);
+		if (ret == null) {
+			Object desktop = thinlet.getDesktop();
+			Object component = thinlet.find(desktop, name);
+		
+			if (component == null) {
+				return null;
+			}
+			
+			ret = new Widget(thinlet, component);
+		}
+		
+		return ret;
 	}
 }

@@ -9,6 +9,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
+import org.newdawn.slick.thingle.Widget;
 
 /**
  * The big test demo that has multiple tabs, sub-dialogs etc
@@ -48,6 +49,10 @@ public class LoginTest extends BasicGame {
 		page.setDrawDesktop(false);
 		
 		page.enable();
+		
+		Widget loginName = page.getWidget("login_name");
+		System.out.println(loginName.getName());
+		loginName.setText("Test");
 	}
 	
 	public void update(GameContainer container, int delta)

@@ -4769,7 +4769,7 @@ public class Thinlet implements Runnable, Serializable {
 		return false;
 	}
 
-	private static Object get(Object component, Object key) {
+	public static Object get(Object component, Object key) {
 		for (Object[] entry = (Object[]) component; entry != null;
 				entry = (Object[]) entry[2]) {
 			if (entry[0] == key) { // TODO doesn't work under Symbian OS?

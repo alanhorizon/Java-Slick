@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import org.newdawn.slick.Color;
-import org.newdawn.slick.thingle.ActionHandler;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
@@ -12,7 +11,7 @@ import org.newdawn.slick.util.ResourceLoader;
 /**
  * Simple demonstration of widgets and events
  */
-public class Demo extends ActionHandler {
+public class Demo {
 
 	/** The dialog created on search */
 	private Object dialog;
@@ -25,10 +24,22 @@ public class Demo extends ActionHandler {
 	/** The colour of the label */
 	private Object rgb_label;
 
+	/** The thinlet instance to control */
+	private Thinlet thinlet;
+	
 	/**
 	 * Loads the xml file
 	 */
 	public Demo() {
+	}
+	
+	/**
+	 * Initialise the demo panel
+	 * 
+	 * @param thinlet The thinlet instance to control
+	 */
+	public void init(Thinlet thinlet) {
+		this.thinlet = thinlet;
 	}
 	
 	/**
@@ -52,7 +63,7 @@ public class Demo extends ActionHandler {
 			}
 		}
 		reader.close();
-		setString(textarea, "text", text.toString());
+		thinlet.setString(textarea, "text", text.toString());
 	}
 
 	/**
@@ -62,7 +73,7 @@ public class Demo extends ActionHandler {
 	 * @param editable True if the text area should be editable
 	 */
 	public void changeEditable(boolean editable, Object textarea) {
-		setBoolean(textarea, "editable", editable);
+		thinlet.setBoolean(textarea, "editable", editable);
 	}
 
 	/**
@@ -72,7 +83,7 @@ public class Demo extends ActionHandler {
 	 * @param enabled True if the text area should be editable
 	 */
 	public void changeEnabled(boolean enabled, Object textarea) {
-		setBoolean(textarea, "enabled", enabled);
+		thinlet.setBoolean(textarea, "enabled", enabled);
 	}
 
 	/**
@@ -82,9 +93,9 @@ public class Demo extends ActionHandler {
 	 */
 	public void showDialog() throws Exception {
 		if (dialog == null) {
-			dialog = parse("res/demodialog.xml", this);
+			dialog = thinlet.parse("res/demodialog.xml", this);
 		}
-		add(dialog);
+		thinlet.add(dialog);
 	}
 
 	/**
@@ -102,19 +113,19 @@ public class Demo extends ActionHandler {
 		if (what.length() == 0) { return; }
 
 		boolean cacheditem = false;
-		for (int i = getCount(combobox) - 1; i >= 0; i--) {
-			String choicetext = getString(getItem(combobox, i), "text");
+		for (int i = thinlet.getCount(combobox) - 1; i >= 0; i--) {
+			String choicetext = thinlet.getString(thinlet.getItem(combobox, i), "text");
 			if (what.equals(choicetext)) { cacheditem = true; break; }
 		}
 		if (!cacheditem) {
 			Object choice = Thinlet.create("choice");
-			setString(choice, "text", what);
-			add(combobox, choice);
+			thinlet.setString(choice, "text", what);
+			thinlet.add(combobox, choice);
 		}
 
-		Object textarea = find("textarea");
-		int end = getInteger(textarea, "end");
-		String text = getString(textarea, "text");
+		Object textarea = thinlet.find("textarea");
+		int end = thinlet.getInteger(textarea, "end");
+		String text = thinlet.getString(textarea, "text");
 		
 		if (!match) {
 			what = what.toLowerCase();
@@ -124,9 +135,9 @@ public class Demo extends ActionHandler {
 		int index = text.indexOf(what, down ? end : 0);
 		if (!down && (index != -1) && (index >= end)) { index = -1; }
 		if (index != -1) {
-			setInteger(textarea, "start", index);
-			setInteger(textarea, "end", index + what.length());
-			requestFocus(textarea);
+			thinlet.setInteger(textarea, "start", index);
+			thinlet.setInteger(textarea, "end", index + what.length());
+			thinlet.requestFocus(textarea);
 		}
 	}
 
@@ -134,7 +145,7 @@ public class Demo extends ActionHandler {
 	 * Closes the dialog
 	 */
 	public void closeDialog() {
-		remove(dialog);
+		thinlet.remove(dialog);
 	}
 	
 	/**
@@ -144,9 +155,9 @@ public class Demo extends ActionHandler {
 	 */
 	public void insertList(Object list) {
 		Object item = Thinlet.create("item");
-		setString(item, "text", "New item");
-		setIcon(item, "icon", getIcon("res/icon/library.gif"));
-		add(list, item, 0);
+		thinlet.setString(item, "text", "New item");
+		thinlet.setIcon(item, "icon", thinlet.getIcon("res/icon/library.gif"));
+		thinlet.add(list, item, 0);
 	}
 
 	/**
@@ -156,13 +167,13 @@ public class Demo extends ActionHandler {
 	 * @param list The list to delete from
 	 */
 	public void deleteList(Object delete, Object list) {
-		for (int i = getCount(list) - 1; i >= 0; i--) {
-			Object item = getItem(list, i);
-			if (getBoolean(item, "selected")) {
-				remove(item);
+		for (int i = thinlet.getCount(list) - 1; i >= 0; i--) {
+			Object item = thinlet.getItem(list, i);
+			if (thinlet.getBoolean(item, "selected")) {
+				thinlet.remove(item);
 			}
 		}
-		setBoolean(delete, "enabled", false);
+		thinlet.setBoolean(delete, "enabled", false);
 	}
 	
 	/**
@@ -172,7 +183,7 @@ public class Demo extends ActionHandler {
 	 * @param delete The item to delete
 	 */
 	public void changeSelection(Object list, Object delete) {
-		setBoolean(delete, "enabled", getSelectedIndex(list) != -1);
+		thinlet.setBoolean(delete, "enabled", thinlet.getSelectedIndex(list) != -1);
 	}
 
 	/**
@@ -183,11 +194,11 @@ public class Demo extends ActionHandler {
 	 * @param delete True if deleteion should be allowed
 	 */
 	public void setSelection(Object list, String selection, Object delete) {
-		for (int i = getCount(list) - 1; i >= 0; i--) {
-			setBoolean(getItem(list, i), "selected", false);
+		for (int i = thinlet.getCount(list) - 1; i >= 0; i--) {
+			thinlet.setBoolean(thinlet.getItem(list, i), "selected", false);
 		}
-		setChoice(list, "selection", selection);
-		setBoolean(delete, "enabled", false);
+		thinlet.setChoice(list, "selection", selection);
+		thinlet.setBoolean(delete, "enabled", false);
 	}
 	
 	/**
@@ -197,7 +208,7 @@ public class Demo extends ActionHandler {
 	 * @param spinbox The spinbox to update
 	 */
 	public void sliderChanged(int value, Object spinbox) {
-		setString(spinbox, "text", String.valueOf(value));
+		thinlet.setString(spinbox, "text", String.valueOf(value));
 		hsbChanged();
 	}
 	
@@ -211,7 +222,7 @@ public class Demo extends ActionHandler {
 		try {
 			int value = Integer.parseInt(text);
 			if ((value >= 0) && (value <= 255)) {
-				setInteger(slider, "value", value);
+				thinlet.setInteger(slider, "value", value);
 				hsbChanged();
 			}
 		} catch (NumberFormatException nfe) { Log.error(nfe); }
@@ -250,21 +261,21 @@ public class Demo extends ActionHandler {
 	 * Notification that HSB changed
 	 */
 	private void hsbChanged() {
-		int red = getInteger(sl_red, "value");
-		int green = getInteger(sl_green, "value");
-		int blue = getInteger(sl_blue, "value");
+		int red = thinlet.getInteger(sl_red, "value");
+		int green = thinlet.getInteger(sl_green, "value");
+		int blue = thinlet.getInteger(sl_blue, "value");
 		
 		float[] hsb = java.awt.Color.RGBtoHSB(red, green, blue, null);
 
-		setString(tf_hue, "text", String.valueOf(hsb[0]));
-		setString(tf_saturation, "text", String.valueOf(hsb[1]));
-		setString(tf_brightness, "text", String.valueOf(hsb[2]));
+		thinlet.setString(tf_hue, "text", String.valueOf(hsb[0]));
+		thinlet.setString(tf_saturation, "text", String.valueOf(hsb[1]));
+		thinlet.setString(tf_brightness, "text", String.valueOf(hsb[2]));
 
-		setInteger(pb_hue, "value", (int) (100f * hsb[0]));
-		setInteger(pb_saturation, "value", (int) (100f * hsb[1]));
-		setInteger(pb_brightness, "value", (int) (100f * hsb[2]));
+		thinlet.setInteger(pb_hue, "value", (int) (100f * hsb[0]));
+		thinlet.setInteger(pb_saturation, "value", (int) (100f * hsb[1]));
+		thinlet.setInteger(pb_brightness, "value", (int) (100f * hsb[2]));
 
-		setColor(rgb_label, "background", new Color(red, green, blue));
-		setColor(rgb_label, "foreground", new Color(255 - red, 255 - green, 255 - blue));
+		thinlet.setColor(rgb_label, "background", new Color(red, green, blue));
+		thinlet.setColor(rgb_label, "foreground", new Color(255 - red, 255 - green, 255 - blue));
 	}
 }
