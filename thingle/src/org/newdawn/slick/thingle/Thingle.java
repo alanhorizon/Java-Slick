@@ -144,4 +144,20 @@ public class Thingle {
 	public static ThingleFont createFont(String face, int style, int size) {
 		return context.createFont(face, style, size);
 	}
+	
+	/**
+	 * Notification of rendering about to happen. Store GL state 
+	 * here
+	 */
+	public static void doPreRender() {
+		context.doPreRender();
+	}
+
+	/**
+	 * Notification of rendering happened. Restore GL state 
+	 * here
+	 */
+	public static void doPostRender() {
+		context.doPostRender();
+	}
 }

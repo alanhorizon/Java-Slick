@@ -152,4 +152,16 @@ public interface ThingleContext {
 	 * @return A thinlet font created from the given information
 	 */
 	public ThingleFont createFont(String face, int style, int size);
+	
+	/**
+	 * Notification of rendering about to happen. Store GL state 
+	 * here
+	 */
+	public void doPreRender();
+
+	/**
+	 * Notification of rendering happened. Restore GL state 
+	 * here
+	 */
+	public void doPostRender();
 }

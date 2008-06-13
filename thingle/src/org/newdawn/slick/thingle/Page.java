@@ -139,7 +139,9 @@ public class Page {
 	 * @param g The graphics context to render to
 	 */
 	public void render() {
+		Thingle.doPreRender();
 		thinlet.paint(Thingle.getGraphics(), Thingle.getWidth(), Thingle.getHeight());	
+		Thingle.doPostRender();
 	}
 	
 	/**

@@ -11,6 +11,8 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.opengl.SlickCallable;
+import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.thingle.internal.ThinletInputListener;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleContext;
@@ -36,6 +38,11 @@ public class SlickThinletFactory implements ThingleContext, ThingleUtil {
 	private FontWrapper defaultFont = new FontWrapper(font);
 	/** The game container running this implementation */
 	private GameContainer container;
+	
+	/** The stored font */
+	private Font storedFont;
+	/** The stored colour */
+	private Color storedColor;
 	
 	/**
 	 * Create a new context
@@ -207,5 +214,24 @@ public class SlickThinletFactory implements ThingleContext, ThingleUtil {
 	 */
 	public ThingleColor createThingleColor(Color color) {
 		return new ColorWrapper(color);
+	}
+
+	/**
+	 * @see org.newdawn.slick.thingle.spi.ThingleContext#doPostRender()
+	 */
+	public void doPostRender() {
+		SlickCallable.leaveSafeBlock();
+		container.getGraphics().setFont(storedFont);
+		container.getGraphics().setColor(storedColor);
+	}
+
+	/**
+	 * @see org.newdawn.slick.thingle.spi.ThingleContext#doPreRender()
+	 */
+	public void doPreRender() {
+		storedFont = container.getGraphics().getFont();
+		storedColor = container.getGraphics().getColor();
+		
+		SlickCallable.enterSafeBlock();
 	}
 }
