@@ -718,7 +718,7 @@ public class Skinlet extends Thinlet {
 				while (s.hasMoreTokens()) {
 					g.drawString(s.nextToken(), r.x + skin.toolTip.insets.left,
 							r.y + lines * (fm.getAscent() + fm.getDescent())
-									+ fm.getAscent() + skin.toolTip.insets.top); // +nullpointerexception
+									+ skin.toolTip.insets.top); // +nullpointerexception
 					lines++;
 				}
 			}
