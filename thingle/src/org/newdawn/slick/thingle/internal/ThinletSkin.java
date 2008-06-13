@@ -572,14 +572,26 @@ public class ThinletSkin {
 		 *            default value ( for custom colors on components )
 		 */
 		public ThingleColor getTextColor(int state, ThingleColor def) {
+			if (state >= textColors.length) {
+				state = 0;
+			}
+			
 			return def != null ? def : skin.colorPool[textColors[state]];
 		}
 
 		public ThingleColor getFaceColor(int state, ThingleColor def) {
+			if (state >= faceColors.length) {
+				state = 0;
+			}
+			
 			return def != null ? def : skin.colorPool[faceColors[state]];
 		}
 
 		public ThingleColor getBorderColor(int state, ThingleColor def) {
+			if (state >= borderColors.length) {
+				state = 0;
+			}
+			
 			return def != null ? def : skin.colorPool[borderColors[state]];
 		}
 
