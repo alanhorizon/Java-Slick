@@ -128,7 +128,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	private boolean dirty = true;
 
 	private ThinletUtil spiUtil = ThinletCore.getUtil();
-	private ThinletContext spiFactory = ThinletCore.getFactory();
+	private ThinletContext spiFactory = ThinletCore.getContext();
 	private ThinletInput input = spiFactory.createInput(this);
 	private int KEY_ENTER = input.getKeyCode(ThinletInput.ENTER_KEY);
 	private int KEY_F6 = input.getKeyCode(ThinletInput.F6_KEY);

@@ -113,9 +113,9 @@ public class Page {
 	 */
 	public void addComponents(String ref, Object actionHandler) throws ThinletException {
 		try {
-			thinlet.add(thinlet.parse(ThinletCore.getFactory().getResourceAsStream(ref), actionHandler));
+			thinlet.add(thinlet.parse(ThinletCore.getContext().getResourceAsStream(ref), actionHandler));
 		} catch (IOException e) {
-			ThinletCore.getFactory().log(e);
+			ThinletCore.getContext().log(e);
 			throw new ThinletException("Failed to load: "+ref, e);
 		}
 		
