@@ -11,7 +11,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.thingle.internal.slick.InputHandler;
-import org.newdawn.slick.thingle.internal.slick.SlickBinding;
+import org.newdawn.slick.thingle.internal.slick.SlickGraphics;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -153,7 +153,7 @@ public class Page {
 		Font font = g.getFont();
 		Color col = g.getColor();
 		SlickCallable.enterSafeBlock();
-		thinlet.paint(new SlickBinding(g), container.getWidth(), container.getHeight());	
+		thinlet.paint(new SlickGraphics(g), container.getWidth(), container.getHeight());	
 		SlickCallable.leaveSafeBlock();
 		g.setFont(font);
 		g.setColor(col);

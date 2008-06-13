@@ -35,16 +35,17 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.lwjgl.Sys;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Font;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.thingle.ThinletCore;
+import org.newdawn.slick.thingle.WidgetRenderer;
 import org.newdawn.slick.thingle.internal.slick.Modifiers;
-import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.ResourceLoader;
+import org.newdawn.slick.thingle.spi.ThinletColor;
+import org.newdawn.slick.thingle.spi.ThinletFactory;
+import org.newdawn.slick.thingle.spi.ThinletFont;
+import org.newdawn.slick.thingle.spi.ThinletGraphics;
+import org.newdawn.slick.thingle.spi.ThinletImage;
+import org.newdawn.slick.thingle.spi.ThinletImageBuffer;
+import org.newdawn.slick.thingle.spi.ThinletUtil;
 
 /**
  * This version has been ported to use Slick for rendering and input.Note that this class
@@ -55,19 +56,22 @@ import org.newdawn.slick.util.ResourceLoader;
  * @author Kevin Glass (slick ports)
  */
 public class Thinlet implements Runnable, Serializable {
-	private transient Font font;
-	private transient Color c_bg;
-	private transient Color c_text;
-	private transient Color c_textbg;
-	private transient Color c_border;
-	private transient Color c_disable;
-	private transient Color c_hover;
-	private transient Color c_press;
-	private transient Color c_focus;
-	private transient Color c_select;
-	private transient Color c_ctrl = null;
+	private ThinletUtil spiUtil = ThinletCore.getUtil();
+	private ThinletFactory spiFactory = ThinletCore.getFactory();
+	
+	private transient ThinletFont font;
+	private transient ThinletColor c_bg;
+	private transient ThinletColor c_text;
+	private transient ThinletColor c_textbg;
+	private transient ThinletColor c_border;
+	private transient ThinletColor c_disable;
+	private transient ThinletColor c_hover;
+	private transient ThinletColor c_press;
+	private transient ThinletColor c_focus;
+	private transient ThinletColor c_select;
+	private transient ThinletColor c_ctrl = null;
 	private transient int block;
-	private transient Image hgradient, vgradient;
+	private transient ThinletImage hgradient, vgradient;
 
 	private transient Thread timer;
 	private transient long watchdelay;
@@ -97,12 +101,15 @@ public class Thinlet implements Runnable, Serializable {
 	private static final int DRAG_ENTERED = AWTEvent.RESERVED_ID_MAX + 1;
 	private static final int DRAG_EXITED = AWTEvent.RESERVED_ID_MAX + 2;
 	
+	private static ThinletColor BLACK = ThinletCore.createColor(0,0,0);
+	private static ThinletColor BLUE = ThinletCore.createColor(0,0,255);
+	
 	private static long WHEEL_MASK = 0;
 	private static int MOUSE_WHEEL = 0;
 	private static Method wheelrotation, renderinghint;
 	private static Object[] TXT_AA, G_AA;
 	private static int evm = 0;
-	
+		
 	static {
 		try { // for mousewheel events
 			WHEEL_MASK = AWTEvent.class.getField("MOUSE_WHEEL_EVENT_MASK").getLong(null);
@@ -125,8 +132,8 @@ public class Thinlet implements Runnable, Serializable {
 	private boolean dirty = true;
 	
 	public Thinlet() { // fixed by Mike Hartshorn (javac1.1 bug)
-		setFont(new TrueTypeFont(new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 12), false));
-		//setFont((Font) getToolkit().getDesktopProperty("win.messagebox.font"));
+		setFont(spiFactory.getDefaultFont());
+		//setFont((ThinletFont) getToolkit().getDesktopProperty("win.messagebox.font"));
 		setColors(0xe6e6e6, 0x000000, 0xffffff,
 			0x909090, 0xb0b0b0, 0xededed, 0xb9b9b9, 0x89899a, 0xc5c5dd);
 			
@@ -175,11 +182,15 @@ public class Thinlet implements Runnable, Serializable {
 	public void setColors(int background, int text, int textbackground,
 			int border, int disable, int hover, int press,
 			int focus, int select) {
-		c_bg = new Color(background); c_text = new Color(text);
-		c_textbg = new Color(textbackground); c_border = new Color(border);
-		c_disable = new Color(disable); c_hover = new Color(hover);
-		c_press = new Color(press); c_focus = new Color(focus);
-		c_select = new Color(select);
+		c_bg = spiFactory.createColor(background); 
+		c_text = spiFactory.createColor(text);
+		c_textbg = spiFactory.createColor(textbackground); 
+		c_border = spiFactory.createColor(border);
+		c_disable = spiFactory.createColor(disable); 
+		c_hover = spiFactory.createColor(hover);
+		c_press = spiFactory.createColor(press); 
+		c_focus = spiFactory.createColor(focus);
+		c_select = spiFactory.createColor(select);
 		hgradient = vgradient = null;
 		repaint();
 	}
@@ -200,7 +211,7 @@ public class Thinlet implements Runnable, Serializable {
 	 *
 	 * @param font the default font is <i>SansSerif</i>, <i>plain</i>, and <i>12pt</i>
 	 */
-	public void setFont(Font font) {
+	public void setFont(ThinletFont font) {
 		block = getFontMetrics(font).getHeight();
 		
 		this.font = font;
@@ -212,7 +223,7 @@ public class Thinlet implements Runnable, Serializable {
 		String classname = getClass(component);
 		if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true)) {
-				Image icon = getIcon(component, "icon", null);
+				ThinletImage icon = getIcon(component, "icon", null);
 				layoutField(component, block, false,
 					(icon != null) ? icon.getWidth() : 0);
 			} // set editable -> validate (overwrite textfield repaint)
@@ -248,7 +259,7 @@ public class Thinlet implements Runnable, Serializable {
 				chars = getChars(component, text, false, 0, 0);
 			}
 			
-			Font currentfont = (Font) get(component, "font");
+			ThinletFont currentfont = (ThinletFont) get(component, "font");
 			FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 			int width = 0, height = 0;
 			int caretx = 0; int carety = 0;
@@ -611,7 +622,7 @@ public class Thinlet implements Runnable, Serializable {
 		else text.getChars(0, chars.length, chars, 0);
 		
 		if (wrap) {
-			Font currentfont = (Font) get(component, "font");
+			ThinletFont currentfont = (ThinletFont) get(component, "font");
 			FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 			int lines = (height - 4 + fm.getLeading()) / fm.getHeight();
 			boolean prevletter = false; int n = chars.length; int linecount = 0;
@@ -946,7 +957,7 @@ public class Thinlet implements Runnable, Serializable {
 		if (end > text.length()) { setInteger(component, "end", end = text.length(), 0); }
 		int offset = getInteger(component, ":offset", 0);
 		int off = offset;
-		Font currentfont = (Font) get(component, "font");
+		ThinletFont currentfont = (ThinletFont) get(component, "font");
 		FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 		int textwidth = hidden ? (fm.charWidth('*') *
 			text.length()) : fm.stringWidth(text);
@@ -1070,7 +1081,7 @@ public class Thinlet implements Runnable, Serializable {
 		if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true)) {
 				Dimension size = getFieldSize(component);
-				Image icon = getIcon(component, "icon", null);
+				ThinletImage icon = getIcon(component, "icon", null);
 				if (icon != null) {
 					size.width += icon.getWidth();
 					size.height = Math.max(size.height, icon.getHeight() + 2);
@@ -1086,7 +1097,7 @@ public class Thinlet implements Runnable, Serializable {
 				}
 				size.width += block;
 				if (size.height == 4) { // no content nor items, set text height
-					Font customfont = (Font) get(component, "font");
+					ThinletFont customfont = (ThinletFont) get(component, "font");
 					FontMetrics fm = getFontMetrics((customfont != null) ? customfont : font);
 					size.height = fm.getAscent() + fm.getDescent() + 4;
 				}
@@ -1099,7 +1110,7 @@ public class Thinlet implements Runnable, Serializable {
 		if ("textarea" == classname) {
 			int columns = getInteger(component, "columns", 0);
 			int rows = getInteger(component, "rows", 0); // 'e' -> 'm' ?
-			Font currentfont = (Font) get(component, "font");
+			ThinletFont currentfont = (ThinletFont) get(component, "font");
 			FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 			return new Dimension(
 				((columns > 0) ? (columns * fm.charWidth('e') + 2) : 76) + 2 + block,
@@ -1371,7 +1382,7 @@ public class Thinlet implements Runnable, Serializable {
 
 	private Dimension getFieldSize(Object component) {
 		int columns = getInteger(component, "columns", 0);
-		Font currentfont = (Font) get(component, "font");
+		ThinletFont currentfont = (ThinletFont) get(component, "font");
 		FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 		return new Dimension(((columns > 0) ?
 			(columns * fm.charWidth('e')) : 76) + 4,
@@ -1388,12 +1399,12 @@ public class Thinlet implements Runnable, Serializable {
 		String text = getString(component, "text", null);
 		int tw = 0; int th = 0;
 		if (text != null) {
-			Font customfont = (Font) get(component, "font");
+			ThinletFont customfont = (ThinletFont) get(component, "font");
 			FontMetrics fm = getFontMetrics((customfont != null) ? customfont : font);
 			tw = fm.stringWidth(text);
 			th = fm.getAscent() + fm.getDescent();
 		}
-		Image icon = getIcon(component, "icon", null);
+		ThinletImage icon = getIcon(component, "icon", null);
 		int iw = 0; int ih = 0;
 		if (icon != null) {
 			iw = icon.getWidth();
@@ -1417,8 +1428,8 @@ public class Thinlet implements Runnable, Serializable {
 		g.setFont(font);
 		if (hgradient == null) {
 			int[][] pix = new int[2][block * block];
-			ImageBuffer hbuffer = new ImageBuffer(block,block);
-			ImageBuffer vbuffer = new ImageBuffer(block,block);
+			ThinletImageBuffer hbuffer = spiFactory.createImageBuffer(block,block);
+			ThinletImageBuffer vbuffer = spiFactory.createImageBuffer(block,block);
 			
 			int r1 = c_bg.getRed(); int r2 = c_press.getRed();
 			int g1 = c_bg.getGreen(); int g2 = c_press.getGreen();
@@ -1505,8 +1516,8 @@ public class Thinlet implements Runnable, Serializable {
 
 			boolean selected = getBoolean(component, "selected", false);
 			String group = getString(component, "group", null);
-			Color border = enabled ? c_border : c_disable;
-			Color foreground = enabled ? ((inside != pressed) ? c_hover :
+			ThinletColor border = enabled ? c_border : c_disable;
+			ThinletColor foreground = enabled ? ((inside != pressed) ? c_hover :
 				(pressed ? c_press : c_ctrl)) : c_bg;
 			int dy = (bounds.height - block + 2) / 2;
 			if (group == null) {
@@ -1536,7 +1547,7 @@ public class Thinlet implements Runnable, Serializable {
 		}
 		else if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true)) {
-				Image icon = getIcon(component, "icon", null);
+				ThinletImage icon = getIcon(component, "icon", null);
 				int left = (icon != null) ? icon.getWidth() : 0;
 				paintField(g, clipx, clipy, clipwidth, clipheight, component,
 					bounds.width - block, bounds.height, focus, enabled, false, left);
@@ -1679,7 +1690,7 @@ public class Thinlet implements Runnable, Serializable {
 			}
 			paintReverse(g, clipx, clipy, clipwidth, clipheight,
 				get(component, ":comp"), enabled);
-			//g.setColor(Color.red); if (clip != null) g.drawRect(clipx, clipy, clipwidth, clipheight);
+			//g.setColor(ThinletColor.red); if (clip != null) g.drawRect(clipx, clipy, clipwidth, clipheight);
 			if ((tooltipowner != null) && (component == content)) {
 				Rectangle r = getRectangle(tooltipowner, ":tooltipbounds");
 				paintRect(g, r.x, r.y, r.width, r.height,
@@ -1883,13 +1894,13 @@ public class Thinlet implements Runnable, Serializable {
 			boolean focus, boolean enabled, boolean hidden, int left) {
 		boolean editable = getBoolean(component, "editable", true);
 		paintRect(g, 0, 0, width, height, enabled ? c_border : c_disable,
-			editable ? getColor(component, "background", c_textbg) : c_bg,
+			editable ? getThinletColor(component, "background", c_textbg) : c_bg,
 			true, true, true, true, true);
 		clipRect(g, 1 + left, 1, width - left - 2, height - 2);
 
 		String text = getString(component, "text", "");
 		int offset = getInteger(component, ":offset", 0);
-		Font currentfont = (Font) get(component, "font");
+		ThinletFont currentfont = (ThinletFont) get(component, "font");
 		if (currentfont != null) { g.setFont(currentfont); }
 		FontMetrics fm = getFontMetrics(g.getFont());
 
@@ -1913,7 +1924,7 @@ public class Thinlet implements Runnable, Serializable {
 			g.fillRect(1 + left - offset + caret, 1, 1 + evm, height - 2 + evm);
 		}
 
-		g.setColor(enabled ? getColor(component, "foreground", c_text) : c_disable);
+		g.setColor(enabled ? getThinletColor(component, "foreground", c_text) : c_disable);
 		int fx = 2 + left - offset;
 		int fy = (height + fm.getAscent() - fm.getDescent()) / 2;
 		if (hidden) {
@@ -1933,9 +1944,9 @@ public class Thinlet implements Runnable, Serializable {
 		}
 	}
 	
-	private Color getColor(Object component, String key, Color defaultcolor) {
+	private ThinletColor getThinletColor(Object component, String key, ThinletColor defaultcolor) {
 		Object value = get(component, key);
-		return (value != null) ? (Color) value : defaultcolor;
+		return (value != null) ? (ThinletColor) value : defaultcolor;
 	}
 	
 	/**
@@ -2028,7 +2039,7 @@ public class Thinlet implements Runnable, Serializable {
 		if (("panel" != classname) && ("dialog" != classname) &&
 				(("textarea" != classname) || getBoolean(component, "border", true))) {
 			paintRect(g, port.x - 1, port.y - 1, port.width + (vneed ? 1 : 2), port.height + (hneed ? 1 : 2),
-				enabled ? c_border : c_disable, getColor(component, "background", c_textbg),
+				enabled ? c_border : c_disable, getThinletColor(component, "background", c_textbg),
 				true, true, !hneed, !vneed, true); // TODO not editable textarea background color
 			if ("table" == classname) {
 				Object header = get(component, "header");
@@ -2090,13 +2101,13 @@ public class Thinlet implements Runnable, Serializable {
 			int start = focus ? getInteger(component, "start", 0) : 0;
 			int end = focus ? getInteger(component, "end", 0) : 0;
 			int is = Math.min(start, end); int ie = Math.max(start, end);
-			Font customfont = (Font) get(component, "font");
+			ThinletFont customfont = (ThinletFont) get(component, "font");
 			if (customfont != null) { g.setFont(customfont); }
 			FontMetrics fm = getFontMetrics(g.getFont());
 			int fontascent = fm.getAscent(); int fontheight = fm.getHeight();
 			int ascent = 1;
 			
-			Color textcolor = enabled ? getColor(component, "foreground", c_text) : c_disable;
+			ThinletColor textcolor = enabled ? getThinletColor(component, "foreground", c_text) : c_disable;
 			for (int i = 0, j = 0; j <= chars.length; j++) {
 				if ((j == chars.length) || (chars[j] == '\n')) {
 					if (clipy + clipheight <= ascent) { break; } // the next lines are bellow paint rectangle
@@ -2240,7 +2251,7 @@ public class Thinlet implements Runnable, Serializable {
 	}
 
 	private void paintRect(ThinletGraphics g, int x, int y, int width, int height,
-			Color border, Color bg,
+			ThinletColor border, ThinletColor bg,
 			boolean top, boolean left, boolean bottom, boolean right, boolean horizontal) {
 		if ((width <= 0) || (height <= 0)) return;
 
@@ -2347,7 +2358,7 @@ public class Thinlet implements Runnable, Serializable {
 		if ((width <= 0) || (height <= 0)) { return; }
 
 		// TODO: remember you swapped the backgroudn painting order
-		Color background = (Color) get(component, "background");
+		ThinletColor background = (ThinletColor) get(component, "background");
 		switch (mode) {
 			case 'e': case 'l': case 'd': case 'g': case 'r': break;
 			case 'b': case 'i': case 'x': if (background == null) { background = c_bg; } break;
@@ -2389,7 +2400,7 @@ public class Thinlet implements Runnable, Serializable {
 	private void paint(Object component, ThinletGraphics g,
 			int x, int y, int width, int height, char type) {
 		paint(component, x, y, width, height, g, true, true, true, true, 'g');
-		g.setColor(Color.black);
+		g.setColor(BLACK);
 		switch (type) {
 			case 'c': // closable dialog button
 				g.drawLine(x + 3, y + 4, x + width - 5, y + height - 4);
@@ -2435,14 +2446,14 @@ public class Thinlet implements Runnable, Serializable {
 			}
 		}
 		
-		Image icon = getIcon(component, "icon", null);
+		ThinletImage icon = getIcon(component, "icon", null);
 		if ((text == null) && (icon == null)) { return; }
 	
 		x += leftpadding; y += toppadding;
 		width -= leftpadding + rightpadding; height -= toppadding + bottompadding;
 
 		alignment = getString(component, "alignment", alignment);
-		Font customfont = (text != null) ? (Font) get(component, "font") : null;
+		ThinletFont customfont = (text != null) ? (ThinletFont) get(component, "font") : null;
 		if (customfont != null) { g.setFont(customfont); }
 
 		FontMetrics fm = null;
@@ -2473,9 +2484,9 @@ public class Thinlet implements Runnable, Serializable {
 			cx += iw;
 		}
 		if (text != null) { 
-			Color foreground = (Color) get(component, "foreground");
+			ThinletColor foreground = (ThinletColor) get(component, "foreground");
 			if (foreground == null) {
-				foreground = (mode == 'l') ? Color.blue :
+				foreground = (mode == 'l') ? BLUE :
 					(((mode != 'd') && (mode != 'r')) ? c_text : c_disable);
 			}
 			g.setColor(foreground);
@@ -2858,7 +2869,7 @@ public class Thinlet implements Runnable, Serializable {
 			}
 			else if ((keycode == Input.KEY_UP) || (keycode == Input.KEY_PRIOR) ||
 					(keycode == Input.KEY_DOWN) || (keycode == Input.KEY_NEXT)) {
-				Font currentfont = (Font) get(component, "font");
+				ThinletFont currentfont = (ThinletFont) get(component, "font");
 				FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 				int fh = fm.getHeight();
 				int y = 0; int linestart = 0;
@@ -3222,7 +3233,7 @@ public class Thinlet implements Runnable, Serializable {
 		}
 		else if (editable && controldown && (keycode == Input.KEY_V)) {
 			try {
-				insert = (String) Sys.getClipboard(); 
+				insert = spiUtil.getClipboard(); 
 			} catch (Exception exc) {
 				insert = clipboard;
 			}
@@ -3562,7 +3573,7 @@ public class Thinlet implements Runnable, Serializable {
 		else if ("combobox" == classname) {
 			boolean editable = getBoolean(component, "editable", true);
 			if (editable && (part == null)) { // textfield area
-				Image icon = null;
+				ThinletImage icon = null;
 				int left = ((id == MouseEvent.MOUSE_PRESSED) &&
 					((icon = getIcon(component, "icon", null)) != null)) ?
 						icon.getWidth() : 0;
@@ -4065,7 +4076,7 @@ public class Thinlet implements Runnable, Serializable {
 
 	private int getCaretLocation(Object component,
 			int x, int y, boolean multiline, boolean hidden) {
-		Font currentfont = (Font) get(component, "font");
+		ThinletFont currentfont = (ThinletFont) get(component, "font");
 		FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 		char[] chars = multiline ? ((char[]) get(component, ":text")) :
 			getString(component, "text", "").toCharArray(); // update it
@@ -4287,7 +4298,7 @@ public class Thinlet implements Runnable, Serializable {
 		
 		if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true) && (x <= bounds.width - block)) {
-				Image icon = getIcon(component, "icon", null);
+				ThinletImage icon = getIcon(component, "icon", null);
 				insidepart = ((icon != null) && (x <= 2 + icon.getWidth())) ?
 					"icon" : null;
 			} else {
@@ -5283,12 +5294,12 @@ public class Thinlet implements Runnable, Serializable {
 	public Object parse(String path, Object handler) throws IOException {
 		InputStream inputstream = null;
 		try {
-			inputstream = ResourceLoader.getResourceAsStream(path);
+			inputstream = spiFactory.getResourceAsStream(path);
 			if (inputstream == null) {
-				Log.warn("Unable to open: "+path);
+				spiFactory.log("Unable to open: "+path);
 			} 
 		} catch (Throwable e) {
-			Log.error(e);
+			spiFactory.log(e);
 		}
 		return parse(inputstream, handler);
 	}
@@ -5799,7 +5810,7 @@ public class Thinlet implements Runnable, Serializable {
 					((Integer.parseInt(st.nextToken()) & 0xff) << 8) |
 					(Integer.parseInt(st.nextToken()) & 0xff);
 			}				
-			set(component, key, new Color(color));
+			set(component, key, spiFactory.createColor(color));
 		}
 		else if ("keystroke" == definition[0]) {
 			setKeystrokeImpl(component, key, value);
@@ -5918,7 +5929,7 @@ public class Thinlet implements Runnable, Serializable {
 	/**
 	 * Sets the given property pair (key and value) for the component
 	 */
-	public void setIcon(Object component, String key, Image icon) {
+	public void setIcon(Object component, String key, ThinletImage icon) {
 		Object[] definition = getDefinition(getClass(component), key, "icon");
 		if (set(component, definition[1], icon)) {
 			update(component, definition[2]);
@@ -5928,8 +5939,8 @@ public class Thinlet implements Runnable, Serializable {
 	/**
 	 * Gets the property value of the given component by the property key
 	 */
-	public Image getIcon(Object component, String key) {
-		return (Image) get(component, key, "icon");
+	public ThinletImage getIcon(Object component, String key) {
+		return (ThinletImage) get(component, key, "icon");
 	}
 	
 	public void setKeystroke(Object component, String key, String value) {
@@ -5943,7 +5954,7 @@ public class Thinlet implements Runnable, Serializable {
 	 * Set custom font on a component, 
 	 * use the other <code>setFont</code> method instead
 	 */
-	public void setFont(Object component, Font font) { // deprecated
+	public void setFont(Object component, ThinletFont font) { // deprecated
 		setFont(component, "font", font);
 	}
 	
@@ -5953,7 +5964,7 @@ public class Thinlet implements Runnable, Serializable {
 	 * @param component component to use the custom font
 	 * @param font custom font to use, or null to reset component to use default font
 	 */
-	public void setFont(Object component, String key, Font font) {
+	public void setFont(Object component, String key, ThinletFont font) {
 		Object[] definition = getDefinition(getClass(component), key, "font");
 		if (set(component, definition[1], font)) {
 			update(component, definition[2]);
@@ -5966,8 +5977,8 @@ public class Thinlet implements Runnable, Serializable {
 	 * @param key the identifier of the parameter, e.g. "font"
 	 * @return may return null if the default font is used
 	 */
-	public Font getFont(Object component, String key) { // written by abial
-		return (Font) get(component, key, "font");
+	public ThinletFont getFont(Object component, String key) { // written by abial
+		return (ThinletFont) get(component, key, "font");
 	}
 
 	/**
@@ -5976,14 +5987,14 @@ public class Thinlet implements Runnable, Serializable {
 	 * For "background" key, on gradient-filled
 	 * components (such as tabs, buttons etc) this will result in a 
 	 * component filled with solid background color, and not a new gradient.
-	 * Also, Color.brighter() will be used for highlight, and Color.darker()
+	 * Also, ThinletColor.brighter() will be used for highlight, and ThinletColor.darker()
 	 * will be used for pressed or not selected.
 	 *
 	 * @param component component to use for custom color
 	 * @param key currently "background" and "foreground" are supported
 	 * @param color custom color to use, or null to reset component to use default color
 	 */
-	public void setColor(Object component, String key, Color color) {
+	public void setColor(Object component, String key, ThinletColor color) {
 		Object[] definition = getDefinition(getClass(component), key, "color");
 		if (set(component, definition[1], color)) {
 			update(component, definition[2]);
@@ -5996,8 +6007,8 @@ public class Thinlet implements Runnable, Serializable {
 	 * @param key the identifier of the parameter, e.g. "foreground"
 	 * @return value of the custom color, or null if default color is used
 	 */
-	public Color getColor(Object component, String key) { // written by abial
-		return (Color) get(component, key, "color");
+	public ThinletColor getThinletColor(Object component, String key) { // written by abial
+		return (ThinletColor) get(component, key, "color");
 	}
 	
 	private void setKeystrokeImpl(Object component, String key, String value) {
@@ -6145,7 +6156,7 @@ public class Thinlet implements Runnable, Serializable {
 						parametertypes[i] = Integer.TYPE;
 					}
 					else if (fieldclass == "icon") {
-						parametertypes[i] = Image.class;
+						parametertypes[i] = ThinletImage.class;
 					}
 					else throw new IllegalArgumentException((String) fieldclass);
 				}
@@ -6236,9 +6247,9 @@ public class Thinlet implements Runnable, Serializable {
 		throw new IllegalArgumentException("unknown " + value + " for " + key);
 	}
 
-	private Image getIcon(Object component, String key, Image defaultvalue) {
+	private ThinletImage getIcon(Object component, String key, ThinletImage defaultvalue) {
 		Object value = get(component, key);
-		return (value == null) ? defaultvalue : (Image) value;
+		return (value == null) ? defaultvalue : (ThinletImage) value;
 	}
 
 	private boolean setBoolean(Object component,
@@ -6293,7 +6304,7 @@ public class Thinlet implements Runnable, Serializable {
 	public void transferFocus() {
 	}
 	
-	public FontMetrics getFontMetrics(Font font) {
+	public FontMetrics getFontMetrics(ThinletFont font) {
 		return new FontMetrics(font);
 	}
 	
@@ -6335,7 +6346,7 @@ public class Thinlet implements Runnable, Serializable {
 	 * (if the path starts with <i>'/'</i> character), or a full URL
 	 * @return the loaded image or null
 	 */
-	public Image getIcon(String path) {
+	public ThinletImage getIcon(String path) {
 		return getIcon(path, true);
 	}
 
@@ -6349,31 +6360,31 @@ public class Thinlet implements Runnable, Serializable {
 	 * (and repaints, and updates the layout) only when required (painted, or size requested) if false
 	 * @return the loaded image or null
 	 */
-	public Image getIcon(String path, boolean preload) {
+	public ThinletImage getIcon(String path, boolean preload) {
 		if ((path == null) || (path.length() == 0)) {
 			return null;
 		}
-		Image image = null; //(Image) imagepool.get(path);
+		ThinletImage image = null; //(Image) imagepool.get(path);
 		try {
-			URL url = ResourceLoader.getResource(path); //ClassLoader.getSystemResource(path)
+			URL url = spiFactory.getResource(path); //ClassLoader.getSystemResource(path)
 			if (url != null) { // contributed by Stefan Matthias Aust
-				image = new Image(url.openStream(), url.toString(), false);
+				image = spiFactory.createImage(url.openStream(), url.toString(), false);
 			} 
 		} catch (Throwable e) {
-			Log.error(e);
+			spiFactory.log(e);
 		}
 		if (image == null) {
 			try {
-				InputStream is = ResourceLoader.getResourceAsStream(path);
+				InputStream is = spiFactory.getResourceAsStream(path);
 				//InputStream is = ClassLoader.getSystemResourceAsStream(path);
 				if (is != null) {
-					image = new Image(is, path, false);
+					image = spiFactory.createImage(is, path, false);
 					is.close();
 				}  else {
-					Log.warn("Could not locate: "+path);
+					spiFactory.log("Could not locate: "+path);
 				}
 			} catch (Throwable e) {
-				Log.error(e);
+				spiFactory.log(e);
 			}
 		}
 		return image;

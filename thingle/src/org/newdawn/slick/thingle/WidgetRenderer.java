@@ -1,4 +1,8 @@
-package org.newdawn.slick.thingle.internal;
+package org.newdawn.slick.thingle;
+
+import org.newdawn.slick.thingle.internal.Rectangle;
+import org.newdawn.slick.thingle.internal.Thinlet;
+import org.newdawn.slick.thingle.spi.ThinletGraphics;
 
 /**
  * A plugin to allow custom rendering to components, currently only panels

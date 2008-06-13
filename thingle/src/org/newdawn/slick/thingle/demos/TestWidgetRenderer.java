@@ -2,11 +2,11 @@ package org.newdawn.slick.thingle.demos;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.thingle.WidgetRenderer;
 import org.newdawn.slick.thingle.internal.Rectangle;
 import org.newdawn.slick.thingle.internal.Thinlet;
-import org.newdawn.slick.thingle.internal.ThinletGraphics;
-import org.newdawn.slick.thingle.internal.WidgetRenderer;
-import org.newdawn.slick.thingle.internal.slick.SlickBinding;
+import org.newdawn.slick.thingle.internal.slick.SlickGraphics;
+import org.newdawn.slick.thingle.spi.ThinletGraphics;
 
 /**
  * A widget renderer to test custom panel rendering
@@ -16,13 +16,13 @@ import org.newdawn.slick.thingle.internal.slick.SlickBinding;
 public class TestWidgetRenderer implements WidgetRenderer {
 	
 	/**
-	 * @see org.newdawn.slick.thingle.internal.WidgetRenderer#paint(org.newdawn.slick.thingle.internal.Thinlet, org.newdawn.slick.thingle.internal.ThinletGraphics, java.lang.Object, org.newdawn.slick.thingle.internal.Rectangle)
+	 * @see org.newdawn.slick.thingle.WidgetRenderer#paint(org.newdawn.slick.thingle.internal.Thinlet, org.newdawn.slick.thingle.spi.ThinletGraphics, java.lang.Object, org.newdawn.slick.thingle.internal.Rectangle)
 	 */
 	public void paint(Thinlet thinlet, ThinletGraphics tg,
 			Object componentHandle, Rectangle bounds) {
 		float ang = (System.currentTimeMillis() / 10) % 360;
 		
-		Graphics g = ((SlickBinding) tg).getGraphics();
+		Graphics g = ((SlickGraphics) tg).getGraphics();
 		g.setColor(Color.black);
 		g.fillRect(0, 0, bounds.width, bounds.height);
 		
