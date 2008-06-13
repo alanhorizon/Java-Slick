@@ -3,11 +3,8 @@ package org.newdawn.slick.thingle;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.thingle.spi.ThinletException;
-import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.ResourceLoader;
 
 /**
  * A single UI page. This page provides a Slick oriented wrapper around the 
@@ -27,7 +24,7 @@ public class Page {
 	/**
 	 * Create new a new UI page
 	 * 
-	 * @throws SlickException Indicates a failure to create thinlet
+	 * @throws ThinletException Indicates a failure to create thinlet
 	 */
 	public Page() throws ThinletException {
 		thinlet = new Thinlet();
@@ -40,7 +37,7 @@ public class Page {
 	 * Create a new UI page
 	 * 
 	 * @param ref A reference to a thinlet xml file to describe the UI
-	 * @throws SlickException Indicates a failure to create thinlet
+	 * @throws ThinletException Indicates a failure to create thinlet
 	 */
 	public Page(String ref) throws ThinletException {
 		this();
@@ -53,7 +50,7 @@ public class Page {
 	 * 
 	 * @param ref A reference to a thinlet xml file to describe the UI
 	 * @param handler The object to respond to events from the GUI specified in the ref XML
-	 * @throws SlickException Indicates a failure to create thinlet
+	 * @throws ThinletException Indicates a failure to create thinlet
 	 */
 	public Page(String ref, Object handler) throws ThinletException {
 		this();
@@ -100,7 +97,7 @@ public class Page {
 	 * events are sent to this page.
 	 * 
 	 * @param ref The reference to the XML file
-  	 * @throws SlickException Indicates a failure to load the XML
+  	 * @throws ThinletException Indicates a failure to load the XML
 	 */
 	public void addComponents(String ref) throws ThinletException {
 		addComponents(ref, this);
@@ -112,13 +109,13 @@ public class Page {
 	 * 
 	 * @param actionHandler The handler to send events to
 	 * @param ref The reference to the XML file
-  	 * @throws SlickException Indicates a failure to load the XML
+  	 * @throws ThinletException Indicates a failure to load the XML
 	 */
 	public void addComponents(String ref, Object actionHandler) throws ThinletException {
 		try {
-			thinlet.add(thinlet.parse(ResourceLoader.getResourceAsStream(ref), actionHandler));
+			thinlet.add(thinlet.parse(ThinletCore.getFactory().getResourceAsStream(ref), actionHandler));
 		} catch (IOException e) {
-			Log.error(e);
+			ThinletCore.getFactory().log(e);
 			throw new ThinletException("Failed to load: "+ref, e);
 		}
 		
