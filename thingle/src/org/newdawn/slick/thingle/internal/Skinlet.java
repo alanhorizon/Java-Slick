@@ -2348,8 +2348,8 @@ public class Skinlet extends Thinlet {
 				int mnemonic = getInteger(component, "mnemonic", -1);
 				if ((mnemonic != -1) && (mnemonic < text.length())) {
 					int mx = cx + fm.stringWidth(text.substring(0, mnemonic));
-					g.drawLine(mx, ty + 1, mx
-							+ fm.charWidth(text.charAt(mnemonic)), ty + 1);
+					g.drawLine(mx, ty - 1, mx
+							+ fm.charWidth(text.charAt(mnemonic)), ty - 1);
 				}
 			}
 		}
