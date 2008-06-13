@@ -16,6 +16,12 @@ public class Rectangle {
 	public int height;
 	
 	/**
+	 * Create an empty rectangle
+	 */
+	public Rectangle() { 
+	}
+	
+	/**
 	 * Create a new rectangle
 	 * 
 	 * @param x The x coordinate of the top left hand corner

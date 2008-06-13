@@ -5,7 +5,7 @@ package org.newdawn.slick.thingle.spi;
  * 
  * @author kevin
  */
-public interface ThinletColor {
+public interface ThingleColor {
 	/** 
 	 * Get the red component of the colour (0-255)
 	 * 
@@ -39,12 +39,12 @@ public interface ThinletColor {
 	 * 
 	 * @return The darker copy of the colour
 	 */
-	public ThinletColor darker();
+	public ThingleColor darker();
 
 	/**
 	 * Get a brighter version of the colour
 	 * 
 	 * @return The brighter copy of the colour
 	 */
-	public ThinletColor brighter();
+	public ThingleColor brighter();
 }

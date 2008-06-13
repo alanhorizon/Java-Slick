@@ -2,7 +2,7 @@ package org.newdawn.slick.thingle.internal.slick;
 
 import org.newdawn.slick.Input;
 import org.newdawn.slick.thingle.internal.ThinletInputListener;
-import org.newdawn.slick.thingle.spi.ThinletInput;
+import org.newdawn.slick.thingle.spi.ThingleInput;
 import org.newdawn.slick.util.InputAdapter;
 import org.newdawn.slick.util.Log;
 
@@ -12,7 +12,7 @@ import org.newdawn.slick.util.Log;
  * 
  * @author kevin
  */
-public class InputHandler extends InputAdapter implements ThinletInput {
+public class InputHandler extends InputAdapter implements ThingleInput {
 	/** The thinlet instance events should be sent to */
 	private ThinletInputListener thinlet;
 	/** The current modifiers state (alt, shift etc) */
@@ -103,35 +103,35 @@ public class InputHandler extends InputAdapter implements ThinletInput {
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletInput#isAltDown()
+	 * @see org.newdawn.slick.thingle.spi.ThingleInput#isAltDown()
 	 */
 	public boolean isAltDown() {
 		return mods.isAltDown;
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletInput#isControlDown()
+	 * @see org.newdawn.slick.thingle.spi.ThingleInput#isControlDown()
 	 */
 	public boolean isControlDown() {
 		return mods.isControlDown;
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletInput#isPopupTrigger()
+	 * @see org.newdawn.slick.thingle.spi.ThingleInput#isPopupTrigger()
 	 */
 	public boolean isPopupTrigger() {
 		return mods.isPopupTrigger;
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletInput#isShiftDown()
+	 * @see org.newdawn.slick.thingle.spi.ThingleInput#isShiftDown()
 	 */
 	public boolean isShiftDown() {
 		return mods.isShiftDown;
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletInput#update(int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleInput#update(int)
 	 */
 	public void update(int delta) {
 	}

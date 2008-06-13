@@ -8,20 +8,20 @@ import org.newdawn.slick.thingle.internal.Rectangle;
  * 
  * @author kevin
  */
-public interface ThinletGraphics {
+public interface ThingleGraphics {
 	/**
 	 * Get the font currently configured 
 	 * 
 	 * @return The font currently configured
 	 */
-	public ThinletFont getFont();
+	public ThingleFont getFont();
 	
 	/**
 	 * Set the font to make use of when rendering text
 	 * 
 	 * @param font The font to use
 	 */
-	public void setFont(ThinletFont font);
+	public void setFont(ThingleFont font);
 	
 	/**
 	 * Draw an image to the graphics context
@@ -36,7 +36,7 @@ public interface ThinletGraphics {
 	 * @param sx2 The x coordinate of the source bottom right corner
 	 * @param sy2 The y coordinate of the source bottom right corner
 	 */
-	public void drawImage(ThinletImage image, int x, int y, int x2, int y2, int sx1, int sy1, int sx2, int sy2);
+	public void drawImage(ThingleImage image, int x, int y, int x2, int y2, int sx1, int sy1, int sx2, int sy2);
 		
 	/**
 	 * Draw an image to the context
@@ -45,7 +45,7 @@ public interface ThinletGraphics {
 	 * @param x The x coordinate to draw at
 	 * @param y The y coordiante to draw at
 	 */
-	public void drawImage(ThinletImage image, int x, int y);
+	public void drawImage(ThingleImage image, int x, int y);
 	
 	/**
 	 * Draw a line to the context
@@ -119,7 +119,7 @@ public interface ThinletGraphics {
 	 * 
 	 * @param color The colour to use when drawing
 	 */
-	public void setColor(ThinletColor color);
+	public void setColor(ThingleColor color);
 	
 	/**
 	 * Draw a string to the screen

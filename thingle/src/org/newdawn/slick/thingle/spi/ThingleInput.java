@@ -6,7 +6,7 @@ package org.newdawn.slick.thingle.spi;
  * 
  * @author kevin
  */
-public interface ThinletInput {
+public interface ThingleInput {
 	/** The mapping value to get the ENTER key code in the SPI's implementation */
 	public static final int ENTER_KEY = 1;
 	/** The mapping value to get the ESCAPE key code in the SPI's implementation */

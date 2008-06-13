@@ -5,7 +5,7 @@ package org.newdawn.slick.thingle.spi;
  * 
  * @author kevin
  */
-public interface ThinletImage {
+public interface ThingleImage {
 	/**
 	 * Get the width of the image
 	 * 

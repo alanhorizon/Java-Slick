@@ -6,7 +6,7 @@ import org.newdawn.slick.thingle.WidgetRenderer;
 import org.newdawn.slick.thingle.internal.Rectangle;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.thingle.internal.slick.SlickGraphics;
-import org.newdawn.slick.thingle.spi.ThinletGraphics;
+import org.newdawn.slick.thingle.spi.ThingleGraphics;
 
 /**
  * A widget renderer to test custom panel rendering
@@ -16,9 +16,9 @@ import org.newdawn.slick.thingle.spi.ThinletGraphics;
 public class TestWidgetRenderer implements WidgetRenderer {
 	
 	/**
-	 * @see org.newdawn.slick.thingle.WidgetRenderer#paint(org.newdawn.slick.thingle.internal.Thinlet, org.newdawn.slick.thingle.spi.ThinletGraphics, java.lang.Object, org.newdawn.slick.thingle.internal.Rectangle)
+	 * @see org.newdawn.slick.thingle.WidgetRenderer#paint(org.newdawn.slick.thingle.internal.Thinlet, org.newdawn.slick.thingle.spi.ThingleGraphics, java.lang.Object, org.newdawn.slick.thingle.internal.Rectangle)
 	 */
-	public void paint(Thinlet thinlet, ThinletGraphics tg,
+	public void paint(Thinlet thinlet, ThingleGraphics tg,
 			Object componentHandle, Rectangle bounds) {
 		float ang = (System.currentTimeMillis() / 10) % 360;
 		

@@ -5,7 +5,21 @@ package org.newdawn.slick.thingle.spi;
  * 
  * @author kevin
  */
-public interface ThinletFont {
+public interface ThingleFont {
+	/**
+	 * Get the original family of the font 
+	 * 
+	 * @return The original family
+	 */
+	public String getFamily();
+	
+	/**
+	 * Get the original point size of the font 
+	 * 
+	 * @return The original point size
+	 */
+	public int getSize();
+	
 	/**
 	 * Get the width of the given string in pixels if it was drawn
 	 * with this font

@@ -2,21 +2,21 @@ package org.newdawn.slick.thingle.internal.slick;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.thingle.internal.Rectangle;
-import org.newdawn.slick.thingle.spi.ThinletColor;
-import org.newdawn.slick.thingle.spi.ThinletFont;
-import org.newdawn.slick.thingle.spi.ThinletGraphics;
-import org.newdawn.slick.thingle.spi.ThinletImage;
+import org.newdawn.slick.thingle.spi.ThingleColor;
+import org.newdawn.slick.thingle.spi.ThingleFont;
+import org.newdawn.slick.thingle.spi.ThingleGraphics;
+import org.newdawn.slick.thingle.spi.ThingleImage;
 
 /**
  * A binding that uses slick to render what thinlet requires
  * 
  * @author kevin
  */
-public class SlickGraphics implements ThinletGraphics {
+public class SlickGraphics implements ThingleGraphics {
 	/** The graphics context to render to */
 	private Graphics g;
 	/** The font currently set */
-	private ThinletFont currentFont;
+	private ThingleFont currentFont;
 	
 	/**
 	 * Create a new slick binding
@@ -37,21 +37,21 @@ public class SlickGraphics implements ThinletGraphics {
 	}
 	
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#getFont()
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#getFont()
 	 */
-	public ThinletFont getFont() {
+	public ThingleFont getFont() {
 		return currentFont;
 	}
 	
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#drawImage(org.newdawn.slick.Image, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#drawImage(org.newdawn.slick.Image, int, int)
 	 */
-	public void drawImage(ThinletImage image, int x, int y) {
+	public void drawImage(ThingleImage image, int x, int y) {
 		g.drawImage(((ImageWrapper) image).getSlickImage(), x, y);
 	}
 	
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#drawLine(int, int, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#drawLine(int, int, int, int)
 	 */
 	public void drawLine(int x, int y, int ax, int ay) {
 		if ((x == ax) || (y == ay)) {
@@ -68,79 +68,82 @@ public class SlickGraphics implements ThinletGraphics {
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#drawImage(org.newdawn.slick.Image, int, int, int, int, int, int, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#drawImage(org.newdawn.slick.Image, int, int, int, int, int, int, int, int)
 	 */
-	public void drawImage(ThinletImage image, int x, int y, int x2, int y2, int sx1, int sy1, int sx2, int sy2){
+	public void drawImage(ThingleImage image, int x, int y, int x2, int y2, int sx1, int sy1, int sx2, int sy2){
 		g.drawImage(((ImageWrapper) image).getSlickImage(), x, y, x2, y2, sx1, sy1, sx2, sy2);
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#drawOval(int, int, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#drawOval(int, int, int, int)
 	 */
 	public void drawOval(int x, int y, int width, int height) {
 		g.drawOval(x, y, width, height);
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#drawRect(int, int, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#drawRect(int, int, int, int)
 	 */
 	public void drawRect(int x, int y, int width, int height) {
 		g.drawRect(x,y,width,height);
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#drawString(java.lang.String, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#drawString(java.lang.String, int, int)
 	 */
 	public void drawString(String str, int x, int y) {
 		g.drawString(str, x, y);
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#fillOval(int, int, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#fillOval(int, int, int, int)
 	 */
 	public void fillOval(int x, int y, int width, int height) {
 		g.fillOval(x, y, width, height);
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#fillRect(int, int, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#fillRect(int, int, int, int)
 	 */
 	public void fillRect(int x, int y, int width, int height) {
 		g.fillRect(x,y,width,height);
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#getClip()
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#getClip()
 	 */
 	public Rectangle getClip() {
 		org.newdawn.slick.geom.Rectangle rect = g.getWorldClip();
+		if (rect == null) {
+			return new Rectangle(0,0,2000,2000);
+		}
 		return new Rectangle((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#setClip(int, int, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#setClip(int, int, int, int)
 	 */
 	public void setClip(int x, int y, int width, int height) {
 		g.setWorldClip(x, y, width, height);
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#setColor(org.newdawn.slick.thingle.spi.ThinletColor)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#setColor(org.newdawn.slick.thingle.spi.ThingleColor)
 	 */
-	public void setColor(ThinletColor color) {
+	public void setColor(ThingleColor color) {
 		g.setColor(((ColorWrapper) color).getSlickColor());
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#setFont(org.newdawn.slick.Font)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#setFont(org.newdawn.slick.Font)
 	 */
-	public void setFont(ThinletFont font) {
+	public void setFont(ThingleFont font) {
 		currentFont = font;
 		g.setFont(((FontWrapper) font).getSlickFont());
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletGraphics#translate(int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#translate(int, int)
 	 */
 	public void translate(int x, int y) {
 		g.translate(x, y);

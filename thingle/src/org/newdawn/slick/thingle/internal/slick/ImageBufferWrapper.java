@@ -1,8 +1,8 @@
 package org.newdawn.slick.thingle.internal.slick;
 
 import org.newdawn.slick.ImageBuffer;
-import org.newdawn.slick.thingle.spi.ThinletImage;
-import org.newdawn.slick.thingle.spi.ThinletImageBuffer;
+import org.newdawn.slick.thingle.spi.ThingleImage;
+import org.newdawn.slick.thingle.spi.ThingleImageBuffer;
 
 /**
  * A wrapped round Slick image buffers to support the graident creation
@@ -10,7 +10,7 @@ import org.newdawn.slick.thingle.spi.ThinletImageBuffer;
  * 
  * @author kevin
  */
-public class ImageBufferWrapper implements ThinletImageBuffer {
+public class ImageBufferWrapper implements ThingleImageBuffer {
 	/** The buffer wrapped */
 	private ImageBuffer buffer;
 	
@@ -24,14 +24,14 @@ public class ImageBufferWrapper implements ThinletImageBuffer {
 	}
 	
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletImageBuffer#getImage()
+	 * @see org.newdawn.slick.thingle.spi.ThingleImageBuffer#getImage()
 	 */
-	public ThinletImage getImage() {
+	public ThingleImage getImage() {
 		return new ImageWrapper(buffer.getImage());
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletImageBuffer#setRGBA(int, int, int, int, int, int)
+	 * @see org.newdawn.slick.thingle.spi.ThingleImageBuffer#setRGBA(int, int, int, int, int, int)
 	 */
 	public void setRGBA(int x, int y, int r, int g, int b, int a) {
 		buffer.setRGBA(x, y, r, g, b, a);

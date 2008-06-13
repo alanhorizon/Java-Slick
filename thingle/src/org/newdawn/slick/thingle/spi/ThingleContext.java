@@ -10,14 +10,14 @@ import org.newdawn.slick.thingle.internal.ThinletInputListener;
  * 
  * @author kevin
  */
-public interface ThinletContext {
+public interface ThingleContext {
 	/**
 	 * Create a the utility implementation. A new instance should
 	 * be created.
 	 * 
 	 * @return The utility implementation
 	 */
-	public ThinletUtil createUtil();
+	public ThingleUtil createUtil();
 	
 	/**
 	 * Create the input implementation for this SP. A new instance should
@@ -26,7 +26,7 @@ public interface ThinletContext {
 	 * @param listener The listener to notify of input events
 	 * @return The input implemetation instance
 	 */
-	public ThinletInput createInput(ThinletInputListener listener);
+	public ThingleInput createInput(ThinletInputListener listener);
 
 	/**
 	 * Create a color
@@ -34,7 +34,7 @@ public interface ThinletContext {
 	 * @param col The 0xAARRGGBB encoding of the color
 	 * @return A colour object representing the value given
 	 */
-	public ThinletColor createColor(int col);
+	public ThingleColor createColor(int col);
 
 	/**
 	 * Create a colour
@@ -44,7 +44,7 @@ public interface ThinletContext {
 	 * @param blue The blue component of the colour
 	 * @return The newly created colour
 	 */
-	public ThinletColor createColor(int red, int green, int blue);
+	public ThingleColor createColor(int red, int green, int blue);
 
 	/**
 	 * Create a colour
@@ -55,14 +55,14 @@ public interface ThinletContext {
 	 * @param alpha The alpha component of the colour
 	 * @return The newly created colour
 	 */
-	public ThinletColor createColor(int red, int green, int blue, int alpha);
+	public ThingleColor createColor(int red, int green, int blue, int alpha);
 	
 	/**
 	 * Get the default font to use for the GUI
 	 * 
 	 * @return Default to use for thinlet GUIs
 	 */
-	public ThinletFont getDefaultFont();
+	public ThingleFont getDefaultFont();
 	
 	/**
 	 * Log a warning message
@@ -109,9 +109,9 @@ public interface ThinletContext {
 	 * @param name The name of the image resource
 	 * @param flipped True if the image should be flipped vertically
 	 * @return The image that's been loaded
-	 * @throws ThinletException
+	 * @throws ThingleException
 	 */
-	public ThinletImage createImage(InputStream in, String name, boolean flipped) throws ThinletException;
+	public ThingleImage createImage(InputStream in, String name, boolean flipped) throws ThingleException;
 	
 	/**
 	 * Create an image buffer in this SPI
@@ -120,14 +120,14 @@ public interface ThinletContext {
 	 * @param height The height of the buffer
 	 * @return The image buffer implementation instance
 	 */
-	public ThinletImageBuffer createImageBuffer(int width, int height);
+	public ThingleImageBuffer createImageBuffer(int width, int height);
 	
 	/**
 	 * Get a graphics context specific to this SPI
 	 * 
 	 * @return The graphics context for this SPI
 	 */
-	public ThinletGraphics getGraphics();
+	public ThingleGraphics getGraphics();
 	
 	/**
 	 * Get the width of the graphics context for this SPI (in pixels)
@@ -142,4 +142,14 @@ public interface ThinletContext {
 	 * @return The height of the graphcis context for this SPI
 	 */
 	public int getHeight();
+	
+	/**
+	 * Create a font with the given specifications
+	 * 
+	 * @param face The name of the type face of the font
+	 * @param style The style of font as defined by java.awt.Font
+	 * @param size The size of the font
+	 * @return A thinlet font created from the given information
+	 */
+	public ThingleFont createFont(String face, int style, int size);
 }

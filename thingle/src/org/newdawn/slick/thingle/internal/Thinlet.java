@@ -35,16 +35,16 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.newdawn.slick.thingle.ThinletCore;
+import org.newdawn.slick.thingle.Thingle;
 import org.newdawn.slick.thingle.WidgetRenderer;
-import org.newdawn.slick.thingle.spi.ThinletColor;
-import org.newdawn.slick.thingle.spi.ThinletContext;
-import org.newdawn.slick.thingle.spi.ThinletFont;
-import org.newdawn.slick.thingle.spi.ThinletGraphics;
-import org.newdawn.slick.thingle.spi.ThinletInput;
-import org.newdawn.slick.thingle.spi.ThinletImage;
-import org.newdawn.slick.thingle.spi.ThinletImageBuffer;
-import org.newdawn.slick.thingle.spi.ThinletUtil;
+import org.newdawn.slick.thingle.spi.ThingleColor;
+import org.newdawn.slick.thingle.spi.ThingleContext;
+import org.newdawn.slick.thingle.spi.ThingleFont;
+import org.newdawn.slick.thingle.spi.ThingleGraphics;
+import org.newdawn.slick.thingle.spi.ThingleInput;
+import org.newdawn.slick.thingle.spi.ThingleImage;
+import org.newdawn.slick.thingle.spi.ThingleImageBuffer;
+import org.newdawn.slick.thingle.spi.ThingleUtil;
 
 /**
  * This version has been ported to use Slick for rendering and input.Note that this class
@@ -55,56 +55,56 @@ import org.newdawn.slick.thingle.spi.ThinletUtil;
  * @author Kevin Glass (slick ports)
  */
 public class Thinlet implements Runnable, Serializable, ThinletInputListener {
-	private transient ThinletFont font;
-	private transient ThinletColor c_bg;
-	private transient ThinletColor c_text;
-	private transient ThinletColor c_textbg;
-	private transient ThinletColor c_border;
-	private transient ThinletColor c_disable;
-	private transient ThinletColor c_hover;
-	private transient ThinletColor c_press;
-	private transient ThinletColor c_focus;
-	private transient ThinletColor c_select;
-	private transient ThinletColor c_ctrl = null;
-	private transient int block;
-	private transient ThinletImage hgradient, vgradient;
+	protected transient ThingleFont font;
+	protected transient ThingleColor c_bg;
+	protected transient ThingleColor c_text;
+	protected transient ThingleColor c_textbg;
+	protected transient ThingleColor c_border;
+	protected transient ThingleColor c_disable;
+	protected transient ThingleColor c_hover;
+	protected transient ThingleColor c_press;
+	protected transient ThingleColor c_focus;
+	protected transient ThingleColor c_select;
+	protected transient ThingleColor c_ctrl = null;
+	protected transient int block;
+	protected transient ThingleImage hgradient, vgradient;
 
-	private transient Thread timer;
-	private transient long watchdelay;
-	private transient long watch;
-	private transient String clipboard;
-	private transient ResourceBundle resourcebundle; // for internationalization
+	protected transient Thread timer;
+	protected transient long watchdelay;
+	protected transient long watch;
+	protected transient String clipboard;
+	protected transient ResourceBundle resourcebundle; // for internationalization
 	
 	// enter the starting characters of a list item text within a short time to select
-	private transient String findprefix = "";
-	private transient long findtime;
+	protected transient String findprefix = "";
+	protected transient long findtime;
 
-	private Object content = createImpl("desktop");
-	private transient Object mouseinside;
-	private transient Object insidepart;
-	private transient Object mousepressed;
-	private transient Object pressedpart;
-	private transient int referencex, referencey;
-	private transient int mousex, mousey;
-	private transient Object focusowner;
-	private transient boolean focusinside;
-	private transient Object popupowner;
-	private transient Object tooltipowner;
-	//private transient int pressedkey;
+	protected Object content = createImpl("desktop");
+	protected transient Object mouseinside;
+	protected transient Object insidepart;
+	protected transient Object mousepressed;
+	protected transient Object pressedpart;
+	protected transient int referencex, referencey;
+	protected transient int mousex, mousey;
+	protected transient Object focusowner;
+	protected transient boolean focusinside;
+	protected transient Object popupowner;
+	protected transient Object tooltipowner;
+	//protected transient int pressedkey;
 	
-	private boolean drawDesktop = true;
+	protected boolean drawDesktop = true;
 	
-	private static final int DRAG_ENTERED = AWTEvent.RESERVED_ID_MAX + 1;
-	private static final int DRAG_EXITED = AWTEvent.RESERVED_ID_MAX + 2;
+	protected static final int DRAG_ENTERED = AWTEvent.RESERVED_ID_MAX + 1;
+	protected static final int DRAG_EXITED = AWTEvent.RESERVED_ID_MAX + 2;
 	
-	private static ThinletColor BLACK = ThinletCore.createColor(0,0,0);
-	private static ThinletColor BLUE = ThinletCore.createColor(0,0,255);
+	protected static ThingleColor BLACK = Thingle.createColor(0,0,0);
+	protected static ThingleColor BLUE = Thingle.createColor(0,0,255);
 	
-	private static long WHEEL_MASK = 0;
-	private static int MOUSE_WHEEL = 0;
-	private static Method wheelrotation, renderinghint;
-	private static Object[] TXT_AA, G_AA;
-	private static int evm = 0;
+	protected static long WHEEL_MASK = 0;
+	protected static int MOUSE_WHEEL = 0;
+	protected static Method wheelrotation, renderinghint;
+	protected static Object[] TXT_AA, G_AA;
+	protected static int evm = 0;
 		
 	static {
 		try { // for mousewheel events
@@ -125,32 +125,32 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		} catch (Exception exc) { /* never */ }
 	}
 	
-	private boolean dirty = true;
+	protected boolean dirty = true;
 
-	private ThinletUtil spiUtil = ThinletCore.getUtil();
-	private ThinletContext spiFactory = ThinletCore.getContext();
-	private ThinletInput input = spiFactory.createInput(this);
-	private int KEY_ENTER = input.getKeyCode(ThinletInput.ENTER_KEY);
-	private int KEY_F6 = input.getKeyCode(ThinletInput.F6_KEY);
-	private int KEY_F8 = input.getKeyCode(ThinletInput.F8_KEY);
-	private int KEY_F10 = input.getKeyCode(ThinletInput.F10_KEY);
-	private int KEY_ESCAPE = input.getKeyCode(ThinletInput.ESCAPE_KEY);
-	private int KEY_LEFT = input.getKeyCode(ThinletInput.LEFT_KEY);
-	private int KEY_RIGHT = input.getKeyCode(ThinletInput.RIGHT_KEY);
-	private int KEY_DOWN = input.getKeyCode(ThinletInput.DOWN_KEY);
-	private int KEY_UP = input.getKeyCode(ThinletInput.UP_KEY);
-	private int KEY_TAB = input.getKeyCode(ThinletInput.TAB_KEY);
-	private int KEY_PRIOR = input.getKeyCode(ThinletInput.PRIOR_KEY);
-	private int KEY_NEXT = input.getKeyCode(ThinletInput.NEXT_KEY);
-	private int KEY_HOME = input.getKeyCode(ThinletInput.HOME_KEY);
-	private int KEY_END = input.getKeyCode(ThinletInput.END_KEY);
-	private int KEY_RETURN = input.getKeyCode(ThinletInput.RETURN_KEY);
-	private int KEY_BACK = input.getKeyCode(ThinletInput.BACK_KEY);
-	private int KEY_A = input.getKeyCode(ThinletInput.A_KEY);
-	private int KEY_X = input.getKeyCode(ThinletInput.X_KEY);
-	private int KEY_V = input.getKeyCode(ThinletInput.V_KEY);
-	private int KEY_C = input.getKeyCode(ThinletInput.C_KEY);
-	private int KEY_DELETE = input.getKeyCode(ThinletInput.DELETE_KEY);
+	protected ThingleUtil spiUtil = Thingle.getUtil();
+	protected ThingleContext spiFactory = Thingle.getContext();
+	protected ThingleInput input = spiFactory.createInput(this);
+	protected int KEY_ENTER = input.getKeyCode(ThingleInput.ENTER_KEY);
+	protected int KEY_F6 = input.getKeyCode(ThingleInput.F6_KEY);
+	protected int KEY_F8 = input.getKeyCode(ThingleInput.F8_KEY);
+	protected int KEY_F10 = input.getKeyCode(ThingleInput.F10_KEY);
+	protected int KEY_ESCAPE = input.getKeyCode(ThingleInput.ESCAPE_KEY);
+	protected int KEY_LEFT = input.getKeyCode(ThingleInput.LEFT_KEY);
+	protected int KEY_RIGHT = input.getKeyCode(ThingleInput.RIGHT_KEY);
+	protected int KEY_DOWN = input.getKeyCode(ThingleInput.DOWN_KEY);
+	protected int KEY_UP = input.getKeyCode(ThingleInput.UP_KEY);
+	protected int KEY_TAB = input.getKeyCode(ThingleInput.TAB_KEY);
+	protected int KEY_PRIOR = input.getKeyCode(ThingleInput.PRIOR_KEY);
+	protected int KEY_NEXT = input.getKeyCode(ThingleInput.NEXT_KEY);
+	protected int KEY_HOME = input.getKeyCode(ThingleInput.HOME_KEY);
+	protected int KEY_END = input.getKeyCode(ThingleInput.END_KEY);
+	protected int KEY_RETURN = input.getKeyCode(ThingleInput.RETURN_KEY);
+	protected int KEY_BACK = input.getKeyCode(ThingleInput.BACK_KEY);
+	protected int KEY_A = input.getKeyCode(ThingleInput.A_KEY);
+	protected int KEY_X = input.getKeyCode(ThingleInput.X_KEY);
+	protected int KEY_V = input.getKeyCode(ThingleInput.V_KEY);
+	protected int KEY_C = input.getKeyCode(ThingleInput.C_KEY);
+	protected int KEY_DELETE = input.getKeyCode(ThingleInput.DELETE_KEY);
 	
 	public Thinlet() { // fixed by Mike Hartshorn (javac1.1 bug)
 		setFont(spiFactory.getDefaultFont());
@@ -171,7 +171,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 //			AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK | WHEEL_MASK);
 	}
 
-	public ThinletInput getInput() {
+	public ThingleInput getInput() {
 		return input;
 	}
 	
@@ -236,7 +236,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 *
 	 * @param font the default font is <i>SansSerif</i>, <i>plain</i>, and <i>12pt</i>
 	 */
-	public void setFont(ThinletFont font) {
+	public void setFont(ThingleFont font) {
 		block = getFontMetrics(font).getHeight();
 		
 		this.font = font;
@@ -244,11 +244,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		if (content != null) validate(content);
 	}
 	
-	private void doLayout(Object component) {
+	protected void doLayout(Object component) {
 		String classname = getClass(component);
 		if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true)) {
-				ThinletImage icon = getIcon(component, "icon", null);
+				ThingleImage icon = getIcon(component, "icon", null);
 				layoutField(component, block, false,
 					(icon != null) ? icon.getWidth() : 0);
 			} // set editable -> validate (overwrite textfield repaint)
@@ -284,7 +284,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				chars = getChars(component, text, false, 0, 0);
 			}
 			
-			ThinletFont currentfont = (ThinletFont) get(component, "font");
+			ThingleFont currentfont = (ThingleFont) get(component, "font");
 			FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 			int width = 0, height = 0;
 			int caretx = 0; int carety = 0;
@@ -591,7 +591,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * Scroll tabs to make the selected one visible
 	 * @param component a tabbedpane
 	 */
-	private void checkOffset(Object component) {
+	protected void checkOffset(Object component) {
 		String placement = getString(component, "placement", "top");
 		int selected = getInteger(component, "selected", 0); int i = 0;
 		if (placement == "stacked") {
@@ -637,7 +637,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 	
-	private char[] getChars(Object component,
+	protected char[] getChars(Object component,
 			String text, boolean wrap, int width, int height) {
 		char[] chars = (char[]) get(component, ":text");
 		if ((chars == null) || (chars.length != text.length())) {
@@ -647,7 +647,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		else text.getChars(0, chars.length, chars, 0);
 		
 		if (wrap) {
-			ThinletFont currentfont = (ThinletFont) get(component, "font");
+			ThingleFont currentfont = (ThingleFont) get(component, "font");
 			FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 			int lines = (height - 4 + fm.getLeading()) / fm.getHeight();
 			boolean prevletter = false; int n = chars.length; int linecount = 0;
@@ -673,7 +673,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return chars;
 	}
 	
-	/*private boolean wrap(char[] chars, int width, int lines) {
+	/*protected boolean wrap(char[] chars, int width, int lines) {
 		FontMetrics fm = getFontMetrics(font);
 		boolean prevletter = false; int n = chars.length; int linecount = 0;
 		for (int i = 0, j = -1, k = 0; k <= n; k++) { // j is the last space index (before k)
@@ -702,7 +702,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param component a menuitem
 	 * @return key modifier strings and key text
 	 */
-	private String getAccelerator(Object component) {
+	protected String getAccelerator(Object component) {
 		Object accelerator = get(component, "accelerator");
 		if (accelerator != null) {
 			long keystroke = ((Long) accelerator).longValue();
@@ -719,7 +719,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param combobox
 	 * @return the created combolist
 	 */
-	private Object popupCombo(Object combobox) {
+	protected Object popupCombo(Object combobox) {
 		// combobox bounds relative to the root desktop
 		int combox = 0, comboy = 0, combowidth = 0, comboheight = 0;
 		for (Object comp = combobox; comp != content; comp = getParent(comp)) {
@@ -774,7 +774,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param component menubar or :popup
 	 * @return the created popupmenu
 	 */
-	private Object popupMenu(Object component) {
+	protected Object popupMenu(Object component) {
 		Object popup = get(component, ":popup"); // first :popup child
 		Object selected = get(component, "selected"); // selected menu in of the component
 		if (popup != null) { // remove its current :popup
@@ -825,7 +825,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * @param popupmenu
 	 */
-	private void popupPopup(Object popupmenu, int x, int y) {
+	protected void popupPopup(Object popupmenu, int x, int y) {
 		// :popup.menu -> popupmenu, popupmenu.:popup -> :popup
 		Object popup = createImpl(":popup");
 		set(popup, "menu", popupmenu);
@@ -852,7 +852,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param height menu's height
 	 * @param offset inner padding relative to the menu's bounds
 	 */
-	private void popup(Object menu, Object popup,
+	protected void popup(Object menu, Object popup,
 			char direction, int x, int y, int width, int height, int offset) {
 		int pw = 0; int ph = 0;
 		for (Object item = get(menu, ":comp"); item != null; item = get(item, ":next")) {
@@ -896,7 +896,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * @param item //TODO can be scrollbar string
 	 */
-	private void closeCombo(Object combobox, Object combolist, Object item) {
+	protected void closeCombo(Object combobox, Object combolist, Object item) {
 		if ((item != null) && getBoolean(item, "enabled", true)) {
 			String text = getString(item, "text", "");
 			set(combobox, "text", text); // if editable
@@ -916,7 +916,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		checkLocation(combolist);
 	}
 
-	private void closeup() {
+	protected void closeup() {
 		if (popupowner != null) {
 			String classname = getClass(popupowner);
 			if ("menubar" == classname) {
@@ -934,7 +934,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void showTip() {
+	protected void showTip() {
 		String text = null;
 		tooltipowner = null;
 		String classname = getClass(mouseinside);
@@ -964,7 +964,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void hideTip() {
+	protected void hideTip() {
 		if (tooltipowner != null) {
 			Rectangle bounds = getRectangle(tooltipowner, ":tooltipbounds");
 			set(tooltipowner, ":tooltipbounds", null);
@@ -973,7 +973,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void layoutField(Object component, int dw, boolean hidden, int left) {
+	protected void layoutField(Object component, int dw, boolean hidden, int left) {
 		int width = getRectangle(component, "bounds").width - left -dw;
 		String text = getString(component, "text", "");
 		int start = getInteger(component, "start", 0);
@@ -982,7 +982,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		if (end > text.length()) { setInteger(component, "end", end = text.length(), 0); }
 		int offset = getInteger(component, ":offset", 0);
 		int off = offset;
-		ThinletFont currentfont = (ThinletFont) get(component, "font");
+		ThingleFont currentfont = (ThingleFont) get(component, "font");
 		FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 		int textwidth = hidden ? (fm.charWidth('*') *
 			text.length()) : fm.stringWidth(text);
@@ -1023,7 +1023,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * list: 0, 0, 0, 0, true, 0 | table: header, ... | dialog: header, 3, 3, 3, true, 0
 	 * title-border panel: header / 2, 0, 0, 0, true, head
 	 */
-	private boolean layoutScroll(Object component,
+	protected boolean layoutScroll(Object component,
 			int contentwidth, int contentheight,
 			int top, int left, int bottom, int right, boolean border, int topgap) {
 		Rectangle bounds = getRectangle(component, "bounds");
@@ -1058,7 +1058,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return vneed || hneed;
 	}
 
-	private void scrollToVisible(Object component,
+	protected void scrollToVisible(Object component,
 			int x, int y, int width, int height) {
 		Rectangle view = getRectangle(component, ":view");
 		Rectangle port = getRectangle(component, ":port");
@@ -1083,7 +1083,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 *
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	private Dimension getPreferredSize(Object component) {
+	protected Dimension getPreferredSize(Object component) {
 		int width = getInteger(component, "width", 0);
 		int height = getInteger(component, "height", 0);
 		if ((width > 0) && (height > 0)) {
@@ -1106,7 +1106,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true)) {
 				Dimension size = getFieldSize(component);
-				ThinletImage icon = getIcon(component, "icon", null);
+				ThingleImage icon = getIcon(component, "icon", null);
 				if (icon != null) {
 					size.width += icon.getWidth();
 					size.height = Math.max(size.height, icon.getHeight() + 2);
@@ -1122,7 +1122,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				}
 				size.width += block;
 				if (size.height == 4) { // no content nor items, set text height
-					ThinletFont customfont = (ThinletFont) get(component, "font");
+					ThingleFont customfont = (ThingleFont) get(component, "font");
 					FontMetrics fm = getFontMetrics((customfont != null) ? customfont : font);
 					size.height = fm.getAscent() + fm.getDescent() + 4;
 				}
@@ -1135,7 +1135,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		if ("textarea" == classname) {
 			int columns = getInteger(component, "columns", 0);
 			int rows = getInteger(component, "rows", 0); // 'e' -> 'm' ?
-			ThinletFont currentfont = (ThinletFont) get(component, "font");
+			ThingleFont currentfont = (ThingleFont) get(component, "font");
 			FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 			return new Dimension(
 				((columns > 0) ? (columns * fm.charWidth('e') + 2) : 76) + 2 + block,
@@ -1261,7 +1261,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * <li>gridwidth, column spans</li>
 	 * <li>gridheight, row spans</li></ul>
 	 */
-	private int[][] getGrid(Object component) {
+	protected int[][] getGrid(Object component) {
 		int count = 0; // count of the visible subcomponents
 		for (Object comp = get(component, ":comp"); comp != null;
 				comp = get(comp, ":next")) {
@@ -1395,7 +1395,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return grid;
 	}
 
-	private int getSum(int[] values,
+	protected int getSum(int[] values,
 			int from, int length, int gap, boolean last) {
 		if (length <= 0) { return 0; }
 		int value = 0;
@@ -1405,9 +1405,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return value + (length - (last ? 0 : 1)) * gap;
 	}
 
-	private Dimension getFieldSize(Object component) {
+	protected Dimension getFieldSize(Object component) {
 		int columns = getInteger(component, "columns", 0);
-		ThinletFont currentfont = (ThinletFont) get(component, "font");
+		ThingleFont currentfont = (ThingleFont) get(component, "font");
 		FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 		return new Dimension(((columns > 0) ?
 			(columns * fm.charWidth('e')) : 76) + 4,
@@ -1420,16 +1420,16 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param dy increase height by this value
 	 * @return size of the text and the image (plus a gap) including the given offsets
 	 */
-	private Dimension getSize(Object component, int dx, int dy) {
+	protected Dimension getSize(Object component, int dx, int dy) {
 		String text = getString(component, "text", null);
 		int tw = 0; int th = 0;
 		if (text != null) {
-			ThinletFont customfont = (ThinletFont) get(component, "font");
+			ThingleFont customfont = (ThingleFont) get(component, "font");
 			FontMetrics fm = getFontMetrics((customfont != null) ? customfont : font);
 			tw = fm.stringWidth(text);
 			th = fm.getAscent() + fm.getDescent();
 		}
-		ThinletImage icon = getIcon(component, "icon", null);
+		ThingleImage icon = getIcon(component, "icon", null);
 		int iw = 0; int ih = 0;
 		if (icon != null) {
 			iw = icon.getWidth();
@@ -1442,7 +1442,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * Paints the components inside the ThinletGraphics clip area
 	 */
-	public void paint(ThinletGraphics g, int width, int height) {
+	public void paint(ThingleGraphics g, int width, int height) {
 		if (dirty) {
 			layout(width,height);
 			dirty = false;
@@ -1451,10 +1451,15 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		setRectangle(content, "bounds", 0, 0, width, height);
 		
 		g.setFont(font);
+		cacheGradients();
+		paint(g, 0, 0, width, height, content, isEnabled());
+	}
+
+	protected void cacheGradients() {
 		if (hgradient == null) {
 			int[][] pix = new int[2][block * block];
-			ThinletImageBuffer hbuffer = spiFactory.createImageBuffer(block,block);
-			ThinletImageBuffer vbuffer = spiFactory.createImageBuffer(block,block);
+			ThingleImageBuffer hbuffer = spiFactory.createImageBuffer(block,block);
+			ThingleImageBuffer vbuffer = spiFactory.createImageBuffer(block,block);
 			
 			int r1 = c_bg.getRed(); int r2 = c_press.getRed();
 			int g1 = c_bg.getGreen(); int g2 = c_press.getGreen();
@@ -1473,9 +1478,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			hgradient = hbuffer.getImage();
 			vgradient = vbuffer.getImage();
 		}
-		paint(g, 0, 0, width, height, content, isEnabled());
 	}
-
+	
 	/**
 	 * @param clipx the cliping rectangle is relative to the component's
 	 * parent location similar to the component's bounds rectangle
@@ -1484,7 +1488,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param clipheight
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	private void paint(ThinletGraphics g,
+	protected void paint(ThingleGraphics g,
 			int clipx, int clipy, int clipwidth, int clipheight,
 			Object component, boolean enabled) {
 		if (!getBoolean(component, "visible", true)) { return; }
@@ -1541,8 +1545,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 
 			boolean selected = getBoolean(component, "selected", false);
 			String group = getString(component, "group", null);
-			ThinletColor border = enabled ? c_border : c_disable;
-			ThinletColor foreground = enabled ? ((inside != pressed) ? c_hover :
+			ThingleColor border = enabled ? c_border : c_disable;
+			ThingleColor foreground = enabled ? ((inside != pressed) ? c_hover :
 				(pressed ? c_press : c_ctrl)) : c_bg;
 			int dy = (bounds.height - block + 2) / 2;
 			if (group == null) {
@@ -1572,7 +1576,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 		else if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true)) {
-				ThinletImage icon = getIcon(component, "icon", null);
+				ThingleImage icon = getIcon(component, "icon", null);
 				int left = (icon != null) ? icon.getWidth() : 0;
 				paintField(g, clipx, clipy, clipwidth, clipheight, component,
 					bounds.width - block, bounds.height, focus, enabled, false, left);
@@ -1897,7 +1901,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		clipx += bounds.x; clipy += bounds.y;
 	}
 
-	private void paintReverse(ThinletGraphics g,
+	protected void paintReverse(ThingleGraphics g,
 			int clipx, int clipy, int clipwidth, int clipheight,
 			Object component, boolean enabled) {
 		if (component != null) {
@@ -1913,7 +1917,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void paintField(ThinletGraphics g,
+	protected void paintField(ThingleGraphics g,
 			int clipx, int clipy, int clipwidth, int clipheight, Object component,
 			int width, int height,
 			boolean focus, boolean enabled, boolean hidden, int left) {
@@ -1925,7 +1929,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 
 		String text = getString(component, "text", "");
 		int offset = getInteger(component, ":offset", 0);
-		ThinletFont currentfont = (ThinletFont) get(component, "font");
+		ThingleFont currentfont = (ThingleFont) get(component, "font");
 		if (currentfont != null) { g.setFont(currentfont); }
 		FontMetrics fm = getFontMetrics(g.getFont());
 
@@ -1969,9 +1973,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 	
-	private ThinletColor getThinletColor(Object component, String key, ThinletColor defaultcolor) {
+	protected ThingleColor getThinletColor(Object component, String key, ThingleColor defaultcolor) {
 		Object value = get(component, key);
-		return (value != null) ? (ThinletColor) value : defaultcolor;
+		return (value != null) ? (ThingleColor) value : defaultcolor;
 	}
 	
 	/**
@@ -1990,9 +1994,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param topborder bordered on the top if true
 	 * @param border define left, bottom, and right border if true
 	 */
-	private void paintScroll(Object component, String classname, boolean pressed,
+	protected void paintScroll(Object component, String classname, boolean pressed,
 			boolean inside, boolean focus, boolean drawfocus, boolean enabled,
-			ThinletGraphics g, int clipx, int clipy, int clipwidth, int clipheight) {
+			ThingleGraphics g, int clipx, int clipy, int clipwidth, int clipheight) {
 		Rectangle port = getRectangle(component, ":port");
 		Rectangle horizontal = getRectangle(component, ":horizontal");
 		Rectangle vertical = getRectangle(component, ":vertical");
@@ -2117,22 +2121,22 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * Paint scrollable content
 	 * @param component a panel
 	 */
-	private void paint(Object component,
+	protected void paint(Object component,
 			String classname, boolean focus, boolean enabled,
-			ThinletGraphics g, int clipx, int clipy, int clipwidth, int clipheight,
+			ThingleGraphics g, int clipx, int clipy, int clipwidth, int clipheight,
 			int portwidth, int viewwidth) {
 		if ("textarea" == classname) {
 			char[] chars = (char[]) get(component, ":text");
 			int start = focus ? getInteger(component, "start", 0) : 0;
 			int end = focus ? getInteger(component, "end", 0) : 0;
 			int is = Math.min(start, end); int ie = Math.max(start, end);
-			ThinletFont customfont = (ThinletFont) get(component, "font");
+			ThingleFont customfont = (ThingleFont) get(component, "font");
 			if (customfont != null) { g.setFont(customfont); }
 			FontMetrics fm = getFontMetrics(g.getFont());
 			int fontascent = fm.getAscent(); int fontheight = fm.getHeight();
 			int ascent = 1;
 			
-			ThinletColor textcolor = enabled ? getThinletColor(component, "foreground", c_text) : c_disable;
+			ThingleColor textcolor = enabled ? getThinletColor(component, "foreground", c_text) : c_disable;
 			for (int i = 0, j = 0; j <= chars.length; j++) {
 				if ((j == chars.length) || (chars[j] == '\n')) {
 					if (clipy + clipheight <= ascent) { break; } // the next lines are bellow paint rectangle
@@ -2275,8 +2279,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void paintRect(ThinletGraphics g, int x, int y, int width, int height,
-			ThinletColor border, ThinletColor bg,
+	protected void paintRect(ThingleGraphics g, int x, int y, int width, int height,
+			ThingleColor border, ThingleColor bg,
 			boolean top, boolean left, boolean bottom, boolean right, boolean horizontal) {
 		if ((width <= 0) || (height <= 0)) return;
 
@@ -2313,7 +2317,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * Fill the given rectangle with gradient
 	 */
-	private void fill(ThinletGraphics g, int x, int y, int width, int height, boolean horizontal) {
+	protected void fill(ThingleGraphics g, int x, int y, int width, int height, boolean horizontal) {
 		if (horizontal) {
 			if (height > block) {
 				g.setColor(c_bg);
@@ -2340,7 +2344,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void paintArrow(ThinletGraphics g, int x, int y, int width, int height,
+	protected void paintArrow(ThingleGraphics g, int x, int y, int width, int height,
 			char dir, boolean enabled, boolean inside, boolean pressed, String part,
 			boolean top, boolean left, boolean bottom, boolean right, boolean horizontal) {
 		inside = inside && (insidepart == part);
@@ -2354,7 +2358,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			width - (left ? 1 : 0) - (right ? 1 : 0), height - (top ? 1 : 0) - (bottom ? 1 : 0), dir);
 	}
 
-	private void paintArrow(ThinletGraphics g,
+	protected void paintArrow(ThingleGraphics g,
 			int x, int y, int width, int height, char dir) {
 		int cx = x + width / 2 - 2;
 		int cy = y + height / 2 - 2;
@@ -2377,13 +2381,13 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * Paint component's borders and background
 	 */
-	private void paint(Object component, int x, int y, int width, int height,
-			ThinletGraphics g, boolean top, boolean left, boolean bottom, boolean right,
+	protected void paint(Object component, int x, int y, int width, int height,
+			ThingleGraphics g, boolean top, boolean left, boolean bottom, boolean right,
 			char mode) {
 		if ((width <= 0) || (height <= 0)) { return; }
 
 		// TODO: remember you swapped the backgroudn painting order
-		ThinletColor background = (ThinletColor) get(component, "background");
+		ThingleColor background = (ThingleColor) get(component, "background");
 		switch (mode) {
 			case 'e': case 'l': case 'd': case 'g': case 'r': break;
 			case 'b': case 'i': case 'x': if (background == null) { background = c_bg; } break;
@@ -2422,7 +2426,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void paint(Object component, ThinletGraphics g,
+	protected void paint(Object component, ThingleGraphics g,
 			int x, int y, int width, int height, char type) {
 		paint(component, x, y, width, height, g, true, true, true, true, 'g');
 		g.setColor(BLACK);
@@ -2449,8 +2453,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * Paint component icon and text (using default or custom font)
 	 * @param mnemonic find mnemonic index and underline text
 	 */
-	private void paint(Object component, int x, int y, int width, int height,
-			ThinletGraphics g, int clipx, int clipy, int clipwidth, int clipheight,
+	protected void paint(Object component, int x, int y, int width, int height,
+			ThingleGraphics g, int clipx, int clipy, int clipwidth, int clipheight,
 			boolean top, boolean left, boolean bottom, boolean right,
 			int toppadding, int leftpadding, int bottompadding, int rightpadding, boolean focus,
 			char mode, String alignment, boolean mnemonic, boolean underline) {
@@ -2471,14 +2475,14 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			}
 		}
 		
-		ThinletImage icon = getIcon(component, "icon", null);
+		ThingleImage icon = getIcon(component, "icon", null);
 		if ((text == null) && (icon == null)) { return; }
 	
 		x += leftpadding; y += toppadding;
 		width -= leftpadding + rightpadding; height -= toppadding + bottompadding;
 
 		alignment = getString(component, "alignment", alignment);
-		ThinletFont customfont = (text != null) ? (ThinletFont) get(component, "font") : null;
+		ThingleFont customfont = (text != null) ? (ThingleFont) get(component, "font") : null;
 		if (customfont != null) { g.setFont(customfont); }
 
 		FontMetrics fm = null;
@@ -2509,7 +2513,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			cx += iw;
 		}
 		if (text != null) { 
-			ThinletColor foreground = (ThinletColor) get(component, "foreground");
+			ThingleColor foreground = (ThingleColor) get(component, "foreground");
 			if (foreground == null) {
 				foreground = (mode == 'l') ? BLUE :
 					(((mode != 'd') && (mode != 'r')) ? c_text : c_disable);
@@ -2534,7 +2538,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		if (customfont != null) { g.setFont(font); } //restore the default font
 	}
 	
-	private void drawFocus(ThinletGraphics g, int x, int y, int width, int height) {
+	protected void drawFocus(ThingleGraphics g, int x, int y, int width, int height) {
 		g.setColor(c_focus);
 		int x2 = x + 1 - height % 2;
 		for (int i = 0; i <= width; i += 2) {
@@ -2574,7 +2578,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void setTimer(long delay) {
+	protected void setTimer(long delay) {
 		watchdelay = delay;
 		if (delay == 0) {
 			watch = 0;
@@ -2605,7 +2609,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return true;
 	}
 
-	public void mouseDragged(int x, int y, ThinletInput mods) {
+	public void mouseDragged(int x, int y, ThingleInput mods) {
 		hideTip(); // remove tooltip
 		Object previnside = mouseinside;
 		Object prevpart = insidepart;
@@ -2636,7 +2640,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 	
-	public void mouseMoved(int x, int y, ThinletInput mods) {
+	public void mouseMoved(int x, int y, ThingleInput mods) {
 		Object previnside = mouseinside;
 		Object prevpart = insidepart;
 		findComponent(content, x, y);
@@ -2652,7 +2656,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 	
-	public void mouseReleased(int x, int y, ThinletInput mods) {
+	public void mouseReleased(int x, int y, ThingleInput mods) {
 		hideTip(); // remove tooltip
 		Object mouserelease = mousepressed;
 		Object releasepart = pressedpart;
@@ -2666,7 +2670,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 	
-	public void mouseWheelMoved(int rotation, ThinletInput mods) {
+	public void mouseWheelMoved(int rotation, ThingleInput mods) {
 		Rectangle port = getRectangle(mouseinside, ":port");
 		if (port != null) { // is scrollable
 			// TODO hide tooltip?
@@ -2682,7 +2686,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 	
-	public void mousePressed(int x, int y, int clickCount, ThinletInput mods) {
+	public void mousePressed(int x, int y, int clickCount, ThingleInput mods) {
 		if (popupowner != null) { // remove popup
 			String classname = getClass(mouseinside);
 			if ((popupowner != mouseinside) &&
@@ -2697,7 +2701,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			MouseEvent.MOUSE_PRESSED, mousepressed, pressedpart);
 	}
 	
-	public boolean keyPressed(char keychar, int keycode, ThinletInput mods, boolean typed) {
+	public boolean keyPressed(char keychar, int keycode, ThingleInput mods, boolean typed) {
 		if (focusinside && ((popupowner != null) || (focusowner != null))) {
 			hideTip(); // remove tooltip
 			
@@ -2800,7 +2804,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * Check the previous mouse location again because of a possible layout change
 	 */
-	private void checkLocation(Object component) {
+	protected void checkLocation(Object component) {
 		if (mouseinside == component) { // parameter added by scolebourne
 			findComponent(content, mousex, mousey);
 			handleMouseEvent(mousex, mousex, 1, false, false, false,
@@ -2808,7 +2812,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private boolean processKeyPress(Object component,
+	protected boolean processKeyPress(Object component,
 			boolean shiftdown, boolean controldown, int modifiers, int keychar, int keycode) {
 		String classname = getClass(component);
 		if ("button" == classname) {
@@ -2895,7 +2899,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			}
 			else if ((keycode == KEY_UP) || (keycode == KEY_PRIOR) ||
 					(keycode == KEY_DOWN) || (keycode == KEY_NEXT)) {
-				ThinletFont currentfont = (ThinletFont) get(component, "font");
+				ThingleFont currentfont = (ThingleFont) get(component, "font");
 				FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 				int fh = fm.getHeight();
 				int y = 0; int linestart = 0;
@@ -3123,7 +3127,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return false;
 	}
 
-	private boolean changeCheck(Object component, boolean box) {
+	protected boolean changeCheck(Object component, boolean box) {
 		String group = getString(component, "group", null);
 		if (group != null) {
 			if (getBoolean(component, "selected", false)) { return false; }
@@ -3154,7 +3158,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param popup the given component is :popup if true, menubar otherwise
 	 * @return the next/previous item relative to the current one excluding separators, or null
 	 */
-	private Object getMenu(Object component, Object part,
+	protected Object getMenu(Object component, Object part,
 			boolean forward, boolean popup) {
 		Object previous = null;
 		for (int i = 0; i < 2; i++) { // 0: next to last, 1: first to previous
@@ -3177,7 +3181,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param hidden true for passwordfield, otherwise false
 	 * @param filter true for spinbox, otherwise false
 	 */
-	private boolean processField(Object component,
+	protected boolean processField(Object component,
 			boolean shiftdown, boolean controldown, int modifiers,
 			int keychar, int keycode,
 			boolean multiline, boolean hidden, boolean filter) {
@@ -3280,7 +3284,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param multiline
 	 * @return
 	 */
-	private static String filter(String text, boolean multiline) {
+	protected static String filter(String text, boolean multiline) {
 		StringBuffer filtered = new StringBuffer(text.length());
 		for (int i = 0; i < text.length(); i++) {
 			char ckey = text.charAt(i);
@@ -3303,7 +3307,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param end current caret position
 	 * @return true if selection, caret location, or text content changed
 	 */
-	private boolean changeField(Object component, String text, String insert,
+	protected boolean changeField(Object component, String text, String insert,
 			int movestart, int moveend, int start, int end) {
 		movestart = Math.max(0, Math.min(movestart, text.length()));
 		moveend = Math.max(0, Math.min(moveend, text.length()));
@@ -3325,7 +3329,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return true;
 	}
 
-	private boolean processList(Object component, boolean shiftdown, boolean controldown,
+	protected boolean processList(Object component, boolean shiftdown, boolean controldown,
 			int keychar, int keycode, boolean recursive) {
 		if ((keycode == KEY_UP) || // select previous/next/first/... item
 				(keycode == KEY_DOWN) || (keycode == KEY_PRIOR) ||
@@ -3385,7 +3389,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param recursive if the component is a tree
 	 * @return the appropriate item or null
 	 */
-	private Object findText(char keychar, Object component,
+	protected Object findText(char keychar, Object component,
 			Object leadowner, boolean recursive) {
 		if (keychar != 0) {
 			long current = System.currentTimeMillis();
@@ -3409,7 +3413,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return null;
 	}
 
-	private Object getListItem(Object component, Object scrollpane,
+	protected Object getListItem(Object component, Object scrollpane,
 			int keycode, Object lead, boolean recursive) {
 		Object row = null;
 		if (keycode == KEY_UP) {
@@ -3467,7 +3471,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param selected selects or deselects items
 	 * @param recursive true for tree
 	 */
-	private void selectAll(Object component,
+	protected void selectAll(Object component,
 			boolean selected, boolean recursive) {
 		boolean changed = false;
 		for (Object item = get(component, ":comp");
@@ -3486,7 +3490,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param row the item/node/row to select
 	 * @param recursive true for tree
 	 */
-	private void selectItem(Object component, Object row, boolean recursive) {
+	protected void selectItem(Object component, Object row, boolean recursive) {
 		boolean changed = false;
 		for (Object item = get(component, ":comp");
 				item != null; item = getNextItem(component, item, recursive)) {
@@ -3498,7 +3502,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		if (changed) { invoke(component, row, "action"); }
 	}
 
-	private void extend(Object component, Object lead,
+	protected void extend(Object component, Object lead,
 			Object row, boolean recursive) {
 		Object anchor = get(component, ":anchor");
 		if (anchor == null) { set(component, ":anchor", anchor = lead); }
@@ -3521,7 +3525,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param oldlead the current lead item
 	 * @param lead the new lead item
 	 */
-	private void setLead(Object component, Object oldlead, Object lead) {
+	protected void setLead(Object component, Object oldlead, Object lead) {
 		if (oldlead != lead) { //?
 			if (oldlead != null) { repaint(component, null, oldlead); }
 			set(component, ":lead", lead);
@@ -3538,7 +3542,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param part the current hotspot item
 	 * @param scroll scroll to the part if true
 	 */
-	private void setInside(Object component, Object part, boolean scroll) {
+	protected void setInside(Object component, Object part, boolean scroll) {
 			Object previous = get(component, ":lead");
 			if (previous != null) {
 				repaint(component, ":combolist", previous);
@@ -3557,7 +3561,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param x mouse x position relative to thinlet component
 	 * @param y mouse y position relative to the main desktop
 	 */
-	private void handleMouseEvent(int x, int y, int clickcount,
+	protected void handleMouseEvent(int x, int y, int clickcount,
 			boolean shiftdown, boolean controldown, boolean popuptrigger,
 			int id, Object component, Object part) {
 		if (id == MouseEvent.MOUSE_ENTERED) {
@@ -3599,7 +3603,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		else if ("combobox" == classname) {
 			boolean editable = getBoolean(component, "editable", true);
 			if (editable && (part == null)) { // textfield area
-				ThinletImage icon = null;
+				ThingleImage icon = null;
 				int left = ((id == MouseEvent.MOUSE_PRESSED) &&
 					((icon = getIcon(component, "icon", null)) != null)) ?
 						icon.getWidth() : 0;
@@ -3971,7 +3975,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param x reference point relative to the component left edge 
 	 * @param y relative to the top edge
 	 */
-	private void setReference(Object component, int x, int y) {
+	protected void setReference(Object component, int x, int y) {
 		referencex = x; referencey = y;
 		for (; component != null; component = getParent(component)) {
 			Rectangle bounds = getRectangle(component, "bounds");
@@ -3985,7 +3989,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void select(Object component, Object row,
+	protected void select(Object component, Object row,
 			boolean recursive, boolean shiftdown, boolean controldown) {
 		String selection = getString(component, "selection", "single");
 		Object lead = null;
@@ -4025,7 +4029,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param recursive true if tree
 	 * @return next (or first) item
 	 */
-	private Object getNextItem(Object component,
+	protected Object getNextItem(Object component,
 			Object item, boolean recursive) {
 		if (!recursive) { return get(item, ":next"); }
 		Object next = get(item, ":comp");
@@ -4037,7 +4041,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return next;
 	}
 	
-	private void processField(int x, int y, int clickcount,
+	protected void processField(int x, int y, int clickcount,
 			int id, Object component, boolean multiline, boolean hidden,
 			int left, boolean popuptrigger) {
 		if (id == MouseEvent.MOUSE_PRESSED) {
@@ -4100,9 +4104,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private int getCaretLocation(Object component,
+	protected int getCaretLocation(Object component,
 			int x, int y, boolean multiline, boolean hidden) {
-		ThinletFont currentfont = (ThinletFont) get(component, "font");
+		ThingleFont currentfont = (ThingleFont) get(component, "font");
 		FontMetrics fm = getFontMetrics((currentfont != null) ? currentfont : font);
 		char[] chars = multiline ? ((char[]) get(component, ":text")) :
 			getString(component, "text", "").toCharArray(); // update it
@@ -4124,7 +4128,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return chars.length;
 	}
 
-	private boolean processScroll(int x, int y,
+	protected boolean processScroll(int x, int y,
 			int id, Object component, Object part) {
 		if ((part == "up") || (part == "down") ||
 				(part == "left") || (part == "right")) {
@@ -4198,7 +4202,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return true;
 	}
 
-	private boolean processScroll(Object component, Object part) {
+	protected boolean processScroll(Object component, Object part) {
 		Rectangle view = getRectangle(component, ":view");
 		Rectangle port = ((part == "left") || (part == "up")) ? null :
 			getRectangle(component, ":port");
@@ -4231,7 +4235,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				(view.y < view.height - port.height));
 	}
 
-	private boolean processSpin(Object component, Object part) {
+	protected boolean processSpin(Object component, Object part) {
 		String text = getString(component, "text", "");
 		try {
 			int itext = Integer.parseInt(text);
@@ -4258,7 +4262,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param event  the event to send, such as 'action'
 	 * @return true if a method object was fired
 	 */ // comment written by scolebourne
-	private boolean invoke(Object component, Object part, String event) { // TODO make protected?
+	protected boolean invoke(Object component, Object part, String event) { // TODO make protected?
 		Object method = get(component, event);
 		if (method != null) {
 			invokeImpl(method, part);
@@ -4267,7 +4271,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return false;
 	}
 	
-	private void invokeImpl(Object method, Object part) {
+	protected void invokeImpl(Object method, Object part) {
 		Object[] data = (Object[]) method;
 		Object[] args = (data.length > 2) ? new Object[(data.length - 2) / 3] : null;
 		if (args != null) for (int i = 0; i < args.length; i++) {
@@ -4310,7 +4314,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		throwable.printStackTrace();
 	}
 
-	private boolean findComponent(Object component, int x, int y) {
+	protected boolean findComponent(Object component, int x, int y) {
 		if (component == content) {
 			mouseinside = insidepart = null;
 			mousex = x; mousey = y;
@@ -4324,7 +4328,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		
 		if ("combobox" == classname) {
 			if (getBoolean(component, "editable", true) && (x <= bounds.width - block)) {
-				ThinletImage icon = getIcon(component, "icon", null);
+				ThingleImage icon = getIcon(component, "icon", null);
 				insidepart = ((icon != null) && (x <= 2 + icon.getWidth())) ?
 					"icon" : null;
 			} else {
@@ -4458,7 +4462,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @return true if the point (x, y) is inside scroll-control area
 	 * (scrollbars, corners, borders), false otherwise (vievport, header, or no scrollpane)
 	 */
-	private boolean findScroll(Object component, int x, int y) {
+	protected boolean findScroll(Object component, int x, int y) {
 		Rectangle port = getRectangle(component, ":port");
 		if ((port == null) || port.contains(x, y)) { return false; }
 		Rectangle view = getRectangle(component, ":view");
@@ -4482,7 +4486,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param viewsize view width or height
 	 * @param horizontal if true horizontal, vertical otherwise
 	 */
-	private void findScroll(int p, int size, int portsize, int viewp, int viewsize, boolean horizontal) {
+	protected void findScroll(int p, int size, int portsize, int viewp, int viewsize, boolean horizontal) {
 		if (p < block) { insidepart = horizontal ? "left" : "up"; }
 		else if (p > size - block) { insidepart = horizontal ? "right" : "down"; }
 		else {
@@ -4496,7 +4500,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void repaint(Object component, Object classname, Object part) {
+	protected void repaint(Object component, Object classname, Object part) {
 		Rectangle b = getRectangle(component, "bounds");
 		if (classname == "combobox") { // combobox down arrow
 			repaint(component, b.x + b.width - block, b.y, block, b.height); // icon?+
@@ -4557,7 +4561,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * Layout and paint the given component later
 	 * @param component
 	 */
-	private void validate(Object component) {
+	protected void validate(Object component) {
 		repaint(component);
 		Rectangle bounds = getRectangle(component, "bounds");
 		if (bounds != null) { bounds.width = -1 * Math.abs(bounds.width); }
@@ -4582,7 +4586,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param width
 	 * @param height
 	 */
-	private void repaint(Object component, int x, int y, int width, int height) {
+	protected void repaint(Object component, int x, int y, int width, int height) {
 		while ((component = getParent(component)) != null) {
 			Rectangle bounds = getRectangle(component, "bounds");
 			x += bounds.x; y += bounds.y;
@@ -4617,7 +4621,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param component a focusable component
 	 * @return true if the focusowner was changed, otherwise false
 	 */
-	private boolean setFocus(Object component) { // TODO change protected?
+	protected boolean setFocus(Object component) { // TODO change protected?
 		if (!focusinside) { // request focus for the thinlet component
 			requestFocus();
 		}
@@ -4642,7 +4646,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * @return next focusable component is found (not the first of the desktop/dialog)
 	 */
-	private boolean setNextFocusable(Object current, boolean outgo) {
+	protected boolean setNextFocusable(Object current, boolean outgo) {
 		boolean consumed = true;
 		for (Object next = null, component = current; true; component = next) {
 			next = get(component, ":comp"); // check first subcomponent
@@ -4670,7 +4674,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * @return previous focusable component is found (not the last of the desktop/dialog)
 	 */
-	private boolean setPreviousFocusable(Object component, boolean outgo) {
+	protected boolean setPreviousFocusable(Object component, boolean outgo) {
 		for (int i = 0; i < 2; i++) { // 0 is backward direction
 			Object previous = getPreviousFocusable(component, null, true, false, (i == 0), outgo);
 			if (previous != null) {
@@ -4689,7 +4693,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * For the rest components check the next, then the first subcomponent direction, and finally
 	 * check whether the component is focusable.
 	 */
-	private Object getPreviousFocusable(Object component,
+	protected Object getPreviousFocusable(Object component,
 			Object block, boolean start, boolean upward, boolean backward, boolean outgo) {
 		Object previous = null;
 		if ((component != null) && (component != block)) {
@@ -4721,7 +4725,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * (e.g. false for tab navigating, and true for mouse selection or application request)
 	 * @return true if focusable, otherwise false
 	 */
-	private boolean isFocusable(Object component, boolean forced) {
+	protected boolean isFocusable(Object component, boolean forced) {
 		String classname = getClass(component);
 		if ((classname == "button") || (classname == "checkbox") || ("togglebutton" == classname) ||
 				(classname == "combobox") || (classname == "textfield") ||
@@ -4782,11 +4786,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return content;
 	}
 
-	private static Object createImpl(String classname) {
+	protected static Object createImpl(String classname) {
 		return new Object[] { ":class", classname, null };
 	}
 	
-	private static boolean set(Object component, Object key, Object value) {
+	protected static boolean set(Object component, Object key, Object value) {
 		Object[] previous = (Object[]) component;
 		for (Object[] entry = previous; entry != null;
 				entry = (Object[]) entry[2]) {
@@ -4911,7 +4915,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * @return the first or the next item of the (list, table, or tree) component
 	 */
-	private Object findNextItem(Object component, String classname, Object item) {
+	protected Object findNextItem(Object component, String classname, Object item) {
 		if (item == null) { // first item
 			return get(component, ":comp");
 		}
@@ -4941,7 +4945,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private static int getItemCountImpl(Object component, String key) {
+	protected static int getItemCountImpl(Object component, String key) {
 		int i = 0;
 		for (Object comp = get(component, key); comp != null; comp = get(comp, ":next")) {
 			i++;
@@ -4979,7 +4983,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * Referenced by DOM, replace by getItem for others
 	 */
-	private static Object getItemImpl(Object component, Object key, int index) {
+	protected static Object getItemImpl(Object component, Object key, int index) {
 		int i = 0;
 		for (Object item = get(component, key); item != null; item = get(item, ":next")) {
 			if (i == index) { return item; }
@@ -4988,7 +4992,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return null;
 	}
 
-	private int getIndex(Object component, Object value) {
+	protected int getIndex(Object component, Object value) {
 		int index = 0;
 		for (Object item = get(component, ":comp"); item != null; item = get(item, ":next")) {
 			if (value == item) { return index; }
@@ -5037,7 +5041,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * Referenced by DOM
 	 */
-	private void insertItem(Object parent,
+	protected void insertItem(Object parent,
 			Object key, Object component, int index) {
 		Object item = parent, next = get(parent, key);
 		for (int i = 0;; i++) {
@@ -5079,7 +5083,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param parent
 	 * @param component
 	 */
-	private void removeItemImpl(Object parent, Object component) {
+	protected void removeItemImpl(Object parent, Object component) {
 		Object previous = null; // the widget before the given component
 		for (Object comp = get(parent, ":comp"); 	comp != null;) {
 			Object next = get(comp, ":next");
@@ -5141,7 +5145,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param mnemonic
 	 * @return true if the char was consumed
 	 */
-	private boolean checkMnemonic(Object component,
+	protected boolean checkMnemonic(Object component,
 			boolean parent, Object checked, char keychar, int keycode, int modifiers) {
 		if ((component == null) || !getBoolean(component, "visible", true) ||
 				!getBoolean(component, "enabled", true)) { //+ enabled comp in disabled parent
@@ -5232,7 +5236,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param modifiers
 	 * @return true if the component has the given mnemonic
 	 */
-	private boolean hasMnemonic(Object component, char keychar, int modifiers) {
+	protected boolean hasMnemonic(Object component, char keychar, int modifiers) {
 		if (modifiers == KeyEvent.ALT_DOWN_MASK) {
 			int index = getInteger(component, "mnemonic", -1);
 			if (index != -1) {
@@ -5250,7 +5254,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param modifiers
 	 * @return true if the component has the given accelerator
 	 */
-	private boolean hasAccelerator(Object component, int keycode, int modifiers) {
+	protected boolean hasAccelerator(Object component, int keycode, int modifiers) {
 		Object accelerator = get(component, "accelerator");
 		if (accelerator != null) {
 			long keystroke = ((Long) accelerator).longValue();
@@ -5463,7 +5467,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @throws java.io.IOException
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	private Object parse(InputStream inputstream,
+	protected Object parse(InputStream inputstream,
 			char mode, Object handler) throws IOException {
 		Reader reader = new BufferedReader(new InputStreamReader(inputstream));
 		try {
@@ -5662,7 +5666,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * vector because these may reference to widgets which are not parsed
 	 * at that time
 	 */
-	private void finishParse(Vector methods, Object root, Object handler) {
+	protected void finishParse(Vector methods, Object root, Object handler) {
 		if (methods != null) for (int i = 0; i < methods.size(); i += 3) {
 			Object component = methods.elementAt(i);
 			Object[] definition = (Object[]) methods.elementAt(i + 1);
@@ -5692,7 +5696,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param index add at the specified index
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	private void addImpl(Object parent, Object component, int index) {
+	protected void addImpl(Object parent, Object component, int index) {
 		String parentclass = getClass(parent);
 		String classname = getClass(component);
 		if ((("combobox" == parentclass) && ("choice" == classname)) ||
@@ -5721,7 +5725,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		else throw new IllegalArgumentException(classname + " add " + parentclass);
 	}
 	
-	private boolean instance(Object classname, Object extendclass) {
+	protected boolean instance(Object classname, Object extendclass) {
 		if (classname == extendclass) { return true; }
 		for (int i = 0; i < dtd.length; i += 3) {
 				if (classname == dtd[i]) {
@@ -5731,7 +5735,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return false;
 	}
 
-	private Object addElement(Object parent, String name) {
+	protected Object addElement(Object parent, String name) {
 		Object component = create(name);
 		addImpl(parent, component, -1);
 		return component;
@@ -5742,7 +5746,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @throws UnsupportedEncodingException 
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	private Vector addAttribute(Object component,
+	protected Vector addAttribute(Object component,
 		String key, String value, String encoding, Vector lasts)
 			throws UnsupportedEncodingException {
 		// replace value found in the bundle
@@ -5849,7 +5853,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 *
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	private static Object[] getDefinition(Object classname, String key, String type) {
+	protected static Object[] getDefinition(Object classname, String key, String type) {
 		Object currentname = classname;
 		while (classname != null) {
 			for (int i = 0; i < dtd.length; i += 3) {
@@ -5955,7 +5959,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * Sets the given property pair (key and value) for the component
 	 */
-	public void setIcon(Object component, String key, ThinletImage icon) {
+	public void setIcon(Object component, String key, ThingleImage icon) {
 		Object[] definition = getDefinition(getClass(component), key, "icon");
 		if (set(component, definition[1], icon)) {
 			update(component, definition[2]);
@@ -5965,8 +5969,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	/**
 	 * Gets the property value of the given component by the property key
 	 */
-	public ThinletImage getIcon(Object component, String key) {
-		return (ThinletImage) get(component, key, "icon");
+	public ThingleImage getIcon(Object component, String key) {
+		return (ThingleImage) get(component, key, "icon");
 	}
 	
 	public void setKeystroke(Object component, String key, String value) {
@@ -5980,7 +5984,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * Set custom font on a component, 
 	 * use the other <code>setFont</code> method instead
 	 */
-	public void setFont(Object component, ThinletFont font) { // deprecated
+	public void setFont(Object component, ThingleFont font) { // deprecated
 		setFont(component, "font", font);
 	}
 	
@@ -5990,7 +5994,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param component component to use the custom font
 	 * @param font custom font to use, or null to reset component to use default font
 	 */
-	public void setFont(Object component, String key, ThinletFont font) {
+	public void setFont(Object component, String key, ThingleFont font) {
 		Object[] definition = getDefinition(getClass(component), key, "font");
 		if (set(component, definition[1], font)) {
 			update(component, definition[2]);
@@ -6003,8 +6007,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param key the identifier of the parameter, e.g. "font"
 	 * @return may return null if the default font is used
 	 */
-	public ThinletFont getFont(Object component, String key) { // written by abial
-		return (ThinletFont) get(component, key, "font");
+	public ThingleFont getFont(Object component, String key) { // written by abial
+		return (ThingleFont) get(component, key, "font");
 	}
 
 	/**
@@ -6020,7 +6024,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param key currently "background" and "foreground" are supported
 	 * @param color custom color to use, or null to reset component to use default color
 	 */
-	public void setColor(Object component, String key, ThinletColor color) {
+	public void setColor(Object component, String key, ThingleColor color) {
 		Object[] definition = getDefinition(getClass(component), key, "color");
 		if (set(component, definition[1], color)) {
 			update(component, definition[2]);
@@ -6033,11 +6037,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param key the identifier of the parameter, e.g. "foreground"
 	 * @return value of the custom color, or null if default color is used
 	 */
-	public ThinletColor getThinletColor(Object component, String key) { // written by abial
-		return (ThinletColor) get(component, key, "color");
+	public ThingleColor getThinletColor(Object component, String key) { // written by abial
+		return (ThingleColor) get(component, key, "color");
 	}
 	
-	private void setKeystrokeImpl(Object component, String key, String value) {
+	protected void setKeystrokeImpl(Object component, String key, String value) {
 		Long keystroke = null;
 		if (value != null) {
 			String token = value;
@@ -6066,7 +6070,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		else throw new IllegalArgumentException(key);
 	}
 	
-	private static Object get(Object component, String key, String type) {
+	protected static Object get(Object component, String key, String type) {
 		Object[] definition = getDefinition(getClass(component), key, type);
 		Object value = get(component, definition[1]);
 		return (value != null) ? value : definition[3];
@@ -6103,7 +6107,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * - ("constant", string object, null) for constant number
 	 * (int, long, double, float) or string given as 'text'.
 	 */
-	private Object[] getMethod(Object component, String value, Object root, Object handler) {
+	protected Object[] getMethod(Object component, String value, Object root, Object handler) {
 		StringTokenizer st = new StringTokenizer(value, "(, \r\n\t)");
 		String methodname = st.nextToken();
 		int n = st.countTokens();
@@ -6182,7 +6186,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 						parametertypes[i] = Integer.TYPE;
 					}
 					else if (fieldclass == "icon") {
-						parametertypes[i] = ThinletImage.class;
+						parametertypes[i] = ThingleImage.class;
 					}
 					else throw new IllegalArgumentException((String) fieldclass);
 				}
@@ -6197,7 +6201,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private void update(Object component, Object mode) {
+	protected void update(Object component, Object mode) {
 		if ("parent" == mode) {
 			component = getParent(component);
 			mode = "validate";
@@ -6245,12 +6249,12 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 
 	// ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
-	private boolean setString(Object component,
+	protected boolean setString(Object component,
 			String key, String value, String defaultvalue) {
 		return set(component, key, value); // use defaultvalue
 	}
 
-	private String getString(Object component,
+	protected String getString(Object component,
 			String key, String defaultvalue) {
 		Object value = get(component, key);
 		return (value == null) ? defaultvalue : (String) value;
@@ -6260,7 +6264,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 *
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	private boolean setChoice(Object component,
+	protected boolean setChoice(Object component,
 			String key, String value, String[] values, String defaultvalue) {
 		if (value == null) {
 			return set(component, key, defaultvalue);
@@ -6273,34 +6277,34 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		throw new IllegalArgumentException("unknown " + value + " for " + key);
 	}
 
-	private ThinletImage getIcon(Object component, String key, ThinletImage defaultvalue) {
+	protected ThingleImage getIcon(Object component, String key, ThingleImage defaultvalue) {
 		Object value = get(component, key);
-		return (value == null) ? defaultvalue : (ThinletImage) value;
+		return (value == null) ? defaultvalue : (ThingleImage) value;
 	}
 
-	private boolean setBoolean(Object component,
+	protected boolean setBoolean(Object component,
 			String key, boolean value, boolean defaultvalue) {
 		return set(component, key, (value == defaultvalue) ? null :
 			(value ? Boolean.TRUE : Boolean.FALSE));
 	}
 
-	private boolean getBoolean(Object component, 
+	protected boolean getBoolean(Object component, 
 			String key, boolean defaultvalue) {
 		Object value = get(component, key);
 		return (value == null) ? defaultvalue : ((Boolean) value).booleanValue();
 	}
 
-	private boolean setInteger(Object component,
+	protected boolean setInteger(Object component,
 			String key, int value, int defaultvalue) {
 		return set(component, key, (value == defaultvalue) ? null : new Integer(value));
 	}
 
-	private int getInteger(Object component, String key, int defaultvalue) {
+	protected int getInteger(Object component, String key, int defaultvalue) {
 		Object value = get(component, key);
 		return (value == null) ? defaultvalue : ((Integer) value).intValue();
 	}
 
-	private void setRectangle(Object component,
+	protected void setRectangle(Object component,
 			String key, int x, int y, int width, int height) {
 		Rectangle rectangle = getRectangle(component, key);
 		if (rectangle != null) {
@@ -6312,7 +6316,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 
-	private Rectangle getRectangle(Object component, String key) {
+	protected Rectangle getRectangle(Object component, String key) {
 		return (Rectangle) get(component, key);
 	}
 	
@@ -6330,7 +6334,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	public void transferFocus() {
 	}
 	
-	public FontMetrics getFontMetrics(ThinletFont font) {
+	public FontMetrics getFontMetrics(ThingleFont font) {
 		return new FontMetrics(font);
 	}
 	
@@ -6338,11 +6342,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return new Dimension(600,600);
 	}
 
-	public void setClip(ThinletGraphics g, int x, int y, int width, int height) {
+	public void setClip(ThingleGraphics g, int x, int y, int width, int height) {
 		g.setClip(x,y,width,height);
 	}
 	
-	public void clipRect(ThinletGraphics g, int x, int y, int width, int height) {
+	public void clipRect(ThingleGraphics g, int x, int y, int width, int height) {
 		Rectangle rect = new Rectangle(x,y,width,height);
 		Rectangle old = g.getClip();
 		if (old == null) {
@@ -6353,7 +6357,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 	}
 	
-	public void drawString(ThinletGraphics g, String str, int x, int y) {
+	public void drawString(ThingleGraphics g, String str, int x, int y) {
 		g.translate(0, -g.getFont().getLineHeight());
 		g.drawString(str, x, y);
 		g.translate(0, g.getFont().getLineHeight());
@@ -6372,7 +6376,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * (if the path starts with <i>'/'</i> character), or a full URL
 	 * @return the loaded image or null
 	 */
-	public ThinletImage getIcon(String path) {
+	public ThingleImage getIcon(String path) {
 		return getIcon(path, true);
 	}
 
@@ -6386,11 +6390,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * (and repaints, and updates the layout) only when required (painted, or size requested) if false
 	 * @return the loaded image or null
 	 */
-	public ThinletImage getIcon(String path, boolean preload) {
+	public ThingleImage getIcon(String path, boolean preload) {
 		if ((path == null) || (path.length() == 0)) {
 			return null;
 		}
-		ThinletImage image = null; //(Image) imagepool.get(path);
+		ThingleImage image = null; //(Image) imagepool.get(path);
 		try {
 			URL url = spiFactory.getResource(path); //ClassLoader.getSystemResource(path)
 			if (url != null) { // contributed by Stefan Matthias Aust
@@ -6426,7 +6430,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return true;
 	}
 
-	private static Object[] dtd;
+	protected static Object[] dtd;
 	static {
 		Integer integer_1 = new Integer(-1);
 		Integer integer0 = new Integer(0);
@@ -6438,7 +6442,13 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			"component", null, new Object[][] {
 				{ "string", "name", null, null },
 				{ "boolean", "enabled", "paint", Boolean.TRUE },
-				{ "boolean", "visible", "parent", Boolean.TRUE },
+				{ "boolean", "visible", "parent", Boolean.TRUE },				
+				// rcs: optionally don't paint the component body, see trough it,
+				// save time, use it just as a container, label/multilabel etc.
+				{"boolean", "transparent", "validate", Boolean.FALSE},
+				// rcs, skinlet: should this component text be parsed and painted as rich text ( styled )?
+				// see drawStyledChars() comment in Skinlet.java
+				{ "boolean", "styled", "validate", Boolean.FALSE},
 				{ "string", "tooltip", null, null },
 				{ "font", "font", "validate", null },
 				{ "color", "foreground", "paint", null },
@@ -6462,7 +6472,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				{ "method", "focusgained" } },
 			"label", "component", new Object[][] {
 				{ "string", "text", "validate", null },
-				{ "icon", "icon", "validate", null },
+				{ "icon", "icon", "validate", null },				
+				{ "icon", "hicon", "validate", null}, // rcs: hover icon
 				{ "choice", "alignment", "validate", leftcenterright },
 				{ "integer", "mnemonic", "paint", integer_1 },
 				{ "component", "for", null, null } },
@@ -6478,7 +6489,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			"combobox", "textfield", new Object[][] {
 				{ "icon", "icon", "validate", null },
 				{ "integer", "selected", "layout", integer_1 } },
-			"choice", null, new Object[][] {
+			"choice", "component", new Object[][] {
 				{ "string", "name", null, null },
 				{ "boolean", "enabled", "paint", Boolean.TRUE },
 				{ "string", "text", "parent", null },

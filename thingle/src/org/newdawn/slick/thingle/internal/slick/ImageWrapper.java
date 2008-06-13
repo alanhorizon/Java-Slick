@@ -1,14 +1,14 @@
 package org.newdawn.slick.thingle.internal.slick;
 
 import org.newdawn.slick.Image;
-import org.newdawn.slick.thingle.spi.ThinletImage;
+import org.newdawn.slick.thingle.spi.ThingleImage;
 
 /**
  * A wrapped round slick images to make them look like thinlet images
  * 
  * @author kevin
  */
-public class ImageWrapper implements ThinletImage {
+public class ImageWrapper implements ThingleImage {
 	/** The image being wrapped */
 	private Image image;
 	
@@ -22,14 +22,14 @@ public class ImageWrapper implements ThinletImage {
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletImage#getHeight()
+	 * @see org.newdawn.slick.thingle.spi.ThingleImage#getHeight()
 	 */
 	public int getHeight() {
 		return image.getHeight();
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletImage#getWidth()
+	 * @see org.newdawn.slick.thingle.spi.ThingleImage#getWidth()
 	 */
 	public int getWidth() {
 		return image.getWidth();

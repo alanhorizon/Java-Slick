@@ -1,6 +1,6 @@
 package org.newdawn.slick.thingle.internal;
 
-import org.newdawn.slick.thingle.spi.ThinletFont;
+import org.newdawn.slick.thingle.spi.ThingleFont;
 
 /**
  * A font metrics to provide AWT like features
@@ -9,14 +9,14 @@ import org.newdawn.slick.thingle.spi.ThinletFont;
  */
 public class FontMetrics {
 	/** The slick font wrapped */
-	private ThinletFont font;
+	private ThingleFont font;
 	
 	/** 
 	 * Create a new metrics based on the given font
 	 * 
 	 * @param font The font to wrap
 	 */
-	public FontMetrics(ThinletFont font) {
+	public FontMetrics(ThingleFont font) {
 		this.font = font;
 	}
 	

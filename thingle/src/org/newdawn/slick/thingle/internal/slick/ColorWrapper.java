@@ -1,14 +1,14 @@
 package org.newdawn.slick.thingle.internal.slick;
 
 import org.newdawn.slick.Color;
-import org.newdawn.slick.thingle.spi.ThinletColor;
+import org.newdawn.slick.thingle.spi.ThingleColor;
 
 /**
  * A wrapped making a Slick colour looks like a ThinletColor
  * 
  * @author kevin
  */
-public class ColorWrapper implements ThinletColor {
+public class ColorWrapper implements ThingleColor {
 	/** The color wrapped */
 	private Color color;
 	
@@ -49,47 +49,47 @@ public class ColorWrapper implements ThinletColor {
 	 * 
 	 * @param col The colour to wrap
 	 */
-	private ColorWrapper(Color col) {
+	public ColorWrapper(Color col) {
 		this.color = col;
 	}
 	
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletColor#brighter()
+	 * @see org.newdawn.slick.thingle.spi.ThingleColor#brighter()
 	 */
-	public ThinletColor brighter() {
+	public ThingleColor brighter() {
 		return new ColorWrapper(color.brighter());
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletColor#darker()
+	 * @see org.newdawn.slick.thingle.spi.ThingleColor#darker()
 	 */
-	public ThinletColor darker() {
+	public ThingleColor darker() {
 		return new ColorWrapper(color.darker());
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletColor#getBlue()
+	 * @see org.newdawn.slick.thingle.spi.ThingleColor#getBlue()
 	 */
 	public int getBlue() {
 		return color.getBlue();
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletColor#getGreen()
+	 * @see org.newdawn.slick.thingle.spi.ThingleColor#getGreen()
 	 */
 	public int getGreen() {
 		return color.getGreen();
 	}
 
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletColor#getRed()
+	 * @see org.newdawn.slick.thingle.spi.ThingleColor#getRed()
 	 */
 	public int getRed() {
 		return color.getRed();
 	}
 	
 	/**
-	 * @see org.newdawn.slick.thingle.spi.ThinletColor#getAlpha()
+	 * @see org.newdawn.slick.thingle.spi.ThingleColor#getAlpha()
 	 */
 	public int getAlpha() {
 		return color.getAlpha();

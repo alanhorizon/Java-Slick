@@ -6,7 +6,7 @@ package org.newdawn.slick.thingle.spi;
  * 
  * @author kevin
  */
-public interface ThinletImageBuffer {
+public interface ThingleImageBuffer {
 	/**
 	 * Set a given pixel to the given colour value
 	 * 
@@ -24,5 +24,5 @@ public interface ThinletImageBuffer {
 	 * 
 	 * @return The image created from the buffer
 	 */
-	public ThinletImage getImage();
+	public ThingleImage getImage();
 }

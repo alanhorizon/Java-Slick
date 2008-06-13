@@ -3,8 +3,9 @@ package org.newdawn.slick.thingle;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.newdawn.slick.thingle.internal.Skinlet;
 import org.newdawn.slick.thingle.internal.Thinlet;
-import org.newdawn.slick.thingle.spi.ThinletException;
+import org.newdawn.slick.thingle.spi.ThingleException;
 
 /**
  * A single UI page. This page provides a Slick oriented wrapper around the 
@@ -24,10 +25,15 @@ public class Page {
 	/**
 	 * Create new a new UI page
 	 * 
-	 * @throws ThinletException Indicates a failure to create thinlet
+	 * @throws ThingleException Indicates a failure to create thinlet
 	 */
-	public Page() throws ThinletException {
-		thinlet = new Thinlet();
+	public Page() throws ThingleException {
+		Skinlet skinlet = new Skinlet();
+//		skinlet.loadSkin("skins", "clearwater");
+//		skinlet.loadSkin("skins", "crystallized");
+//		skinlet.loadSkin("skins", "metropolitan");
+		thinlet = skinlet;
+		//thinlet = new Thinlet();
 		thinlet.setKeyFocus(true);
 		theme = new Theme();
 		setColors();
@@ -37,9 +43,9 @@ public class Page {
 	 * Create a new UI page
 	 * 
 	 * @param ref A reference to a thinlet xml file to describe the UI
-	 * @throws ThinletException Indicates a failure to create thinlet
+	 * @throws ThingleException Indicates a failure to create thinlet
 	 */
-	public Page(String ref) throws ThinletException {
+	public Page(String ref) throws ThingleException {
 		this();
 		
 		addComponents(ref);
@@ -50,9 +56,9 @@ public class Page {
 	 * 
 	 * @param ref A reference to a thinlet xml file to describe the UI
 	 * @param handler The object to respond to events from the GUI specified in the ref XML
-	 * @throws ThinletException Indicates a failure to create thinlet
+	 * @throws ThingleException Indicates a failure to create thinlet
 	 */
-	public Page(String ref, Object handler) throws ThinletException {
+	public Page(String ref, Object handler) throws ThingleException {
 		this();
 		
 		addComponents(ref, handler);
@@ -97,9 +103,9 @@ public class Page {
 	 * events are sent to this page.
 	 * 
 	 * @param ref The reference to the XML file
-  	 * @throws ThinletException Indicates a failure to load the XML
+  	 * @throws ThingleException Indicates a failure to load the XML
 	 */
-	public void addComponents(String ref) throws ThinletException {
+	public void addComponents(String ref) throws ThingleException {
 		addComponents(ref, this);
 	}
 
@@ -109,14 +115,14 @@ public class Page {
 	 * 
 	 * @param actionHandler The handler to send events to
 	 * @param ref The reference to the XML file
-  	 * @throws ThinletException Indicates a failure to load the XML
+  	 * @throws ThingleException Indicates a failure to load the XML
 	 */
-	public void addComponents(String ref, Object actionHandler) throws ThinletException {
+	public void addComponents(String ref, Object actionHandler) throws ThingleException {
 		try {
-			thinlet.add(thinlet.parse(ThinletCore.getContext().getResourceAsStream(ref), actionHandler));
+			thinlet.add(thinlet.parse(Thingle.getContext().getResourceAsStream(ref), actionHandler));
 		} catch (IOException e) {
-			ThinletCore.getContext().log(e);
-			throw new ThinletException("Failed to load: "+ref, e);
+			Thingle.getContext().log(e);
+			throw new ThingleException("Failed to load: "+ref, e);
 		}
 		
 		layout();
@@ -128,14 +134,14 @@ public class Page {
 	 * @param g The graphics context to render to
 	 */
 	public void render() {
-		thinlet.paint(ThinletCore.getGraphics(), ThinletCore.getWidth(), ThinletCore.getHeight());	
+		thinlet.paint(Thingle.getGraphics(), Thingle.getWidth(), Thingle.getHeight());	
 	}
 	
 	/**
 	 * Layout the GUI
 	 */
 	public void layout() {
-		thinlet.layout(ThinletCore.getWidth(), ThinletCore.getHeight());
+		thinlet.layout(Thingle.getWidth(), Thingle.getHeight());
 	}
 	
 	/**

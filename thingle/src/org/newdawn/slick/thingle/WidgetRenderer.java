@@ -2,7 +2,7 @@ package org.newdawn.slick.thingle;
 
 import org.newdawn.slick.thingle.internal.Rectangle;
 import org.newdawn.slick.thingle.internal.Thinlet;
-import org.newdawn.slick.thingle.spi.ThinletGraphics;
+import org.newdawn.slick.thingle.spi.ThingleGraphics;
 
 /**
  * A plugin to allow custom rendering to components, currently only panels
@@ -19,5 +19,5 @@ public interface WidgetRenderer {
 	 * @param componentHandle The handle to the component being rendered
 	 * @param bounds The bounds of the component
 	 */
-	public void paint(Thinlet thinlet, ThinletGraphics g, Object componentHandle, Rectangle bounds);
+	public void paint(Thinlet thinlet, ThingleGraphics g, Object componentHandle, Rectangle bounds);
 }

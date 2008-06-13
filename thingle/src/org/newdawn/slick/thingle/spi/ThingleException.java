@@ -6,14 +6,14 @@ package org.newdawn.slick.thingle.spi;
  * 
  * @author kevin
  */
-public class ThinletException extends Exception {
+public class ThingleException extends Exception {
 
 	/**
 	 * Create a new exception
 	 * 
 	 * @param msg The detail message
 	 */
-	public ThinletException(String msg) {
+	public ThingleException(String msg) {
 		super(msg);
 	}
 
@@ -22,7 +22,7 @@ public class ThinletException extends Exception {
 	 * 
 	 * @param cause The exception causing this exception to be thrown
 	 */
-	public ThinletException(Throwable cause) {
+	public ThingleException(Throwable cause) {
 		super(cause);
 	}
 
@@ -32,7 +32,7 @@ public class ThinletException extends Exception {
 	 * @param msg The detail message
 	 * @param cause The exception causing this exception to be thrown
 	 */
-	public ThinletException(String msg, Throwable cause) {
+	public ThingleException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 }

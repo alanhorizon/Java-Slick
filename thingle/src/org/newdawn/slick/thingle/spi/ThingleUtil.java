@@ -5,7 +5,7 @@ package org.newdawn.slick.thingle.spi;
  * 
  * @author kevin
  */
-public interface ThinletUtil {
+public interface ThingleUtil {
 
 	/**
 	 * Get the contents of the clipboard

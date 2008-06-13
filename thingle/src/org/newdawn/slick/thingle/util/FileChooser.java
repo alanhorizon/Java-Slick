@@ -10,7 +10,7 @@ import javax.swing.filechooser.FileSystemView;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
 import org.newdawn.slick.thingle.internal.Thinlet;
-import org.newdawn.slick.thingle.spi.ThinletException;
+import org.newdawn.slick.thingle.spi.ThingleException;
 
 /**
  * A file chooser emulating the swing one but rendered using the Thinlet implementation
@@ -61,9 +61,9 @@ public class FileChooser {
 	 * @param title The title to display in the dialog 
 	 * @param select The label to place on the OK button
 	 * @param listener The listener to be notified of dialog events
- 	 * @throws ThinletException Indicates a failure to load required resources
+ 	 * @throws ThingleException Indicates a failure to load required resources
 	 */
-	public FileChooser(String title, String select, FileChooserListener listener) throws ThinletException {
+	public FileChooser(String title, String select, FileChooserListener listener) throws ThingleException {
 		this(title, select, FileSystemView.getFileSystemView().getDefaultDirectory(), listener);
 	}
 
@@ -74,9 +74,9 @@ public class FileChooser {
 	 * @param title The title to display in the dialog 
 	 * @param select The label to place on the OK button
 	 * @param listener The listener to be notified of dialog events
- 	 * @throws ThinletException Indicates a failure to load required resources
+ 	 * @throws ThingleException Indicates a failure to load required resources
 	 */
-	public FileChooser(String title, String select, File currentDir, FileChooserListener listener) throws ThinletException {
+	public FileChooser(String title, String select, File currentDir, FileChooserListener listener) throws ThingleException {
 		this.listener = listener;
 		this.title = title;
 		this.currentDir = currentDir;

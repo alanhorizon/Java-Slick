@@ -3,7 +3,7 @@ package org.newdawn.slick.thingle.demos;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import org.newdawn.slick.thingle.ThinletCore;
+import org.newdawn.slick.thingle.Thingle;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
@@ -287,7 +287,7 @@ public class Demo {
 		thinlet.setInteger(pb_saturation, "value", (int) (100f * hsb[1]));
 		thinlet.setInteger(pb_brightness, "value", (int) (100f * hsb[2]));
 
-		thinlet.setColor(rgb_label, "background", ThinletCore.createColor(red, green, blue));
-		thinlet.setColor(rgb_label, "foreground", ThinletCore.createColor(255 - red, 255 - green, 255 - blue));
+		thinlet.setColor(rgb_label, "background", Thingle.createColor(red, green, blue));
+		thinlet.setColor(rgb_label, "foreground", Thingle.createColor(255 - red, 255 - green, 255 - blue));
 	}
 }

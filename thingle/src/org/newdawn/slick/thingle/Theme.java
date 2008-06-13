@@ -1,7 +1,7 @@
 package org.newdawn.slick.thingle;
 
 import org.newdawn.slick.thingle.internal.Thinlet;
-import org.newdawn.slick.thingle.spi.ThinletColor;
+import org.newdawn.slick.thingle.spi.ThingleColor;
 
 /**
  * A colour theme to apply across the GUI
@@ -10,30 +10,30 @@ import org.newdawn.slick.thingle.spi.ThinletColor;
  */
 public class Theme {
 	/** The background colour - also used as the base of the gradients */
-	private ThinletColor background = ThinletCore.createColor(0xe6e6e6);
+	private ThingleColor background = Thingle.createColor(0xe6e6e6);
 	/** The text colour */
-	private ThinletColor text = ThinletCore.createColor(0x000000);
+	private ThingleColor text = Thingle.createColor(0x000000);
 	/** The background of text area's colour */
-	private ThinletColor textbackground = ThinletCore.createColor(0xffffff);
+	private ThingleColor textbackground = Thingle.createColor(0xffffff);
 	/** The border of components colour */
-	private ThinletColor border = ThinletCore.createColor(0x909090);
+	private ThingleColor border = Thingle.createColor(0x909090);
 	/** The disabled colour */
-	private ThinletColor disable = ThinletCore.createColor(0xb0b0b0);
+	private ThingleColor disable = Thingle.createColor(0xb0b0b0);
 	/** The colour used when the mouse is hovering over a component */
-	private ThinletColor hover = ThinletCore.createColor(0xededed);
+	private ThingleColor hover = Thingle.createColor(0xededed);
 	/** The colour used when a button is pressed */
-	private ThinletColor press = ThinletCore.createColor(0xb9b9b9);
+	private ThingleColor press = Thingle.createColor(0xb9b9b9);
 	/** The colour of the focus outline */
-	private ThinletColor focus = ThinletCore.createColor(0x89899a);
+	private ThingleColor focus = Thingle.createColor(0x89899a);
 	/** The colour of the selection over text */
-	private ThinletColor select = ThinletCore.createColor(0xc5c5dd);
+	private ThingleColor select = Thingle.createColor(0xc5c5dd);
 
 	/**
 	 * Get the background colour
 	 * 
 	 * @return The background colour
 	 */
-	public ThinletColor getBackground() {
+	public ThingleColor getBackground() {
 		return background;
 	}
 	
@@ -42,7 +42,7 @@ public class Theme {
 	 * 
 	 * @param background The background colour
 	 */
-	public void setBackground(ThinletColor background) {
+	public void setBackground(ThingleColor background) {
 		this.background = background;
 	}
 
@@ -51,7 +51,7 @@ public class Theme {
 	 * 
 	 * @return The text colour
 	 */
-	public ThinletColor getText() {
+	public ThingleColor getText() {
 		return text;
 	}
 
@@ -60,7 +60,7 @@ public class Theme {
 	 * 
 	 * @param text The text colour
 	 */
-	public void setText(ThinletColor text) {
+	public void setText(ThingleColor text) {
 		this.text = text;
 	}
 
@@ -69,7 +69,7 @@ public class Theme {
 	 * 
 	 * @return The text background colour
 	 */
-	public ThinletColor getTextBackground() {
+	public ThingleColor getTextBackground() {
 		return textbackground;
 	}
 
@@ -78,7 +78,7 @@ public class Theme {
 	 * 
 	 * @param textbackground The text background colour
 	 */
-	public void setTextBackground(ThinletColor textbackground) {
+	public void setTextBackground(ThingleColor textbackground) {
 		this.textbackground = textbackground;
 	}
 
@@ -87,7 +87,7 @@ public class Theme {
 	 * 
 	 * @return The border colour
 	 */
-	public ThinletColor getBorder() {
+	public ThingleColor getBorder() {
 		return border;
 	}
 
@@ -96,7 +96,7 @@ public class Theme {
 	 * 
 	 * @param border The border colour
 	 */
-	public void setBorder(ThinletColor border) {
+	public void setBorder(ThingleColor border) {
 		this.border = border;
 	}
 
@@ -105,7 +105,7 @@ public class Theme {
 	 * 
 	 * @return The disabled colour
 	 */
-	public ThinletColor getDisabled() {
+	public ThingleColor getDisabled() {
 		return disable;
 	}
 
@@ -114,7 +114,7 @@ public class Theme {
 	 * 
 	 * @param disable The disabled colour
 	 */
-	public void setDisabled(ThinletColor disable) {
+	public void setDisabled(ThingleColor disable) {
 		this.disable = disable;
 	}
 
@@ -123,7 +123,7 @@ public class Theme {
 	 * 
 	 * @return The hover colour
 	 */
-	public ThinletColor getHover() {
+	public ThingleColor getHover() {
 		return hover;
 	}
 
@@ -132,7 +132,7 @@ public class Theme {
 	 * 
 	 * @param hover The hover colour
 	 */
-	public void setHover(ThinletColor hover) {
+	public void setHover(ThingleColor hover) {
 		this.hover = hover;
 	}
 
@@ -141,7 +141,7 @@ public class Theme {
 	 * 
 	 * @return The pressed colour
 	 */
-	public ThinletColor getPressed() {
+	public ThingleColor getPressed() {
 		return press;
 	}
 
@@ -150,7 +150,7 @@ public class Theme {
 	 * 
 	 * @param press The pressed colour
 	 */
-	public void setPressed(ThinletColor press) {
+	public void setPressed(ThingleColor press) {
 		this.press = press;
 	}
 
@@ -159,7 +159,7 @@ public class Theme {
 	 * 
 	 * @return The focus colour
 	 */
-	public ThinletColor getFocus() {
+	public ThingleColor getFocus() {
 		return focus;
 	}
 
@@ -168,7 +168,7 @@ public class Theme {
 	 * 
 	 * @param focus The focused colour
 	 */
-	public void setFocus(ThinletColor focus) {
+	public void setFocus(ThingleColor focus) {
 		this.focus = focus;
 	}
 
@@ -177,7 +177,7 @@ public class Theme {
 	 * 
 	 * @return The selected colour
 	 */
-	public ThinletColor getSelected() {
+	public ThingleColor getSelected() {
 		return select;
 	}
 
@@ -186,7 +186,7 @@ public class Theme {
 	 * 
 	 * @param select The selected colour
 	 */
-	public void setSelected(ThinletColor select) {
+	public void setSelected(ThingleColor select) {
 		this.select = select;
 	}
 
@@ -196,7 +196,7 @@ public class Theme {
 	 * @param color The colour to convert
 	 * @return The int form of the colour
 	 */
-	private int toInt(ThinletColor color) {
+	private int toInt(ThingleColor color) {
 		return (color.getAlpha() << 24) + (color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue();
 	}
 	

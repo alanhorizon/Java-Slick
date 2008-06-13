@@ -9,9 +9,9 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
-import org.newdawn.slick.thingle.ThinletCore;
+import org.newdawn.slick.thingle.Thingle;
 import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
-import org.newdawn.slick.thingle.spi.ThinletException;
+import org.newdawn.slick.thingle.spi.ThingleException;
 
 /**
  * The big test demo that has multiple tabs, sub-dialogs etc
@@ -35,7 +35,7 @@ public class PanelRendererTest extends BasicGame {
 	 * @see org.newdawn.slick.BasicGame#init(org.newdawn.slick.GameContainer)
 	 */
 	public void init(GameContainer container) throws SlickException {
-		ThinletCore.init(new SlickThinletFactory(container));
+		Thingle.init(new SlickThinletFactory(container));
 		
 		container.setShowFPS(false);
 		
@@ -44,13 +44,13 @@ public class PanelRendererTest extends BasicGame {
 		
 		try {
 			page = new Page("res/panel.xml", new Login());
-		} catch (ThinletException e) {
+		} catch (ThingleException e) {
 			e.printStackTrace();
 		}
 		Theme theme = new Theme();
-		theme.setBackground(ThinletCore.createColor(0.6f,0.6f,1f,1f));
-		theme.setBorder(ThinletCore.createColor(0,0,0.5f));
-		theme.setFocus(ThinletCore.createColor(0,0,0));
+		theme.setBackground(Thingle.createColor(0.6f,0.6f,1f,1f));
+		theme.setBorder(Thingle.createColor(0,0,0.5f));
+		theme.setFocus(Thingle.createColor(0,0,0));
 		page.setTheme(theme);
 		page.setDrawDesktop(false);
 		
