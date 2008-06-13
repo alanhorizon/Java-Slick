@@ -108,7 +108,7 @@ public interface ThinletContext {
 	 * @param in The input stream from which to read the image
 	 * @param name The name of the image resource
 	 * @param flipped True if the image should be flipped vertically
-	 * @return
+	 * @return The image that's been loaded
 	 * @throws ThinletException
 	 */
 	public ThinletImage createImage(InputStream in, String name, boolean flipped) throws ThinletException;

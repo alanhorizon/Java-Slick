@@ -139,6 +139,15 @@ public class Page {
 	}
 	
 	/**
+	 * Update the input handling for the page
+	 * 
+	 * @param delta The amount of time in milliseconds thats passed since last update
+	 */
+	public void update(int delta) {
+		thinlet.getInput().update(delta);
+	}
+	
+	/**
 	 * Enable input to this GUI page
 	 */
 	public void enable() {
