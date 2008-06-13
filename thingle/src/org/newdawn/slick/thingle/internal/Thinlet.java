@@ -1491,7 +1491,7 @@ public class Thinlet implements Runnable, Serializable {
 					0, 0, 0, 0, focus, enabled ? (pressed ? 'e' : 'l') : 'd', "center",
 					true, enabled && (inside != pressed));
 			} else { // disabled toggled
-				char mode = enabled ? ((inside != pressed) ? 'h' : ((pressed || toggled) ? 'p' : 'g')) : 'd';
+				char mode = enabled ? ((inside != pressed && !toggled) ? 'h' : ((pressed || toggled) ? 'p' : 'g')) : 'd';
 				paint(component, 0, 0, bounds.width, bounds.height,
 					g, clipx, clipy, clipwidth, clipheight, true, true, true, true,
 					2, 5, 2, 5, focus, mode, "center", true, false);
