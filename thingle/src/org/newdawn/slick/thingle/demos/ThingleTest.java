@@ -56,7 +56,7 @@ public class ThingleTest extends BasicGame {
 //		theme.setBorder(Thingle.createColor(0,0,0.5f));
 //		theme.setFocus(Thingle.createColor(0,0,0));
 //		page.setTheme(theme);
-		page.setDrawDesktop(false);
+		page.setDrawDesktop(true);
 		
 		page.enable();
 		try {
