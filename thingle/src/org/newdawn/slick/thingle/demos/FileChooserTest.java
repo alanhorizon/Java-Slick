@@ -38,6 +38,8 @@ public class FileChooserTest extends BasicGame {
 	 * @see org.newdawn.slick.BasicGame#init(org.newdawn.slick.GameContainer)
 	 */
 	public void init(GameContainer container) throws SlickException {
+		ThinletCore.init(new SlickThinletFactory(container));
+		
 		container.setShowFPS(false);
 		//container.setVSync(true);
 		//container.setTargetFrameRate(100);

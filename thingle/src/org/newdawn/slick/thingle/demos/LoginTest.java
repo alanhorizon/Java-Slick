@@ -11,6 +11,7 @@ import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
 import org.newdawn.slick.thingle.ThinletCore;
 import org.newdawn.slick.thingle.Widget;
+import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
 import org.newdawn.slick.thingle.spi.ThinletException;
 
 /**
@@ -35,6 +36,8 @@ public class LoginTest extends BasicGame {
 	 * @see org.newdawn.slick.BasicGame#init(org.newdawn.slick.GameContainer)
 	 */
 	public void init(GameContainer container) throws SlickException {
+		ThinletCore.init(new SlickThinletFactory(container));
+		
 		container.setShowFPS(false);
 		//container.setVSync(true);
 		//container.setTargetFrameRate(100);

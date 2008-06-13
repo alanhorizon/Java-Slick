@@ -16,11 +16,23 @@ public class Demo {
 	/** The dialog created on search */
 	private Object dialog;
 	/** The current colour settings */
-	private Object sl_red, sl_green, sl_blue;
+	private Object sl_red;
+	/** The current colour settings */
+	private Object sl_green;
+	/** The current colour settings */
+	private Object sl_blue;
 	/** The current HSB settings */
-	private Object tf_hue, tf_saturation, tf_brightness;
+	private Object tf_hue;
 	/** The current HSB settings */
-	private Object pb_hue, pb_saturation, pb_brightness;
+	private Object tf_saturation;
+	/** The current HSB settings */
+	private Object tf_brightness;
+	/** The current HSB settings */
+	private Object pb_hue;
+	/** The current HSB settings */
+	private Object pb_saturation;
+	/** The current HSB settings */
+	private Object pb_brightness;
 	/** The colour of the label */
 	private Object rgb_label;
 
