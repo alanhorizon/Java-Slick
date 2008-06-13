@@ -3878,6 +3878,14 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			}
 		}
 		else if ("dialog" == classname) {
+			if ("closebutton".equals(part)) {
+				if (id == MouseEvent.MOUSE_PRESSED) {
+					// close
+					remove(component);
+					invoke(component, null, "close");
+				}
+			}
+			
 			if (part == "header") {
 				if (id == MouseEvent.MOUSE_PRESSED) {
 					Rectangle bounds = getRectangle(component, "bounds");
@@ -4391,6 +4399,10 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 					int titleheight = getInteger(component, ":titleheight", 0);
 					if (y < 4 + titleheight) {
 						insidepart = "header";
+				
+						if (x > bounds.width - 20) {
+							insidepart = "closebutton";
+						}
 					}
 				}
 			}
@@ -6539,7 +6551,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			"desktop", "component", null,
 			"dialog", "panel", new Object[][] {
 				{ "integer", "minwidth", "validate", integer0 },
-				{ "integer", "minheight", "validate", integer0 },
+				{ "integer", "minheight", "validate", integer0 },				
+				{ "method", "close", "", null}, // rcs: executes on dialog close
 				{ "boolean", "modal", null, Boolean.FALSE },
 				{ "boolean", "resizable", null, Boolean.FALSE },
 				{ "boolean", "closable", "paint", Boolean.FALSE },

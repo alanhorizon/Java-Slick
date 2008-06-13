@@ -662,14 +662,16 @@ public class Skinlet extends Thinlet {
 				g.setFont(tmp);
 
 				// close dialog button
-				int x = bounds.width - skin.titlebar.borderInsets.right
-						- skin.closeButton.pieceWidth, y = skin.titlebar.borderInsets.top;
-				int cstate = 0;
-				if ((insidepart == "closebutton"))
-					cstate = 2;
-				if ((pressedpart == "closebutton"))
-					cstate = 1;
-				skin.closeButton.paintBody(g, cstate, x, y);
+				if (getBoolean(component, "closable", false)) {
+					int x = bounds.width - skin.titlebar.borderInsets.right
+							- skin.closeButton.pieceWidth, y = skin.titlebar.borderInsets.top;
+					int cstate = 0;
+					if ((insidepart == "closebutton"))
+						cstate = 2;
+					if ((pressedpart == "closebutton"))
+						cstate = 1;
+					skin.closeButton.paintBody(g, cstate, x, y);
+				}
 
 				// end of X
 			} else { // panel
