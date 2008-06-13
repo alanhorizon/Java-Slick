@@ -2,16 +2,66 @@ package org.newdawn.slick.thingle.internal;
 
 import org.newdawn.slick.thingle.spi.ThinletInput;
 
+/**
+ * The input interface supported by the Thinlet instance. This interface
+ * must be enacted by the input provider of the SPI implementation.
+ * 
+ * @author kevin
+ */
 public interface ThinletInputListener {
-	public void mouseDragged(int x, int y, ThinletInput mods);
+	/**
+	 * Notification that the mouse has been dragged
+	 * 
+	 * @param x The x location the mouse was dragged to
+	 * @param y The y location the mouse was dragged to
+	 * @param input The input instance firing this event
+	 */
+	public void mouseDragged(int x, int y, ThinletInput input);
 	
-	public void mouseMoved(int x, int y, ThinletInput mods);
-	
-	public void mouseReleased(int x, int y, ThinletInput mods);
-	
-	public void mouseWheelMoved(int rotation, ThinletInput mods);
+	/**
+	 * Notification that the mouse has been moved (not dragged)
+	 * 
+	 * @param x The x location the mouse was moved to
+	 * @param y The y location the mouse was moved to
+	 * @param input The input instance firing this event
+	 */
+	public void mouseMoved(int x, int y, ThinletInput input);
+
+	/**
+	 * Notification that the mouse button has been released
+	 * 
+	 * @param x The x location the mouse was released at
+	 * @param y The y location the mouse was released at
+	 * @param input The input instance firing this event
+	 */
+	public void mouseReleased(int x, int y, ThinletInput input);
+
+	/**
+	 * Notification that the mouse wheel has been moved
+	 * 
+	 * @param rotation The amount the wheel was moved by
+	 * @param input The input instance firing this event
+	 */
+	public void mouseWheelMoved(int rotation, ThinletInput input);
+
+	/**
+	 * Notification that the mouse button has been pressed
+	 * 
+	 * @param x The x location the mouse was pressed at
+	 * @param y The y location the mouse was pressed at
+	 * @param clickCount The number of clicks at the given location
+	 * @param input The input instance firing this event
+	 */
+	public void mousePressed(int x, int y, int clickCount, ThinletInput input);
 		
-	public void mousePressed(int x, int y, int clickCount, ThinletInput mods);
-		
-	public boolean keyPressed(char keychar, int keycode, ThinletInput mods, boolean typed);
+	/**
+	 * Notification that a key was pressed
+	 * 
+	 * @param keychar The character of the key pressed (if any)
+	 * @param keycode The key code of the key pressed (as described by ThinletInput.getKeyMapping())
+	 * @param input The input instance firing this event
+	 * @param typed True if this key was typed (i.e. pressed then released)
+	 * @return True if the key was processed
+	 */
+	public boolean keyPressed(char keychar, int keycode, ThinletInput input, boolean typed);
 }
