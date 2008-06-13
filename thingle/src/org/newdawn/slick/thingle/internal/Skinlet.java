@@ -1163,6 +1163,7 @@ public class Skinlet extends Thinlet {
 				- piece.insets.lr, height - piece.insets.tb);
 
 		String text = getString(component, "text", "");
+		
 		int offset = getInteger(component, ":offset", 0);
 		ThingleFont currentfont = (ThingleFont) get(component, "font");
 		if (currentfont != null) {
@@ -1194,7 +1195,7 @@ public class Skinlet extends Thinlet {
 		}
 		g.setColor(piece.getTextColor(enabled ? 0 : 3, enabled ? fg : null));
 		int fx = piece.insets.left + left - offset;
-		int fy = (height + fm.getAscent() - fm.getDescent()) / 2;
+		int fy = (height - fm.getHeight()) / 2;
 		if (hidden) {
 			int fh = fm.charWidth('*');
 			for (int i = text.length(); i > 0; i--) {
@@ -2301,7 +2302,7 @@ public class Skinlet extends Thinlet {
 		ThingleColor customfg = (ThingleColor) get(component, "foreground"); // +no
 																				// if
 																				// disabled
-
+		
 		FontMetrics fm = null;
 		int tw = 0, th = 0;
 		int ta = 0;
