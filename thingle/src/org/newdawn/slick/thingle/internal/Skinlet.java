@@ -951,7 +951,10 @@ public class Skinlet extends Thinlet {
 	 * @return the created popupmenu
 	 */
 	protected Object popupMenu(Object component) {
-
+		if (!skin.loaded()) {
+			return super.popupMenu(component);
+		}
+		
 		Object popup = get(component, ":popup"); // first :popup child
 		Object selected = get(component, "selected"); // selected menu in of
 														// the component

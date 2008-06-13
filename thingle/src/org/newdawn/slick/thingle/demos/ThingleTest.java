@@ -51,14 +51,19 @@ public class ThingleTest extends BasicGame {
 			System.exit(0);
 		}
 		
-		Theme theme = new Theme();
-		theme.setBackground(Thingle.createColor(0.6f,0.6f,1f,1f));
-		theme.setBorder(Thingle.createColor(0,0,0.5f));
-		theme.setFocus(Thingle.createColor(0,0,0));
-		page.setTheme(theme);
-		page.setDrawDesktop(true);
+//		Theme theme = new Theme();
+//		theme.setBackground(Thingle.createColor(0.6f,0.6f,1f,1f));
+//		theme.setBorder(Thingle.createColor(0,0,0.5f));
+//		theme.setFocus(Thingle.createColor(0,0,0));
+//		page.setTheme(theme);
+		page.setDrawDesktop(false);
 		
 		page.enable();
+		try {
+			page.loadSkin("crystallized");
+		} catch (ThingleException e) {
+			// ignore, no skin
+		}
 	}
 	
 	public void update(GameContainer container, int delta)

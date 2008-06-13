@@ -15,7 +15,7 @@ import org.newdawn.slick.thingle.spi.ThingleException;
  */
 public class Page {
 	/** The thinlet instance in use */
-	private Thinlet thinlet;
+	private Skinlet thinlet;
 	/** The colour theme applied */
 	private Theme theme;
 	
@@ -28,12 +28,7 @@ public class Page {
 	 * @throws ThingleException Indicates a failure to create thinlet
 	 */
 	public Page() throws ThingleException {
-		Skinlet skinlet = new Skinlet();
-//		skinlet.loadSkin("skins", "clearwater");
-//		skinlet.loadSkin("skins", "crystallized");
-//		skinlet.loadSkin("skins", "metropolitan");
-		thinlet = skinlet;
-		//thinlet = new Thinlet();
+		thinlet = new Skinlet();
 		thinlet.setKeyFocus(true);
 		theme = new Theme();
 		setColors();
@@ -62,6 +57,16 @@ public class Page {
 		this();
 		
 		addComponents(ref, handler);
+	}
+	
+	/**
+	 * Load a skin from a configuration file assumed to be on the class path
+	 * 
+	 * @param name The name of the configuration file (without it's extension)
+	 * @throws ThingleException Indicates a failure to load the given skin
+	 */
+	public void loadSkin(String name) throws ThingleException {
+		thinlet.loadSkin("skins", name);
 	}
 	
 	/**
