@@ -45,8 +45,6 @@ public class FileChooser {
 	
 	/** The title to be given to the dialog */
 	private String title = "Save";
-	/** The file selected */
-	private File selectedFile = null;
 	/** The listener to be notified of dialog events */
 	private FileChooserListener listener;
 	/** True if you're allowed to select directories as well as files */
@@ -162,7 +160,6 @@ public class FileChooser {
 	 * reporting the cancellation.
 	 */
 	public void cancel() {
-		selectedFile = null;
 		page.disable();
 		visible = false;
 		thinlet.remove(chooserDialog);
@@ -176,7 +173,6 @@ public class FileChooser {
 	 * @param file The file that has been selected
 	 */
 	private void selectFile(File file) {
-		selectedFile = file;
 		page.disable();
 		visible = false;
 		thinlet.remove(chooserDialog);
