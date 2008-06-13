@@ -5,23 +5,33 @@ import java.net.URL;
 
 import org.lwjgl.Sys;
 import org.newdawn.slick.Font;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.thingle.internal.ThinletInputListener;
 import org.newdawn.slick.thingle.spi.ThinletColor;
 import org.newdawn.slick.thingle.spi.ThinletException;
-import org.newdawn.slick.thingle.spi.ThinletFactory;
+import org.newdawn.slick.thingle.spi.ThinletContext;
 import org.newdawn.slick.thingle.spi.ThinletFont;
+import org.newdawn.slick.thingle.spi.ThinletGraphics;
 import org.newdawn.slick.thingle.spi.ThinletImage;
 import org.newdawn.slick.thingle.spi.ThinletImageBuffer;
+import org.newdawn.slick.thingle.spi.ThinletInput;
 import org.newdawn.slick.thingle.spi.ThinletUtil;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.ResourceLoader;
 
-public class SlickThinletFactory implements ThinletFactory, ThinletUtil {
+public class SlickThinletFactory implements ThinletContext, ThinletUtil {
 	private TrueTypeFont font = new TrueTypeFont(new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 12), false);
 	private FontWrapper defaultFont = new FontWrapper(font);
+	private GameContainer container;
+	
+	public SlickThinletFactory(GameContainer container) {
+		this.container = container;
+		container.getInput().setDoubleClickInterval(250);
+	}
 	
 	public ThinletUtil createUtil() {
 		return this;
@@ -78,5 +88,28 @@ public class SlickThinletFactory implements ThinletFactory, ThinletUtil {
 
 	public ThinletImageBuffer createImageBuffer(int width, int height) {
 		return new ImageBufferWrapper(new ImageBuffer(width, height));
+	}
+
+	public ThinletInput createInput(ThinletInputListener listener) {
+		InputHandler handler = new InputHandler(listener);
+		handler.setInput(container.getInput());
+		
+		return handler;
+	}
+
+	public ThinletGraphics getGraphics() {
+		return new SlickGraphics(container.getGraphics());
+	}
+
+	public int getHeight() {
+		return container.getHeight();
+	}
+
+	public int getWidth() {
+		return container.getWidth();
+	}
+
+	public ThinletColor createColor(int red, int green, int blue, int alpha) {
+		return new ColorWrapper(red, green, blue, alpha);
 	}
 }

@@ -10,6 +10,10 @@ public class ColorWrapper implements ThinletColor {
 		color = new Color(r, g, b);
 	}
 	
+	public ColorWrapper(int r, int g, int b, int a) {
+		color = new Color(r, g, b, a);
+	}
+	
 	public ColorWrapper(int value) {
 		color = new Color(value);
 	}
@@ -36,6 +40,10 @@ public class ColorWrapper implements ThinletColor {
 
 	public int getRed() {
 		return color.getRed();
+	}
+	
+	public int getAlpha() {
+		return color.getAlpha();
 	}
 
 	public Color getSlickColor() {

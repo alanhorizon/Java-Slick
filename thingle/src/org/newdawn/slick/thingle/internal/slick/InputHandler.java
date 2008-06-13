@@ -1,8 +1,10 @@
 package org.newdawn.slick.thingle.internal.slick;
 
 import org.newdawn.slick.Input;
-import org.newdawn.slick.thingle.internal.Thinlet;
+import org.newdawn.slick.thingle.internal.ThinletInputListener;
+import org.newdawn.slick.thingle.spi.ThinletInput;
 import org.newdawn.slick.util.InputAdapter;
+import org.newdawn.slick.util.Log;
 
 /** 
  * The input handler responsible for translating from Slick input events
@@ -10,9 +12,9 @@ import org.newdawn.slick.util.InputAdapter;
  * 
  * @author kevin
  */
-public class InputHandler extends InputAdapter {
+public class InputHandler extends InputAdapter implements ThinletInput {
 	/** The thinlet instance events should be sent to */
-	private Thinlet thinlet;
+	private ThinletInputListener thinlet;
 	/** The current modifiers state (alt, shift etc) */
 	private Modifiers mods;
 	/** The input we're listening to */
@@ -23,7 +25,7 @@ public class InputHandler extends InputAdapter {
 	 * 
 	 * @param thinlet The thinlet instance we're sending events to
 	 */
-	public InputHandler(Thinlet thinlet) {
+	public InputHandler(ThinletInputListener thinlet) {
 		this.thinlet = thinlet;
 	}
 
@@ -34,7 +36,7 @@ public class InputHandler extends InputAdapter {
 		if (clickCount == 2) {
 			mods.update();
 			mouseMoved(x,y,x,y);
-			thinlet.mousePressed(x, y, 2, mods);
+			thinlet.mousePressed(x, y, 2, this);
 		}
 	}
 
@@ -44,9 +46,9 @@ public class InputHandler extends InputAdapter {
 	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
 		mods.update();
 		if (input.isMouseButtonDown(0)) {
-			thinlet.mouseDragged(newx, newy, mods);
+			thinlet.mouseDragged(newx, newy, this);
 		} else {
-			thinlet.mouseMoved(newx, newy, mods);
+			thinlet.mouseMoved(newx, newy, this);
 		}
 	}
 
@@ -56,7 +58,7 @@ public class InputHandler extends InputAdapter {
 	public void mousePressed(int button, int x, int y) {
 		mods.update();
 		mouseMoved(x,y,x,y);
-		thinlet.mousePressed(x, y, 1, mods);
+		thinlet.mousePressed(x, y, 1, this);
 	}
 
 	/**
@@ -65,7 +67,7 @@ public class InputHandler extends InputAdapter {
 	public void mouseReleased(int button, int x, int y) {
 		mods.update();
 		mouseMoved(x,y,x,y);
-		thinlet.mouseReleased(x, y, mods);
+		thinlet.mouseReleased(x, y, this);
 	}
 
 	/**
@@ -73,7 +75,7 @@ public class InputHandler extends InputAdapter {
 	 */
 	public void mouseWheelMoved(int change) {
 		mods.update();
-		thinlet.mouseWheelMoved(-change, mods);
+		thinlet.mouseWheelMoved(-change, this);
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class InputHandler extends InputAdapter {
 	 */
 	public void keyPressed(int key, char c) {
 		mods.update();
-		thinlet.keyPressed(c, key, mods, false);
+		thinlet.keyPressed(c, key, this, false);
 	}
 
 	/**
@@ -97,7 +99,105 @@ public class InputHandler extends InputAdapter {
 	 */
 	public void keyReleased(int key, char c) {
 		super.keyReleased(key, c);
-		thinlet.keyPressed(c, key, mods, true);
+		thinlet.keyPressed(c, key, this, true);
 	}
-	
+
+	/**
+	 * @see org.newdawn.slick.thingle.spi.ThinletInput#isAltDown()
+	 */
+	public boolean isAltDown() {
+		return mods.isAltDown;
+	}
+
+	/**
+	 * @see org.newdawn.slick.thingle.spi.ThinletInput#isControlDown()
+	 */
+	public boolean isControlDown() {
+		return mods.isControlDown;
+	}
+
+	/**
+	 * @see org.newdawn.slick.thingle.spi.ThinletInput#isPopupTrigger()
+	 */
+	public boolean isPopupTrigger() {
+		return mods.isPopupTrigger;
+	}
+
+	/**
+	 * @see org.newdawn.slick.thingle.spi.ThinletInput#isShiftDown()
+	 */
+	public boolean isShiftDown() {
+		return mods.isShiftDown;
+	}
+
+	/**
+	 * @see org.newdawn.slick.thingle.spi.ThinletInput#update(int)
+	 */
+	public void update(int delta) {
+	}
+
+	public int getKeyCode(int keyMapping) {
+		switch (keyMapping) {
+		case ENTER_KEY:
+			return Input.KEY_ENTER;
+		case ESCAPE_KEY:
+			return Input.KEY_ESCAPE;
+		case F6_KEY:
+			return Input.KEY_F6;
+		case F8_KEY:
+			return Input.KEY_F8;
+		case LEFT_KEY:
+			return Input.KEY_LEFT;
+		case RIGHT_KEY:
+			return Input.KEY_RIGHT;
+		case UP_KEY:
+			return Input.KEY_UP;
+		case DOWN_KEY:
+			return Input.KEY_DOWN;
+		case F10_KEY:
+			return Input.KEY_F10;
+		case TAB_KEY:
+			return Input.KEY_TAB;
+		case PRIOR_KEY:
+			return Input.KEY_PRIOR;
+		case NEXT_KEY:
+			return Input.KEY_NEXT;
+		case HOME_KEY:
+			return Input.KEY_HOME;
+		case END_KEY:
+			return Input.KEY_END;
+		case RETURN_KEY:
+			return Input.KEY_RETURN;
+		case BACK_KEY:
+			return Input.KEY_BACK;
+		case A_KEY:
+			return Input.KEY_A;
+		case V_KEY:
+			return Input.KEY_V;
+		case X_KEY:
+			return Input.KEY_X;
+		case C_KEY:
+			return Input.KEY_C;
+		case DELETE_KEY:
+			return Input.KEY_DELETE;
+		}
+
+		Log.error("Didn't map key mapping: " + keyMapping);
+		return -1;
+	}
+
+	/**
+	 * Enable input to this GUI page
+	 */
+	public void enable() {
+		input.addListener(this);
+	}
+
+	/**
+	 * Disabl input to this GUI page
+	 */
+	public void disable() {
+		input.removeListener(this);
+		input.clearKeyPressedRecord();
+	}
 }

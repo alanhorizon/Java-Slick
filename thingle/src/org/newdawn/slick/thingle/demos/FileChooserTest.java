@@ -10,6 +10,9 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.thingle.ThinletCore;
+import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
+import org.newdawn.slick.thingle.spi.ThinletException;
 import org.newdawn.slick.thingle.util.FileChooser;
 import org.newdawn.slick.thingle.util.FileChooserListener;
 
@@ -40,8 +43,14 @@ public class FileChooserTest extends BasicGame {
 		//container.setTargetFrameRate(100);
 		container.getGraphics().setBackground(new Color(0.5f,0.7f,1.0f));
 		
+		ThinletCore.init(new SlickThinletFactory(container));
+		
 		image = new Image("res/logo.png");
-		newChooser(container);
+		try {
+			newChooser();
+		} catch (ThinletException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -49,8 +58,8 @@ public class FileChooserTest extends BasicGame {
 	 * 
 	 * @throws SlickException Indicates a failure to load resources
 	 */
-	private void newChooser(GameContainer container) throws SlickException {
-		chooser = new FileChooser("Open..", "Open", container, new FileChooserListener() {
+	private void newChooser() throws ThinletException {
+		chooser = new FileChooser("Open..", "Open", new FileChooserListener() {
 
 			public void chooserCanceled() {
 				System.out.println("CANCEL");
@@ -68,7 +77,11 @@ public class FileChooserTest extends BasicGame {
 			throws SlickException {
 		if (!chooser.isVisible()) {
 			if (container.getInput().isKeyPressed(Input.KEY_SPACE)) {
-				newChooser(container);
+				try {
+					newChooser();
+				} catch (ThinletException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -76,7 +89,7 @@ public class FileChooserTest extends BasicGame {
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 		image.draw(100,10);
-		chooser.render(g);
+		chooser.render();
 		
 		g.setColor(Color.black);
 		g.drawString("FPS: "+container.getFPS(), 530, 2);

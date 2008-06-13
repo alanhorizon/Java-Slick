@@ -8,11 +8,11 @@ import java.util.Comparator;
 import javax.swing.filechooser.FileSystemView;
 
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
 import org.newdawn.slick.thingle.internal.Thinlet;
+import org.newdawn.slick.thingle.spi.ThinletException;
 
 /**
  * A file chooser emulating the swing one but rendered using the Thinlet implementation
@@ -64,12 +64,11 @@ public class FileChooser {
 	 * 
 	 * @param title The title to display in the dialog 
 	 * @param select The label to place on the OK button
-	 * @param container The container the dialog will eb displayed in
 	 * @param listener The listener to be notified of dialog events
  	 * @throws SlickException Indicates a failure to load required resources
 	 */
-	public FileChooser(String title, String select, GameContainer container, FileChooserListener listener) throws SlickException {
-		this(title, select, FileSystemView.getFileSystemView().getDefaultDirectory(), container, listener);
+	public FileChooser(String title, String select, FileChooserListener listener) throws ThinletException {
+		this(title, select, FileSystemView.getFileSystemView().getDefaultDirectory(), listener);
 	}
 
 	/**
@@ -78,16 +77,15 @@ public class FileChooser {
 	 * @param currentDir The directory to display the dialog focused on
 	 * @param title The title to display in the dialog 
 	 * @param select The label to place on the OK button
-	 * @param container The container the dialog will eb displayed in
 	 * @param listener The listener to be notified of dialog events
  	 * @throws SlickException Indicates a failure to load required resources
 	 */
-	public FileChooser(String title, String select, File currentDir, GameContainer container, FileChooserListener listener) throws SlickException {
+	public FileChooser(String title, String select, File currentDir, FileChooserListener listener) throws ThinletException {
 		this.listener = listener;
 		this.title = title;
 		this.currentDir = currentDir;
 		
-		page = new Page(container, "utilres/filechooser.xml", this);
+		page = new Page("utilres/filechooser.xml", this);
 		page.setTheme(theme);
 		page.setDrawDesktop(false);
 	}
@@ -468,12 +466,10 @@ public class FileChooser {
 	
 	/**
 	 * Render the dialog - should be called in the game loop
-	 * 
-	 * @param g The graphics context to render to
 	 */
-	public void render(Graphics g) {
+	public void render() {
 		if (visible) {
-			page.render(g);
+			page.render();
 		}
 	}
 	

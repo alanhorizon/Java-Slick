@@ -9,7 +9,9 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
+import org.newdawn.slick.thingle.ThinletCore;
 import org.newdawn.slick.thingle.Widget;
+import org.newdawn.slick.thingle.spi.ThinletException;
 
 /**
  * The big test demo that has multiple tabs, sub-dialogs etc
@@ -40,11 +42,15 @@ public class LoginTest extends BasicGame {
 		image = new Image("res/logo.png");
 		container.getGraphics().setBackground(Color.white);
 		
-		page = new Page(container, "res/login.xml", new Login());
+		try {
+			page = new Page("res/login.xml", new Login());
+		} catch (ThinletException e) {
+			e.printStackTrace();
+		}
 		Theme theme = new Theme();
-		theme.setBackground(new Color(0.6f,0.6f,1f,1f));
-		theme.setBorder(new Color(0,0,0.5f));
-		theme.setFocus(new Color(0,0,0));
+		theme.setBackground(ThinletCore.createColor(0.6f,0.6f,1f,1f));
+		theme.setBorder(ThinletCore.createColor(0,0,0.5f));
+		theme.setFocus(ThinletCore.createColor(0,0,0));
 		page.setTheme(theme);
 		page.setDrawDesktop(false);
 		
@@ -62,7 +68,7 @@ public class LoginTest extends BasicGame {
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 		image.draw(100,200);
-		page.render(g);
+		page.render();
 		
 		g.setColor(Color.black);
 		g.drawString("FPS: "+container.getFPS(), 530, 2);

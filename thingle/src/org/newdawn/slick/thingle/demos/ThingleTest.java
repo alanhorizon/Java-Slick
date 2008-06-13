@@ -9,6 +9,9 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
+import org.newdawn.slick.thingle.ThinletCore;
+import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
+import org.newdawn.slick.thingle.spi.ThinletException;
 
 /**
  * The big test demo that has multiple tabs, sub-dialogs etc
@@ -32,6 +35,8 @@ public class ThingleTest extends BasicGame {
 	 * @see org.newdawn.slick.BasicGame#init(org.newdawn.slick.GameContainer)
 	 */
 	public void init(GameContainer container) throws SlickException {
+		ThinletCore.init(new SlickThinletFactory(container));
+		
 		container.setShowFPS(false);
 		//container.setVSync(true);
 		//container.setTargetFrameRate(100);
@@ -39,11 +44,15 @@ public class ThingleTest extends BasicGame {
 		image = new Image("res/logo.png");
 		container.getGraphics().setBackground(Color.white);
 		
-		page = new Page(container, "res/demo.xml", new Demo());
+		try {
+			page = new Page("res/demo.xml", new Demo());
+		} catch (ThinletException e) {
+			e.printStackTrace();
+		}
 		Theme theme = new Theme();
-		theme.setBackground(new Color(0.6f,0.6f,1f,1f));
-		theme.setBorder(new Color(0,0,0.5f));
-		theme.setFocus(new Color(0,0,0));
+		theme.setBackground(ThinletCore.createColor(0.6f,0.6f,1f,1f));
+		theme.setBorder(ThinletCore.createColor(0,0,0.5f));
+		theme.setFocus(ThinletCore.createColor(0,0,0));
 		page.setTheme(theme);
 		page.setDrawDesktop(true);
 		
@@ -57,7 +66,7 @@ public class ThingleTest extends BasicGame {
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 		image.draw(100,200);
-		page.render(g);
+		page.render();
 		
 		g.setColor(Color.black);
 		g.drawString("FPS: "+container.getFPS(), 530, 2);

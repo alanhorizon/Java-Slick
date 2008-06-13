@@ -8,6 +8,8 @@ public interface ThinletColor {
 	
 	public int getGreen();
 	
+	public int getAlpha();
+	
 	public ThinletColor darker();
 	
 	public ThinletColor brighter();
