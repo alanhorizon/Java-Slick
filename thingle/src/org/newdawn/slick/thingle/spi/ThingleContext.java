@@ -152,6 +152,15 @@ public interface ThingleContext {
 	 * @return A thinlet font created from the given information
 	 */
 	public ThingleFont createFont(String face, int style, int size);
+
+	/**
+	 * Create a font with the given specifications
+	 * 
+	 * @param ref The reference to the bitmap font definition file
+	 * @param image The reference to the image file
+	 * @return A thinlet font created from the given information
+	 */
+	public ThingleFont createBitmapFont(String ref, String image);
 	
 	/**
 	 * Notification of rendering about to happen. Store GL state 

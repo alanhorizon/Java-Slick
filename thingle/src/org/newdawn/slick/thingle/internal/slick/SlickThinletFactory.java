@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.lwjgl.Sys;
+import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
@@ -12,7 +13,6 @@ import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.opengl.SlickCallable;
-import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.thingle.internal.ThinletInputListener;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleContext;
@@ -233,5 +233,13 @@ public class SlickThinletFactory implements ThingleContext, ThingleUtil {
 		storedColor = container.getGraphics().getColor();
 		
 		SlickCallable.enterSafeBlock();
+	}
+
+	public ThingleFont createBitmapFont(String ref, String image) {
+		try {
+			return createThingleFont(new AngelCodeFont(ref, image));
+		} catch (SlickException e) {
+			throw new RuntimeException("Unable to load font: "+ref, e);
+		}
 	}
 }

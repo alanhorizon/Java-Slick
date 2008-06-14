@@ -146,6 +146,17 @@ public class Thingle {
 	}
 	
 	/**
+	 * Create a bit map font
+	 * 
+	 * @param ref The reference to the deifnition file
+	 * @param image The reference to the image containing the bitmap font
+	 * @return A thinlet font for the bitmap font
+	 */
+	public static ThingleFont createBitmapFont(String ref, String image) {
+		return context.createBitmapFont(ref, image);
+	}
+	
+	/**
 	 * Notification of rendering about to happen. Store GL state 
 	 * here
 	 */

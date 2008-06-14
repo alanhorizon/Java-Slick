@@ -466,7 +466,7 @@ public class ThinletSkin {
 
 			g.setColor(colorPool[borderColors[state]]);
 			// borders
-
+			
 			if (top)
 				drawPiece(g, topBorder[state], x
 						+ ((left) ? borderInsets.left : 0), y, w
@@ -715,10 +715,16 @@ public class ThinletSkin {
 					int t1 = tmp.indexOf(":");
 					int t2 = tmp.indexOf(":", t1 + 1);
 					String face = tmp.substring(0, t1);
-					int style = Integer.parseInt(tmp.substring(t1 + 1, t2), 10);
-					int size = Integer.parseInt(tmp.substring(t2 + 1), 10)
-							+ delta;
-					arr[i] = Thingle.createFont(face, style, size);
+					String styleString = tmp.substring(t1 + 1, t2);
+					String sizeString = tmp.substring(t2 + 1);
+					if (face.equals("bitmap")) {
+						 arr[i] = Thingle.createBitmapFont(styleString, sizeString);
+					} else {
+						int style = Integer.parseInt(styleString, 10);
+						int size = Integer.parseInt(sizeString, 10)
+								+ delta;
+						arr[i] = Thingle.createFont(face, style, size);
+					}
 					// System.out.println(arr[i]);
 				}
 				return arr;

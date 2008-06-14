@@ -2707,8 +2707,7 @@ public class Skinlet extends Thinlet {
 		String key = f + "," + style + "," + f;
 		FontMetrics fm = (FontMetrics) fontMetricsCache.get(key);
 		if (fm == null) {
-			fm = getFontMetrics(Thingle.getContext().createFont(
-					f.getFamily(), style, f.getSize()));
+			fm = getFontMetrics(f);
 			fontMetricsCache.put(key, fm);
 		}
 		return fm;
