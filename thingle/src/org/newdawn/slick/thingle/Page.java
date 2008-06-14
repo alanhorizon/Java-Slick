@@ -43,7 +43,7 @@ public class Page {
 	public Page(String ref) throws ThingleException {
 		this();
 		
-		addComponents(ref);
+		addWidgets(ref);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class Page {
 	public Page(String ref, Object handler) throws ThingleException {
 		this();
 		
-		addComponents(ref, handler);
+		addWidgets(ref, handler);
 	}
 	
 	/**
@@ -66,7 +66,12 @@ public class Page {
 	 * @throws ThingleException Indicates a failure to load the given skin
 	 */
 	public void loadSkin(String name) throws ThingleException {
-		thinlet.loadSkin("skins", name);
+		String path = "";
+		if (name.indexOf("/") >= 0) {
+			path = name.substring(0, name.lastIndexOf("/")+1);
+		}
+		
+		thinlet.loadSkin(path, name);
 	}
 	
 	/**
@@ -110,8 +115,8 @@ public class Page {
 	 * @param ref The reference to the XML file
   	 * @throws ThingleException Indicates a failure to load the XML
 	 */
-	public void addComponents(String ref) throws ThingleException {
-		addComponents(ref, this);
+	public void addWidgets(String ref) throws ThingleException {
+		addWidgets(ref, this);
 	}
 
 	/**
@@ -122,15 +127,39 @@ public class Page {
 	 * @param ref The reference to the XML file
   	 * @throws ThingleException Indicates a failure to load the XML
 	 */
-	public void addComponents(String ref, Object actionHandler) throws ThingleException {
+	public void addWidgets(String ref, Object actionHandler) throws ThingleException {
+		thinlet.add(loadWidgets(ref, actionHandler));
+		layout();
+	}
+	
+	/**
+	 * Loads the components specified in the referenced XML file and returns the root. The action
+	 * events are sent to this page.
+	 * 
+	 * @param ref The reference to the XML file
+	 * @return The object representing the top level widget
+  	 * @throws ThingleException Indicates a failure to load the XML
+	 */
+	public Object loadWidgets(String ref) throws ThingleException {
+		return loadWidgets(ref, this);
+	}
+
+	/**
+	 * Loads the components specified in the referenced XML file and returns the root. The action
+	 * events are sent to the action handler specified.
+	 * 
+	 * @param actionHandler The handler to send events to
+	 * @param ref The reference to the XML file
+	 * @return The object represent the top level widget
+  	 * @throws ThingleException Indicates a failure to load the XML
+	 */
+	public Object loadWidgets(String ref, Object actionHandler) throws ThingleException {
 		try {
-			thinlet.add(thinlet.parse(Thingle.getContext().getResourceAsStream(ref), actionHandler));
+			return thinlet.parse(Thingle.getContext().getResourceAsStream(ref), actionHandler);
 		} catch (IOException e) {
 			Thingle.getContext().log(e);
 			throw new ThingleException("Failed to load: "+ref, e);
 		}
-		
-		layout();
 	}
 	
 	/**

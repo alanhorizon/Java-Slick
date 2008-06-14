@@ -2,7 +2,6 @@ package org.newdawn.slick.thingle.internal;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -185,9 +184,9 @@ public class ThinletSkin {
 			return null;
 
 		ThingleImage image = null;
-		InputStream is = Thingle.getContext().getResourceAsStream(name);
+		InputStream is = Thingle.getContext().getResourceAsStream(path+name);
 		if (is == null) {
-			Thread.dumpStack();
+			Thingle.getContext().log("Unable to locate: "+path+name);
 			return null;
 		}
 		try {
