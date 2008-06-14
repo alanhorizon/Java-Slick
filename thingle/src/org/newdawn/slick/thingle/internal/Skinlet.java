@@ -705,8 +705,11 @@ public class Skinlet extends Thinlet {
 				}
 			}
 		} else if ("desktop" == classname) {
-			skin.desktop.paintBody(g, 0, 0, 0, bounds.width, bounds.height,
-					false, false, false, false);
+			if (drawDesktop) {
+				skin.desktop.paintBody(g, 0, 0, 0, bounds.width, bounds.height,
+						false, false, false, false);
+			}
+			
 			paintReverse(g, clipx, clipy, clipwidth, clipheight, get(component,
 					":comp"), enabled);
 			if ((tooltipowner != null) && (component == content)) {

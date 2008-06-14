@@ -1905,11 +1905,12 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			int clipx, int clipy, int clipwidth, int clipheight,
 			Object component, boolean enabled) {
 		if (component != null) {
-			Rectangle bounds = getRectangle(component, "bounds");
-			if ((clipx < bounds.x) ||
-					(clipx + clipwidth > bounds.x + bounds.width) ||
-					(clipy < bounds.y) ||
-					(clipy + clipheight > bounds.y + bounds.height)) {
+//			Rectangle bounds = getRectangle(component, "bounds");
+//			if ((clipx < bounds.x) ||
+//					(clipx + clipwidth > bounds.x + bounds.width) ||
+//					(clipy < bounds.y) ||
+//					(clipy + clipheight > bounds.y + bounds.height)) {
+			if (get(component, ":next") != null) {
 				paintReverse(g, clipx, clipy, clipwidth, clipheight,
 					get(component, ":next"), enabled);
 			}
@@ -5858,15 +5859,19 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 		else if ("color" == definition[0]) {
 			int color = 0;
-			if (value.startsWith("#")) { color = Integer.parseInt(value.substring(1), 16); }
-			else if (value.startsWith("0x")) { color = Integer.parseInt(value.substring(2), 16); }
-			else { // three separated integer including red, green, and blue
-				StringTokenizer st = new StringTokenizer(value, " \r\n\t,");
-				color = 0xff000000 | ((Integer.parseInt(st.nextToken()) & 0xff) << 16) |
-					((Integer.parseInt(st.nextToken()) & 0xff) << 8) |
-					(Integer.parseInt(st.nextToken()) & 0xff);
-			}				
-			set(component, key, spiFactory.createColor(color));
+			if (value.equals("transparent")) {
+				set(component, key, spiFactory.createColor(0,0,0,0));
+			} else {
+				if (value.startsWith("#")) { color = Integer.parseInt(value.substring(1), 16); }
+				else if (value.startsWith("0x")) { color = Integer.parseInt(value.substring(2), 16); }
+				else { // three separated integer including red, green, and blue
+					StringTokenizer st = new StringTokenizer(value, " \r\n\t,");
+					color = 0xff000000 | ((Integer.parseInt(st.nextToken()) & 0xff) << 16) |
+						((Integer.parseInt(st.nextToken()) & 0xff) << 8) |
+						(Integer.parseInt(st.nextToken()) & 0xff);
+				}				
+				set(component, key, spiFactory.createColor(color));
+			}
 		}
 		else if ("keystroke" == definition[0]) {
 			setKeystrokeImpl(component, key, value);
