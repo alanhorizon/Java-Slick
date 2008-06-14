@@ -4140,9 +4140,15 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 		for (int i = linestart; i < chars.length; i++) {
 			if ((chars[i] == '\n') || (chars[i] == '\t')) { return i; }
+			int charsWidth = fm.charsWidth(chars, linestart, i - linestart);
 			int charwidth = fm.charWidth(hidden ? '*' : chars[i]);
-			if (x <= (charwidth / 2)) { return i; }
-			x -= charwidth;
+			
+			if (x <= charsWidth + (charwidth / 2)) {
+				return i;
+			}
+			
+			//if (x <= (charwidth / 2)) { return i; }
+			//x -= charwidth;
 		}
 		return chars.length;
 	}
