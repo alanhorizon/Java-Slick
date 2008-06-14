@@ -15,8 +15,9 @@ public interface ThinletInputListener {
 	 * @param x The x location the mouse was dragged to
 	 * @param y The y location the mouse was dragged to
 	 * @param input The input instance firing this event
+	 * @return True if the mouse was inside a GUI component
 	 */
-	public void mouseDragged(int x, int y, ThingleInput input);
+	public boolean mouseDragged(int x, int y, ThingleInput input);
 	
 	/**
 	 * Notification that the mouse has been moved (not dragged)
@@ -24,8 +25,9 @@ public interface ThinletInputListener {
 	 * @param x The x location the mouse was moved to
 	 * @param y The y location the mouse was moved to
 	 * @param input The input instance firing this event
+	 * @return True if the mouse was inside a GUI component
 	 */
-	public void mouseMoved(int x, int y, ThingleInput input);
+	public boolean mouseMoved(int x, int y, ThingleInput input);
 
 	/**
 	 * Notification that the mouse button has been released
@@ -33,16 +35,18 @@ public interface ThinletInputListener {
 	 * @param x The x location the mouse was released at
 	 * @param y The y location the mouse was released at
 	 * @param input The input instance firing this event
+	 * @return True if the mouse was inside a GUI component
 	 */
-	public void mouseReleased(int x, int y, ThingleInput input);
+	public boolean mouseReleased(int x, int y, ThingleInput input);
 
 	/**
 	 * Notification that the mouse wheel has been moved
 	 * 
 	 * @param rotation The amount the wheel was moved by
 	 * @param input The input instance firing this event
+	 * @return True if the mouse was inside a GUI component
 	 */
-	public void mouseWheelMoved(int rotation, ThingleInput input);
+	public boolean mouseWheelMoved(int rotation, ThingleInput input);
 
 	/**
 	 * Notification that the mouse button has been pressed
@@ -51,8 +55,9 @@ public interface ThinletInputListener {
 	 * @param y The y location the mouse was pressed at
 	 * @param clickCount The number of clicks at the given location
 	 * @param input The input instance firing this event
+	 * @return True if the mouse was inside a GUI component
 	 */
-	public void mousePressed(int x, int y, int clickCount, ThingleInput input);
+	public boolean mousePressed(int x, int y, int clickCount, ThingleInput input);
 		
 	/**
 	 * Notification that a key was pressed

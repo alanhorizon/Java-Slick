@@ -2609,7 +2609,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return true;
 	}
 
-	public void mouseDragged(int x, int y, ThingleInput mods) {
+	public boolean mouseDragged(int x, int y, ThingleInput mods) {
 		hideTip(); // remove tooltip
 		Object previnside = mouseinside;
 		Object prevpart = insidepart;
@@ -2638,9 +2638,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			handleMouseEvent(x, y, 0, mods.isShiftDown(), mods.isControlDown(), mods.isPopupTrigger(),
 				MouseEvent.MOUSE_DRAGGED, mousepressed, pressedpart);
 		}
+
+		return getParent(getParent(mouseinside)) != null;
 	}
 	
-	public void mouseMoved(int x, int y, ThingleInput mods) {
+	public boolean mouseMoved(int x, int y, ThingleInput mods) {
 		Object previnside = mouseinside;
 		Object prevpart = insidepart;
 		findComponent(content, x, y);
@@ -2654,9 +2656,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			handleMouseEvent(x, y, 0, mods.isShiftDown(), mods.isControlDown(), mods.isPopupTrigger(),
 				MouseEvent.MOUSE_ENTERED, mouseinside, insidepart);
 		}
+
+		return getParent(getParent(mouseinside)) != null;
 	}
 	
-	public void mouseReleased(int x, int y, ThingleInput mods) {
+	public boolean mouseReleased(int x, int y, ThingleInput mods) {
 		hideTip(); // remove tooltip
 		Object mouserelease = mousepressed;
 		Object releasepart = pressedpart;
@@ -2668,9 +2672,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			handleMouseEvent(x, y, 0, mods.isShiftDown(), mods.isControlDown(), mods.isPopupTrigger(),
 				MouseEvent.MOUSE_ENTERED, mouseinside, insidepart);
 		}
+
+		return getParent(getParent(mouseinside)) != null;
 	}
 	
-	public void mouseWheelMoved(int rotation, ThingleInput mods) {
+	public boolean mouseWheelMoved(int rotation, ThingleInput mods) {
 		Rectangle port = getRectangle(mouseinside, ":port");
 		if (port != null) { // is scrollable
 			// TODO hide tooltip?
@@ -2684,9 +2690,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				}
 			} catch (Exception exc) { /* never */ }
 		}
+
+		return getParent(getParent(mouseinside)) != null;
 	}
 	
-	public void mousePressed(int x, int y, int clickCount, ThingleInput mods) {
+	public boolean mousePressed(int x, int y, int clickCount, ThingleInput mods) {
 		if (popupowner != null) { // remove popup
 			String classname = getClass(mouseinside);
 			if ((popupowner != mouseinside) &&
@@ -2699,6 +2707,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		pressedpart = insidepart;
 		handleMouseEvent(x, y, clickCount, mods.isShiftDown(), mods.isControlDown(), mods.isPopupTrigger(),
 			MouseEvent.MOUSE_PRESSED, mousepressed, pressedpart);
+
+		return getParent(getParent(mousepressed)) != null;
 	}
 	
 	public boolean keyPressed(char keychar, int keycode, ThingleInput mods, boolean typed) {

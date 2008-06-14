@@ -34,9 +34,13 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 */
 	public void mouseClicked(int button, int x, int y, int clickCount) {
 		if (clickCount == 2) {
-			mods.update();
-			mouseMoved(x,y,x,y);
-			thinlet.mousePressed(x, y, 2, this);
+			if (button == 0) {
+				mods.update();
+				mouseMoved(x,y,x,y);
+				if (thinlet.mousePressed(x, y, 2, this)) {
+					input.consumeEvent();
+				}
+			}
 		}
 	}
 
@@ -46,9 +50,13 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
 		mods.update();
 		if (input.isMouseButtonDown(0)) {
-			thinlet.mouseDragged(newx, newy, this);
+			if (thinlet.mouseDragged(newx, newy, this)) {
+				input.consumeEvent();
+			}
 		} else {
-			thinlet.mouseMoved(newx, newy, this);
+			if (thinlet.mouseMoved(newx, newy, this)) {
+				input.consumeEvent();
+			}
 		}
 	}
 
@@ -56,18 +64,26 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 * @see org.newdawn.slick.util.InputAdapter#mousePressed(int, int, int)
 	 */
 	public void mousePressed(int button, int x, int y) {
-		mods.update();
-		mouseMoved(x,y,x,y);
-		thinlet.mousePressed(x, y, 1, this);
+		if (button == 0) {
+			mods.update();
+			mouseMoved(x,y,x,y);
+			if (thinlet.mousePressed(x, y, 1, this)) {
+				input.consumeEvent();
+			}
+		}
 	}
 
 	/**
 	 * @see org.newdawn.slick.util.InputAdapter#mouseReleased(int, int, int)
 	 */
 	public void mouseReleased(int button, int x, int y) {
-		mods.update();
-		mouseMoved(x,y,x,y);
-		thinlet.mouseReleased(x, y, this);
+		if (button == 0) {
+			mods.update();
+			mouseMoved(x,y,x,y);
+			if (thinlet.mouseReleased(x, y, this)) {
+				input.consumeEvent();
+			}
+		}
 	}
 
 	/**
@@ -75,7 +91,9 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 */
 	public void mouseWheelMoved(int change) {
 		mods.update();
-		thinlet.mouseWheelMoved(-change, this);
+		if (thinlet.mouseWheelMoved(-change, this)) {
+			input.consumeEvent();
+		}
 	}
 
 	/**
@@ -91,7 +109,9 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 */
 	public void keyPressed(int key, char c) {
 		mods.update();
-		thinlet.keyPressed(c, key, this, false);
+		if (thinlet.keyPressed(c, key, this, false)) {
+			input.consumeEvent();
+		}
 	}
 
 	/**
@@ -99,7 +119,9 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 */
 	public void keyReleased(int key, char c) {
 		super.keyReleased(key, c);
-		thinlet.keyPressed(c, key, this, true);
+		if (thinlet.keyPressed(c, key, this, true)) {
+			input.consumeEvent();
+		}
 	}
 
 	/**
@@ -190,7 +212,7 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 * Enable input to this GUI page
 	 */
 	public void enable() {
-		input.addListener(this);
+		input.addPrimaryListener(this);
 	}
 
 	/**
