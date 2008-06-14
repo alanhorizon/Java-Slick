@@ -4864,6 +4864,10 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @return the parent container of this component or item
 	 */
 	public Object getParent(Object component) {
+		if (component == null) {
+			return null;
+		}
+		
 		return get(component, ":parent");
 	}
 
