@@ -5387,7 +5387,19 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @throws java.io.IOException
 	 */
 	public Object parse(InputStream inputstream, Object handler) throws IOException {
-		return parse(inputstream, 'T', handler);
+		return parse(new InputStreamReader(inputstream), 'T', handler);
+	}
+
+	/**
+	 * Creates a component from the given reader and event handler
+	 *
+	 * @param reader read xml from this reader
+	 * @param handler event handlers are implemented in this object
+	 * @return the parsed components' root
+	 * @throws java.io.IOException
+	 */
+	public Object parse(Reader reader, Object handler) throws IOException {
+		return parse(reader, 'T', handler);
 	}
 
 	/**
@@ -5399,7 +5411,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @throws java.io.IOException
 	 */
 	protected void parseXML(InputStream inputstream) throws IOException {
-		parse(inputstream, 'S', null);
+		parse(new InputStreamReader(inputstream), 'S', null);
 	}
 
 	/**
@@ -5433,7 +5445,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @throws java.io.IOException
 	 */
 	protected Object parseDOM(InputStream inputstream) throws IOException {
-		return parse(inputstream, 'D', null);
+		return parse(new InputStreamReader(inputstream), 'D', null);
 	}
 	
 	/**
@@ -5500,9 +5512,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @throws java.io.IOException
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	protected Object parse(InputStream inputstream,
+	protected Object parse(Reader reader,
 			char mode, Object handler) throws IOException {
-		Reader reader = new BufferedReader(new InputStreamReader(inputstream));
+		if (!(reader instanceof BufferedReader)) reader = new BufferedReader(reader);
 		try {
 			Object[] parentlist = null;
 			Object current = null;

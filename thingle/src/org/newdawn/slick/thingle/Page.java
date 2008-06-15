@@ -1,6 +1,7 @@
 package org.newdawn.slick.thingle;
 
 import java.io.IOException;
+import java.io.StringReader;
 
 import org.newdawn.slick.thingle.internal.Skinlet;
 import org.newdawn.slick.thingle.internal.Thinlet;
@@ -179,6 +180,36 @@ public class Page {
 		} catch (IOException e) {
 			Thingle.getContext().log(e);
 			throw new ThingleException("Failed to load: "+ref, e);
+		}
+	}
+
+	/**
+	 * Loads the components in the specified XML returns the root. The action events are sent to
+	 * this page.
+	 * 
+	 * @param xml The XML to parse
+	 * @return The top level widget parsed from the string
+	 * @throws ThingleException Indicates a failure to load the XML
+	 */
+	public Widget parse(String xml) throws ThingleException {
+		return parse(xml, this);
+	}
+	
+	/**
+	 * Loads the components in the specified XML returns the root. The action events are sent to
+	 * the action handler specified.
+	 * 
+	 * @param xml The XML to parse
+	 * @param actionHandler The handler to send events to
+	 * @return The top level widget parsed from the string
+	 * @throws ThingleException Indicates a failure to load the XML
+	 */
+	public Widget parse(String xml, Object actionHandler) throws ThingleException {
+		try {
+			return new Widget(thinlet, thinlet.parse(new StringReader(xml), actionHandler));
+		} catch (IOException e) {
+			Thingle.getContext().log(e);
+			throw new ThingleException("Failed to load: " + xml, e);
 		}
 	}
 	
