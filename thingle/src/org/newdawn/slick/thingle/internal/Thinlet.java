@@ -3902,10 +3902,12 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 		else if ("dialog" == classname) {
 			if ("closebutton".equals(part)) {
-				if (id == MouseEvent.MOUSE_PRESSED) {
-					// close
-					remove(component);
-					invoke(component, null, "close");
+				if (getBoolean(component, "closable", false)) {
+					if (id == MouseEvent.MOUSE_PRESSED) {
+						// close
+						remove(component);
+						invoke(component, null, "close");
+					}
 				}
 			}
 			
