@@ -13,6 +13,7 @@ import org.newdawn.slick.thingle.spi.ThingleFont;
  * thinlet API.
  * 
  * @author kevin
+ * @author Nate
  */
 public class Page {
 	/** The thinlet instance in use */

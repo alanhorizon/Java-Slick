@@ -53,6 +53,7 @@ import org.newdawn.slick.thingle.spi.ThingleUtil;
  * 
  * @author Robert Bajzat
  * @author Kevin Glass (slick ports)
+ * @author Nate (more Thingle work)
  */
 public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	protected transient ThingleFont font;
