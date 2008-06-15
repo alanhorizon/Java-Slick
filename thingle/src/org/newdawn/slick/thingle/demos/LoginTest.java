@@ -60,7 +60,7 @@ public class LoginTest extends BasicGame {
 		page.enable();
 		
 		Widget loginName = page.getWidget("login_name");
-		System.out.println(loginName.getName());
+		System.out.println(loginName);
 		loginName.setText("Test");
 	}
 	

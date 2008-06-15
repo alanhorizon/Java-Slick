@@ -1,11 +1,11 @@
 package org.newdawn.slick.thingle;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.newdawn.slick.thingle.internal.Skinlet;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.thingle.spi.ThingleException;
+import org.newdawn.slick.thingle.spi.ThingleFont;
 
 /**
  * A single UI page. This page provides a Slick oriented wrapper around the 
@@ -18,9 +18,6 @@ public class Page {
 	private Skinlet thinlet;
 	/** The colour theme applied */
 	private Theme theme;
-	
-	/** The cache of widgets from this page */
-	private HashMap widgets = new HashMap();
 	
 	/**
 	 * Create new a new UI page
@@ -88,7 +85,7 @@ public class Page {
 	 * 
 	 * @return The thinlet instance in use
 	 */
-	public Thinlet getThinlet() {
+	Thinlet getThinlet() {
 		return thinlet;
 	}
 	
@@ -107,7 +104,17 @@ public class Page {
 	private void setColors() {
 		theme.apply(thinlet);
 	}
-	
+
+	/**
+	 * Sets the default font to use for the page. Note that skins can force 
+	 * their fonts to be used.
+	 * 
+	 * @param font The font to use for the UI
+	 */
+	public void setFont(ThingleFont font) {
+		thinlet.setFont(font);
+	}
+
 	/**
 	 * Add the components specified in the referenced XML file. The action
 	 * events are sent to this page.
@@ -128,7 +135,7 @@ public class Page {
   	 * @throws ThingleException Indicates a failure to load the XML
 	 */
 	public void addWidgets(String ref, Object actionHandler) throws ThingleException {
-		thinlet.add(loadWidgets(ref, actionHandler));
+		thinlet.add(loadComponents(ref, actionHandler));
 		layout();
 	}
 	
@@ -140,7 +147,7 @@ public class Page {
 	 * @return The object representing the top level widget
   	 * @throws ThingleException Indicates a failure to load the XML
 	 */
-	public Object loadWidgets(String ref) throws ThingleException {
+	public Widget loadWidgets(String ref) throws ThingleException {
 		return loadWidgets(ref, this);
 	}
 
@@ -153,7 +160,20 @@ public class Page {
 	 * @return The object represent the top level widget
   	 * @throws ThingleException Indicates a failure to load the XML
 	 */
-	public Object loadWidgets(String ref, Object actionHandler) throws ThingleException {
+	public Widget loadWidgets(String ref, Object actionHandler) throws ThingleException {
+		return new Widget(thinlet, loadComponents(ref, actionHandler));
+	}
+	
+	/**
+	 * Loads the components specified in the referenced XML file and returns the root. The action
+	 * events are sent to the action handler specified.
+	 * 
+	 * @param actionHandler The handler to send events to
+	 * @param ref The reference to the XML file
+	 * @return The object represent the top level widget
+  	 * @throws ThingleException Indicates a failure to load the XML
+	 */
+	protected Object loadComponents(String ref, Object actionHandler) throws ThingleException {
 		try {
 			return thinlet.parse(Thingle.getContext().getResourceAsStream(ref), actionHandler);
 		} catch (IOException e) {
@@ -210,18 +230,38 @@ public class Page {
  	 * @return The widget or null if no widget by that name could be found
 	 */
 	public Widget getWidget(String name) {
-		Widget ret = (Widget) widgets.get(name);
-		if (ret == null) {
-			Object desktop = thinlet.getDesktop();
-			Object component = thinlet.find(desktop, name);
-		
-			if (component == null) {
-				return null;
-			}
-			
-			ret = new Widget(thinlet, component);
+		Object component = thinlet.find(name);
+		if (component == null) {
+			return null;
 		}
-		
-		return ret;
+		return new Widget(thinlet, component);
+	}
+
+	/**
+	 * Returns a new widget with the specified name.
+	 * 
+	 * @param classname The name to give the widget (as defined by thinlet)
+	 * @return The newly created widget
+	 */
+	public Widget createWidget(String classname) {
+		return new Widget(thinlet, Thinlet.create(classname));
+	}
+
+	/**
+	 * Returns the desktop widget.
+	 * 
+	 * @return The widget representing the desktop
+	 */
+	public Widget getDesktop() {
+		return new Widget(thinlet, thinlet.getDesktop());
+	}
+	
+	/**
+	 * Add a widget to the top level component
+	 * 
+	 * @param widget The widget to add
+	 */
+	public void add(Widget widget) {
+		getDesktop().add(widget);
 	}
 }
