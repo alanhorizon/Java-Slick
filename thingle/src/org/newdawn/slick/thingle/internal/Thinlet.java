@@ -41,9 +41,9 @@ import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleContext;
 import org.newdawn.slick.thingle.spi.ThingleFont;
 import org.newdawn.slick.thingle.spi.ThingleGraphics;
-import org.newdawn.slick.thingle.spi.ThingleInput;
 import org.newdawn.slick.thingle.spi.ThingleImage;
 import org.newdawn.slick.thingle.spi.ThingleImageBuffer;
+import org.newdawn.slick.thingle.spi.ThingleInput;
 import org.newdawn.slick.thingle.spi.ThingleUtil;
 
 /**
@@ -2611,6 +2611,17 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return true;
 	}
 
+	private boolean consumesEvents(Object component) {
+		if (getParent(getParent(component)) != null) {
+			ThingleColor bg = getThinletColor(component,"background");
+			if ((bg == null) || (bg.getAlpha() != 0)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public boolean mouseDragged(int x, int y, ThingleInput mods) {
 		hideTip(); // remove tooltip
 		Object previnside = mouseinside;
@@ -2641,7 +2652,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				MouseEvent.MOUSE_DRAGGED, mousepressed, pressedpart);
 		}
 
-		return getParent(getParent(mouseinside)) != null;
+		return consumesEvents(mouseinside); 
 	}
 	
 	public boolean mouseMoved(int x, int y, ThingleInput mods) {
@@ -2659,7 +2670,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				MouseEvent.MOUSE_ENTERED, mouseinside, insidepart);
 		}
 
-		return getParent(getParent(mouseinside)) != null;
+		return consumesEvents(mouseinside); 
 	}
 	
 	public boolean mouseReleased(int x, int y, ThingleInput mods) {
@@ -2675,7 +2686,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				MouseEvent.MOUSE_ENTERED, mouseinside, insidepart);
 		}
 
-		return getParent(getParent(mouseinside)) != null;
+		return consumesEvents(mouseinside); 
 	}
 	
 	public boolean mouseWheelMoved(int rotation, ThingleInput mods) {
@@ -2693,7 +2704,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			} catch (Exception exc) { /* never */ }
 		}
 
-		return getParent(getParent(mouseinside)) != null;
+		return consumesEvents(mouseinside); 
 	}
 	
 	public boolean mousePressed(int x, int y, int clickCount, ThingleInput mods) {
@@ -2710,7 +2721,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		handleMouseEvent(x, y, clickCount, mods.isShiftDown(), mods.isControlDown(), mods.isPopupTrigger(),
 			MouseEvent.MOUSE_PRESSED, mousepressed, pressedpart);
 
-		return getParent(getParent(mousepressed)) != null;
+		return consumesEvents(mousepressed); 
 	}
 	
 	public boolean keyPressed(char keychar, int keycode, ThingleInput mods, boolean typed) {
