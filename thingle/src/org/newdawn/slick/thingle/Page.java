@@ -163,7 +163,7 @@ public class Page {
   	 * @throws ThingleException Indicates a failure to load the XML
 	 */
 	public Widget loadWidgets(String ref, Object actionHandler) throws ThingleException {
-		return new Widget(thinlet, loadComponents(ref, actionHandler));
+		return Widget.getWidget(thinlet, loadComponents(ref, actionHandler));
 	}
 	
 	/**
@@ -207,7 +207,7 @@ public class Page {
 	 */
 	public Widget parse(String xml, Object actionHandler) throws ThingleException {
 		try {
-			return new Widget(thinlet, thinlet.parse(new StringReader(xml), actionHandler));
+			return Widget.getWidget(thinlet, thinlet.parse(new StringReader(xml), actionHandler));
 		} catch (IOException e) {
 			Thingle.getContext().log(e);
 			throw new ThingleException("Failed to load: " + xml, e);
@@ -266,7 +266,7 @@ public class Page {
 		if (component == null) {
 			return null;
 		}
-		return new Widget(thinlet, component);
+		return Widget.getWidget(thinlet, component);
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class Page {
 	 * @return The newly created widget
 	 */
 	public Widget createWidget(String classname) {
-		return new Widget(thinlet, Thinlet.create(classname));
+		return Widget.getWidget(thinlet, Thinlet.create(classname));
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class Page {
 	 * @return The widget representing the desktop
 	 */
 	public Widget getDesktop() {
-		return new Widget(thinlet, thinlet.getDesktop());
+		return Widget.getWidget(thinlet, thinlet.getDesktop());
 	}
 	
 	/**

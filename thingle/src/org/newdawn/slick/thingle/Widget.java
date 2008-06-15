@@ -1,6 +1,8 @@
 package org.newdawn.slick.thingle;
 
-import org.newdawn.slick.thingle.internal.Dimension;
+import java.lang.ref.SoftReference;
+import java.util.HashMap;
+
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleFont;
@@ -13,6 +15,30 @@ import org.newdawn.slick.thingle.spi.ThingleImage;
  * @author Nathan Sweet <misc@n4te.com>
  */
 public class Widget {
+	/** The cache of references to widgets */
+	private static HashMap cache = new HashMap();
+	
+	/**
+	 * Get the widget for a particular thinlet component
+	 * 
+	 * @param thinlet The thinlet instnce the widget will be associated with
+	 * @param component The component itself
+	 */
+	static Widget getWidget(Thinlet thinlet, Object component) {
+    	SoftReference ref = (SoftReference) cache.get(component);
+		if (ref != null) {
+			Widget cached = (Widget) ref.get();
+			if (cached != null) {
+				return cached;
+			}
+		} 
+		
+		Widget widget = new Widget(thinlet, component);
+		cache.put(component, new SoftReference(widget));
+		
+		return widget;
+	}
+	
 	/** The thinlet instance being configured */
 	private Thinlet thinlet;
 	/** The component handle */
@@ -24,7 +50,7 @@ public class Widget {
 	 * @param thinlet The thinlet instance to be configured
 	 * @param component The component handler
 	 */
-	Widget(Thinlet thinlet, Object component) {
+	private Widget(Thinlet thinlet, Object component) {
 		this.thinlet = thinlet;
 		this.component = component;
 	}
@@ -75,7 +101,7 @@ public class Widget {
 		if (child == null) {
 			return null;
 		}
-		return new Widget(thinlet, child);
+		return getWidget(thinlet, child);
 	}
 
 	/**
@@ -90,7 +116,7 @@ public class Widget {
 			return null;
 		}
 		
-		return new Widget(thinlet, child);
+		return getWidget(thinlet, child);
 	}
 
 	/**
@@ -143,7 +169,7 @@ public class Widget {
 		if (parent == null) {
 			return null;
 		}
-		return new Widget(thinlet, parent);
+		return getWidget(thinlet, parent);
 	}
 	
 	/**
@@ -157,7 +183,7 @@ public class Widget {
 			return null;
 		}
 		
-		return new Widget(thinlet, popupmenu);
+		return getWidget(thinlet, popupmenu);
 	}
 
 	/**
@@ -170,7 +196,7 @@ public class Widget {
 		if (header == null) {
 			return null;
 		}
-		return new Widget(thinlet, header);
+		return getWidget(thinlet, header);
 	}
 
 	/**
@@ -284,7 +310,7 @@ public class Widget {
 			return null;
 		}
 		
-		return new Widget(thinlet, selected);
+		return getWidget(thinlet, selected);
 	}
 	
 	/**
