@@ -26,7 +26,7 @@ public class Page {
 	 * 
 	 * @throws ThingleException Indicates a failure to create thinlet
 	 */
-	public Page() throws ThingleException {
+	public Page() {
 		thinlet = new Skinlet();
 		thinlet.setKeyFocus(true);
 		theme = new Theme();

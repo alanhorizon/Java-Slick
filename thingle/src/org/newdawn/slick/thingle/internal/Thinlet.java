@@ -5539,6 +5539,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			for (int c = reader.read(); c != -1;) {
 				if (c == '<') {
 					if ((c = reader.read()) == '/') { //endtag
+						if (c == -1) throw new IllegalArgumentException();
 						if ((text.length() > 0) && (text.charAt(text.length() - 1) == ' ')) {
 							text.setLength(text.length() - 1); // trim last space
 						}
@@ -5555,8 +5556,10 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 							if ((c = reader.read()) != tagname.charAt(i)) {
 								throw new IllegalArgumentException(tagname);
 							}
+							if (c == -1) throw new IllegalArgumentException();
 						}
-						while (" \t\n\r".indexOf(c = reader.read()) != -1); // read whitespace
+						while (" \t\n\r".indexOf(c = reader.read()) != -1) // read whitespace
+							if (c == -1) throw new IllegalArgumentException();
 						if (c != '>') throw new IllegalArgumentException(); // read '>'
 						if (mode == 'S') { endElement(); } // SAX parser
 						if (parentlist[0] == null) {
@@ -5569,13 +5572,14 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 						parentlist = (Object[]) parentlist[1];
 					}
 					else if (c == '!') { // doctype
-						while ((c = reader.read()) != '>'); // read to '>'
+						while ((c = reader.read()) != '>') // read to '>'
+							if (c == -1) throw new IllegalArgumentException();
 						c = reader.read();
 					}
 					else { // start or standalone tag
 						text.setLength(0);
 						boolean iscomment = false;
-						while (">/ \t\n\r".indexOf(c) == -1) { // to next whitespace or '/'
+						while (c != -1 && ">/ \t\n\r".indexOf(c) == -1) { // to next whitespace or '/'
 							text.append((char) c);
 							if ((text.length() == 3) && (text.charAt(0) == '!') &&
 									(text.charAt(1) == '-') && (text.charAt(2) == '-')) { // comment
@@ -5612,7 +5616,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 						text.setLength(0);
 						while (true) { // read attributes
 							boolean whitespace = false;
-							while (" \t\n\r".indexOf(c) != -1) { // read whitespaces
+							while (c != -1 && " \t\n\r".indexOf(c) != -1) { // read whitespaces
 								c = reader.read();
 								whitespace = true;
 							}
@@ -5643,21 +5647,22 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 								parentlist = (Object[]) parentlist[1];
 							}
 							else if (whitespace) {
-								while ("= \t\n\r".indexOf(c) == -1) { // read to key's end
+								while (c != -1 && "= \t\n\r".indexOf(c) == -1) { // read to key's end
 									text.append((char) c);
 									c = reader.read();
 								}
 								String key = text.toString();
 								text.setLength(0);
-								while (" \t\n\r".indexOf(c) != -1) c = reader.read();
+								while (c != -1 && " \t\n\r".indexOf(c) != -1) c = reader.read();
 								if (c != '=') throw new IllegalArgumentException();
-								while (" \t\n\r".indexOf(c = reader.read()) != -1);
+								while (c != -1 && " \t\n\r".indexOf(c = reader.read()) != -1);
 								char quote = (char) c;
 								if ((c != '\"') && (c != '\'')) throw new IllegalArgumentException();
 								while (quote != (c = reader.read())) {
+									if (c == -1) break;
 									if (c == '&') {
 										StringBuffer eb = new StringBuffer();
-										while (';' != (c = reader.read())) { eb.append((char) c); }
+										while (';' != (c = reader.read()) && c != -1) { eb.append((char) c); }
 										String entity = eb.toString();
 										if ("lt".equals(entity)) { text.append('<'); }
 										else if ("gt".equals(entity)) { text.append('>'); }
@@ -5732,12 +5737,14 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			String value = (String) methods.elementAt(i + 2);
 			
 			if ("method" == definition[0]) {
-				Object[] method = getMethod(component, value, root, handler);
-				if ("init" == definition[1]) {
-					invokeImpl(method, null);
-				}
-				else {
-					set(component, definition[1], method);
+				if (handler != null) {
+					Object[] method = getMethod(component, value, root, handler);
+					if ("init" == definition[1]) {
+						invokeImpl(method, null);
+					}
+					else {
+						set(component, definition[1], method);
+					}
 				}
 			}
 			else { // ("component" == definition[0])
