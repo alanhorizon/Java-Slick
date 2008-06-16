@@ -71,11 +71,13 @@
 </target>
 
 <target name="build-game-webstart" depends="build-game">
+<!--
 	<input message="KeyStore:" addproperty="keystore.alias"/>
 	<input message="KeyStorePW:" addproperty="keystore.password"/>
 	
 	<copyandsign jar="${game.name}.jar"/>
-		 
+	-->	 
+	
 	<jar destfile="lib/${game.name}.jar" 
 		 basedir="${build.dir}/classes"/>
 	<jar update="true" destfile="lib/${game.name}.jar" 
@@ -91,7 +93,7 @@
 	<input message="Upload password:" addproperty="password"/>
 	
 	<scp todir="${username}:${password}@${host}:${dir}" 
-		 file="webstart/${game.name}.jar"
+		 file="lib/${game.name}.jar"
 		 trust="true"
 		 port="122"
 		 verbose="true"/>
