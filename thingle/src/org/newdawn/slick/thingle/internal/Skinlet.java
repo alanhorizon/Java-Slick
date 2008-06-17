@@ -1381,88 +1381,66 @@ public class Skinlet extends Thinlet {
 			checkOffset(component);
 		} else if (("panel" == classname) || (classname == "dialog")) {
 			int gap = getInteger(component, "gap", 0);
-			int[][] grid = getGrid(component); // TODO: Consider why this
-												// doesn't exist, gap );
-			int top = 0;
-			int left = 0;
-			int contentwidth = 0;
-			int contentheight = 0;
+			int[][] grid = getGrid(component);
+			int top = 0; int left = 0;
+			int contentwidth = 0; int contentheight = 0;
 			if (grid != null) { // has subcomponents
 				top = getInteger(component, "top", 0);
 				left = getInteger(component, "left", 0);
 				int bottom = getInteger(component, "bottom", 0);
 				int right = getInteger(component, "right", 0);
 				// sums the preferred size of cell widths and heights, gaps
-				contentwidth = left
-						+ getSum(grid[0], 0, grid[0].length, gap, false)
-						+ right;
-				contentheight = top
-						+ getSum(grid[1], 0, grid[1].length, gap, false)
-						+ bottom;
+				contentwidth = left + getSum(grid[0], 0, grid[0].length, gap, false) + right;
+				contentheight = top + getSum(grid[1], 0, grid[1].length, gap, false) + bottom;
 			}
-
-			Dimension title = getSize(component, 0, 0); // title text and icon
-			setInteger(component, ":titleheight", title.height, 0);
+			
+			int titleheight = getSize(component, 0, 0).height; // title text and icon
+			setInteger(component, ":titleheight", titleheight, 0);
 			boolean scrollable = getBoolean(component, "scrollable", false);
-			boolean border = ("panel" == classname)
-					&& getBoolean(component, "border", false);
-			int iborder = (border ? skin.panel.borderInsets.top : 0);
+			boolean border = ("panel" == classname) && getBoolean(component, "border", false);
+			int iborder = (border ? 1 : 0);
 			if (scrollable) { // set scrollpane areas
 				if ("panel" == classname) {
-					int head = title.height / 2;
-					int headgap = (title.height > 0) ? (title.height - head - iborder)
-							: 0;
-					scrollable = layoutScroll(component, contentwidth,
-							contentheight, head, 0, 0, 0, border, headgap);
-				} else { // dialog
-					scrollable = layoutScroll(component, contentwidth,
-							contentheight, 3 + title.height, 3, 3, 3, true, 0);
+					int head = titleheight / 2;
+					int headgap = (titleheight > 0) ? (titleheight - head - iborder) : 0;
+					scrollable = layoutScroll(component, contentwidth, contentheight,
+						head, 0, 0, 0, border, headgap);
+				}
+				else { // dialog
+					scrollable = layoutScroll(component, contentwidth, contentheight,
+						3 + titleheight, 3, 3, 3, true, 0);
 				}
 			}
 			if (!scrollable) { // clear scrollpane bounds //+
-				set(component, ":view", null);
-				set(component, ":port", null);
+				set(component, ":view", null); set(component, ":port", null);
 			}
-
+			
 			if (grid != null) {
-				int areax = 0;
-				int areay = 0;
-				int areawidth = 0;
-				int areaheight = 0;
+				int areax = 0; int areay = 0; int areawidth = 0; int areaheight = 0;
 				if (scrollable) {
 					// components are relative to the viewport
 					Rectangle view = getRectangle(component, ":view");
-					areawidth = view.width;
-					areaheight = view.height;
-				} else { // scrollpane isn't required
+					areawidth = view.width; areaheight = view.height;
+				}
+				else { // scrollpane isn't required
 					// components are relative to top/left corner
 					Rectangle bounds = getRectangle(component, "bounds");
-					areawidth = bounds.width;
-					areaheight = bounds.height;
+					areawidth = bounds.width; areaheight = bounds.height;
 					if ("panel" == classname) {
-						areax = iborder;
-						areay = Math.max(iborder, title.height);
-						areawidth -= 2 * iborder;
-						areaheight -= areay + iborder;
-					} else { // dialog
-						int titleheight = Math.max(getInteger(component,
-								":titleheight", 0), skin.titlebar.pieceHeight);
-						areax = skin.dialog.insets.left;
-						areay = skin.dialog.insets.top
-								+ skin.titlebar.pieceHeight;
-						areawidth -= skin.dialog.insets.lr;
-						areaheight -= skin.dialog.insets.bottom - titleheight;
+						areax = iborder; areay = Math.max(iborder, titleheight);
+						areawidth -= 2 * iborder; areaheight -= areay + iborder;
+					}
+					else { // dialog
+						areax = 4; areay = 4 + titleheight;
+						areawidth -= 8; areaheight -= areay + 4;
 					}
 				}
-
-				for (int i = 0; i < 2; i++) { // i=0: horizontal, i=1:
-												// vertical
+			
+				for (int i = 0; i < 2; i++) { // i=0: horizontal, i=1: vertical
 					// remaining space
-					int d = ((i == 0) ? (areawidth - contentwidth)
-							: (areaheight - contentheight));
-					if (d != 0) { // + > 0
-						int w = getSum(grid[2 + i], 0, grid[2 + i].length, 0,
-								false);
+					int d = ((i == 0) ? (areawidth - contentwidth) : (areaheight - contentheight));
+					if (d != 0) { //+ > 0
+						int w = getSum(grid[2 + i], 0, grid[2 + i].length, 0, false);
 						if (w > 0) {
 							for (int j = 0; j < grid[i].length; j++) {
 								if (grid[2 + i][j] != 0) {
@@ -1472,40 +1450,28 @@ public class Skinlet extends Thinlet {
 						}
 					}
 				}
-
+				
 				Object comp = get(component, ":comp");
 				for (int i = 0; comp != null; comp = get(comp, ":next")) {
-					if (!getBoolean(comp, "visible", true)) {
-						continue;
-					}
-					int ix = areax + left
-							+ getSum(grid[0], 0, grid[4][i], gap, true);
-					int iy = areay + top
-							+ getSum(grid[1], 0, grid[5][i], gap, true);
-					int iwidth = getSum(grid[0], grid[4][i], grid[6][i], gap,
-							false);
-					int iheight = getSum(grid[1], grid[5][i], grid[7][i], gap,
-							false);
+					if (!getBoolean(comp, "visible", true)) { continue; }
+					int ix = areax + left + getSum(grid[0], 0, grid[4][i], gap, true);
+					int iy = areay + top + getSum(grid[1], 0, grid[5][i], gap, true);
+					int iwidth = getSum(grid[0], grid[4][i], grid[6][i], gap, false);
+					int iheight = getSum(grid[1], grid[5][i], grid[7][i], gap, false);
 					String halign = getString(comp, "halign", "fill");
 					String valign = getString(comp, "valign", "fill");
 					if ((halign != "fill") || (valign != "fill")) {
 						Dimension d = getPreferredSize(comp);
 						if (halign != "fill") {
 							int dw = Math.max(0, iwidth - d.width);
-							if (halign == "center") {
-								ix += dw / 2;
-							} else if (halign == "right") {
-								ix += dw;
-							}
+							if (halign == "center") { ix += dw / 2; }
+								else if (halign == "right") { ix += dw; }
 							iwidth -= dw;
 						}
 						if (valign != "fill") {
 							int dh = Math.max(0, iheight - d.height);
-							if (valign == "center") {
-								iy += dh / 2;
-							} else if (valign == "bottom") {
-								iy += dh;
-							}
+							if (valign == "center") { iy += dh / 2; }
+								else if (valign == "bottom") { iy += dh; }
 							iheight -= dh;
 						}
 					}
