@@ -35,7 +35,9 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Thingle;
+import org.newdawn.slick.thingle.Widget;
 import org.newdawn.slick.thingle.WidgetRenderer;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleContext;
@@ -152,6 +154,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	protected int KEY_V = input.getKeyCode(ThingleInput.V_KEY);
 	protected int KEY_C = input.getKeyCode(ThingleInput.C_KEY);
 	protected int KEY_DELETE = input.getKeyCode(ThingleInput.DELETE_KEY);
+	
+	private Page page;
 	
 	public Thinlet() { // fixed by Mike Hartshorn (javac1.1 bug)
 		setFont(spiFactory.getDefaultFont());
@@ -586,6 +590,10 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				x += d.width;
 			}
 		}
+	}
+	
+	public void setPage(Page page) {
+		this.page = page;
 	}
 	
 	/**
@@ -4318,6 +4326,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			if ("thinlet" == target) {
 				args[i] = this;
 			}
+			else if ("page" == target) {
+				args[i] = page;
+			}
 			else if (("constant" == target)) { // constant value
 				args[i] = data[2 + 3 * i + 1];
 			}
@@ -4325,8 +4336,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				if ("item" == target) { target = part; }
 				Object parametername = data[2 + 3 * i + 1];
 				if (parametername == null) {
-					args[i] = target;
-					//args[i] = new Widget(this, target);
+					args[i] = Widget.getWidget(this, target);
 				}
 				else {
 					args[i] = (target != null) ? get(target, parametername) : null;
@@ -6189,6 +6199,10 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				data[2 + 3 * i] = "thinlet"; // the target component
 				parametertypes[i] = Thinlet.class;
 			}
+			else if ("page".equals(arg)) {
+				data[2 + 3 * i] = "page"; // the target component
+				parametertypes[i] = Page.class;
+			}
 			else if ((arg.length() > 1) && // constant string value
 					(arg.charAt(0) == '\'') && (arg.charAt(arg.length() - 1) == '\'')) {
 				data[2 + 3 * i] = "constant";
@@ -6239,7 +6253,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				}
 				data[2 + 3 * i] = comp; // the target component
 				if (dot == -1) {
-					parametertypes[i] = Object.class; // Widget.class
+					parametertypes[i] = Widget.class; 
 				}
 				else {
 					Object[] definition = getDefinition(classname, arg.substring(dot + 1), null);

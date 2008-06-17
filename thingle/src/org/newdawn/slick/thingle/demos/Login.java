@@ -1,6 +1,7 @@
 package org.newdawn.slick.thingle.demos;
 
-import org.newdawn.slick.thingle.internal.Thinlet;
+import org.newdawn.slick.thingle.Page;
+import org.newdawn.slick.thingle.Widget;
 
 /**
  * Login test logic
@@ -11,15 +12,15 @@ public class Login {
 	/** The dialog */
 	public Object dialog;
 	/** The thinlet instance being controlled */
-	private Thinlet thinlet;
+	private Page page;
 	
 	/**
 	 * Initialise 
 	 * 
-	 * @param thinlet The thinlet instance to control
+	 * @param page The page displaying the GUI
 	 */ 
-	public void init(Thinlet thinlet) {
-		this.thinlet = thinlet;
+	public void init(Page page) {
+		this.page = page;
 	}
 	
 	/**
@@ -29,10 +30,10 @@ public class Login {
 	 * @param username The username given
 	 * @param password The password given
 	 */
-	public void login(Object dialog, String username, String password) {
+	public void login(Widget dialog, String username, String password) {
 		this.dialog = dialog;
 		
-		thinlet.remove(dialog);
+		page.remove(dialog);
 		System.out.println("Attempting login with the following criteria: "+username+","+password);
 	}
 }

@@ -474,6 +474,13 @@ public class Widget {
 	}
 	
 	/**
+	 * Cause the widget to be removed frm the top level of thinlet
+	 */
+	void removeFromTopLevel() {
+		thinlet.remove(component);
+	}
+	
+	/**
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

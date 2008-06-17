@@ -29,6 +29,7 @@ public class Page {
 	public Page() {
 		thinlet = new Skinlet();
 		thinlet.setKeyFocus(true);
+		thinlet.setPage(this);
 		theme = new Theme();
 		setColors();
 	}
@@ -295,5 +296,14 @@ public class Page {
 	 */
 	public void add(Widget widget) {
 		widget.addAtTopLevel();
+	}
+	
+	/**
+	 * Remove a widget from the top level component
+	 * 
+	 * @param widget The widget to remove
+	 */
+	public void remove(Widget widget) {
+		widget.removeFromTopLevel();
 	}
 }
