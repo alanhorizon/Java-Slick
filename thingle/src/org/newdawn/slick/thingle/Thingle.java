@@ -1,5 +1,7 @@
 package org.newdawn.slick.thingle;
 
+import org.newdawn.slick.thingle.internal.JavaLocalMethodInvoker;
+import org.newdawn.slick.thingle.spi.MethodInvoker;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleContext;
 import org.newdawn.slick.thingle.spi.ThingleFont;
@@ -17,6 +19,8 @@ public class Thingle {
 	private static ThingleContext context;
 	/** The utilities class */
 	private static ThingleUtil util;
+	/** The method invoker in use */
+	private static MethodInvoker methodInvoker = new JavaLocalMethodInvoker();
 	
 	/**
 	 * Initialise the Thingle system providing the SPI implementation
@@ -26,6 +30,26 @@ public class Thingle {
 	public static void init(ThingleContext f) {
 		context = f;
 		util = context.createUtil();
+	}
+	
+	/**
+	 * Set the method invoker to use for thinlet GUIs in this 
+	 * process.
+	 * 
+	 * @param invoker The invoker to make use of when invoking GUI event
+	 * call backs from Thinlet
+	 */
+	public static void setMethodInvoker(MethodInvoker invoker) {
+		methodInvoker = invoker;
+	}
+	
+	/**
+	 * Get the method invoker to use when invoking methods from thinlet
+	 * 
+	 * @return The method invoker
+	 */
+	public static MethodInvoker getMethodInvoker() {
+		return methodInvoker;
 	}
 	
 	/**

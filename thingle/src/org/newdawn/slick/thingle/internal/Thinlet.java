@@ -26,7 +26,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Hashtable;
@@ -41,6 +40,7 @@ import org.newdawn.slick.thingle.Widget;
 import org.newdawn.slick.thingle.WidgetRenderer;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleContext;
+import org.newdawn.slick.thingle.spi.ThingleException;
 import org.newdawn.slick.thingle.spi.ThingleFont;
 import org.newdawn.slick.thingle.spi.ThingleGraphics;
 import org.newdawn.slick.thingle.spi.ThingleImage;
@@ -4344,12 +4344,11 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				}
 			}
 		}
+		
 		try {
-			((Method) data[1]).invoke(data[0], args);
-		} catch (InvocationTargetException ite) {
-			handleException(ite.getTargetException());
-		} catch (Throwable throwable) {
-			handleException(throwable);
+			Thingle.getMethodInvoker().invoke(data[1], data[0], args);
+		} catch (ThingleException e) {
+			handleException(e);
 		}
 	}
 	
@@ -6278,10 +6277,10 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 		data[0] = handler;
 		try {
-			data[1] = handler.getClass().getMethod(methodname, parametertypes);
+			data[1] = Thingle.getMethodInvoker().getMethodHandle(handler, methodname, parametertypes);
 			return data;
-		} catch (Exception exc) {
-			throw new IllegalArgumentException(value + " " + exc.getMessage());
+		} catch (ThingleException exc) {
+			throw new IllegalArgumentException(value + " " + exc.getMessage(), exc);
 		}
 	}
 
