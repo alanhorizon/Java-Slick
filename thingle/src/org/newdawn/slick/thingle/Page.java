@@ -294,6 +294,6 @@ public class Page {
 	 * @param widget The widget to add
 	 */
 	public void add(Widget widget) {
-		getDesktop().add(widget);
+		widget.addAtTopLevel();
 	}
 }

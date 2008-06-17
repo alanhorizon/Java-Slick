@@ -24,7 +24,7 @@ public class Widget {
 	 * @param thinlet The thinlet instnce the widget will be associated with
 	 * @param component The component itself
 	 */
-	static Widget getWidget(Thinlet thinlet, Object component) {
+	public static Widget getWidget(Thinlet thinlet, Object component) {
     	SoftReference ref = (SoftReference) cache.get(component);
 		if (ref != null) {
 			Widget cached = (Widget) ref.get();
@@ -69,7 +69,7 @@ public class Widget {
 	 * 
 	 * @param child The child widget to add
  	 */
-	public void add (Widget child) {
+	public void add(Widget child) {
 		thinlet.add(component, child.component);
 	}
 
@@ -79,14 +79,14 @@ public class Widget {
 	 * @param child The child widget to add
 	 * @param index The index to insert the widget
  	 */
-	public void add (Widget child, int index) {
+	public void add(Widget child, int index) {
 		thinlet.add(component, child.component, index);
 	}
 
 	/**
 	 * Removes this widget from the page.
 	 */
-	public void remove () {
+	public void remove() {
 		thinlet.remove(component);
 	}
 
@@ -318,7 +318,7 @@ public class Widget {
 	 * 
 	 * @return The index of the first selected item
 	 */
-	public int getSelectedIndex () {
+	public int getSelectedIndex() {
 		return thinlet.getSelectedIndex(component);
 	}
 
@@ -466,9 +466,17 @@ public class Widget {
 	}
 
 	/**
+	 * Cause this widget to be added to the top level of the thinlet
+	 * instance it's connected to
+	 */
+	void addAtTopLevel() {
+		thinlet.add(component);
+	}
+	
+	/**
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString () {
+	public String toString() {
 		String name = thinlet.getString(component, "name");
 		if (name == null) {
 			name = getWidgetClass();
