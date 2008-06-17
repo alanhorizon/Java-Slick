@@ -1,4 +1,4 @@
-package org.newdawn.slick.thingle.internal;
+package org.newdawn.slick.thingle;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

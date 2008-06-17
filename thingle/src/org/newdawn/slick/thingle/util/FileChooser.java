@@ -9,6 +9,8 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.newdawn.slick.thingle.Page;
 import org.newdawn.slick.thingle.Theme;
+import org.newdawn.slick.thingle.Thingle;
+import org.newdawn.slick.thingle.Widget;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.thingle.spi.ThingleException;
 
@@ -30,13 +32,13 @@ public class FileChooser {
 	/** The directory the file chooser is pointing at */
 	private File currentDir = view.getDefaultDirectory();
 	/** The thinlet component for the dialog */
-	private Object chooserDialog;
+	private Widget chooserDialog;
 	/** The thinlet component for the list of files */
-	private Object filesList;
+	private Widget filesList;
 	/** The thinlet component for the path combo */
-	private Object pathCombo;
+	private Widget pathCombo;
 	/** The thinlet component for the text field */
-	private Object field;
+	private Widget field;
 	
 	/** The list of files shown in the path selection */
 	private ArrayList pathShown = new ArrayList();
@@ -51,9 +53,6 @@ public class FileChooser {
 	private boolean directorySelectionAllowed = false;
 	/** The label to place on the select button */
 	private String select = "Open";
-	
-	/** The thinlet instance to control */
-	private Thinlet thinlet;
 	
 	/**
 	 * Create a new file chooser
@@ -112,8 +111,8 @@ public class FileChooser {
 	 * 
 	 * @param button The button being selected
 	 */
-	public void initSelect(Object button) {
-		thinlet.setString(button, "text", select);
+	public void initSelect(Widget button) {
+		button.setText(select);
 	}
 	
 	/**
@@ -123,7 +122,7 @@ public class FileChooser {
 	 * 
 	 * @param list The list to initialise
 	 */
-	public void initList(Object list) {
+	public void initList(Widget list) {
 		this.filesList = list;
 	}
 
@@ -132,14 +131,14 @@ public class FileChooser {
 	 * 
 	 * Initialise the dialog 
 	 * 
-	 * @param thinlet The thinlet instance being configured
+	 * @param page The page displaying the chooser
 	 * @param dialog The dialog to initialise
 	 */
-	public void initDialog(Thinlet thinlet, Object dialog) {
+	public void initDialog(Page page, Widget dialog) {
 		this.chooserDialog = dialog;
-		this.thinlet = thinlet;
+		this.page = page;
 		
-		thinlet.setString(dialog, "text", title);
+		dialog.setText(title);
 	}
 
 	/**
@@ -149,7 +148,7 @@ public class FileChooser {
 	 * 
 	 * @param field The field to initialise
 	 */
-	public void initField(Object field) {
+	public void initField(Widget field) {
 		this.field = field;
 	}
 
@@ -162,7 +161,7 @@ public class FileChooser {
 	public void cancel() {
 		page.disable();
 		visible = false;
-		thinlet.remove(chooserDialog);
+		page.remove(chooserDialog);
 		
 		listener.chooserCanceled();
 	}
@@ -175,7 +174,7 @@ public class FileChooser {
 	private void selectFile(File file) {
 		page.disable();
 		visible = false;
-		thinlet.remove(chooserDialog);
+		page.remove(chooserDialog);
 		
 		listener.fileSelected(file);
 	}
@@ -187,12 +186,12 @@ public class FileChooser {
 	 * 
 	 * @param source The component the event came from
 	 */
-	public void selectEntry(Object source) {
+	public void selectEntry(Widget source) {
 		boolean doubleClick = source == filesList;
 		
-		for (int i = thinlet.getCount(filesList) - 1; i >= 0; i--) {
-			Object item = thinlet.getItem(filesList, i);
-			if (thinlet.getBoolean(item, "selected")) {
+		for (int i = filesList.getChildrenCount() - 1; i >= 0; i--) {
+			Widget item = filesList.getChild(i);
+			if (item.getBoolean("selected")) {
 				// selected item
 				File file = (File) filesListed.get(i);
 				if (file.isDirectory() && (doubleClick || !directorySelectionAllowed)) {
@@ -214,7 +213,7 @@ public class FileChooser {
 	 */
 	public void populateList() {
 		Object fileList = filesList;
-		thinlet.removeAll(fileList);
+		filesList.removeChildren();
 		
 		File[] files = currentDir.listFiles();
 		filesListed.clear();
@@ -264,22 +263,22 @@ public class FileChooser {
 //			}
 			File file = (File) allFiles.get(i);
 			
-			Object item = Thinlet.create("item");
+			Widget item = page.createWidget("item");
 			String text = view.getSystemDisplayName(file);
-			thinlet.setString(item, "text", text);
+			item.setText(text);
 			filesListed.add(file);
 				
 			if (file.isDirectory()) {
 				if (file.getName().equals("")) {
-					thinlet.setIcon(item, "icon", thinlet.getIcon("utilres/disk.gif"));
+					item.setIcon("utilres/disk.gif");
 				} else {
-					thinlet.setIcon(item, "icon", thinlet.getIcon("utilres/folder.gif"));
+					item.setIcon("utilres/folder.gif");
 				}
 			} else {
-				thinlet.setIcon(item, "icon", thinlet.getIcon("utilres/document.gif"));
+				item.setIcon("utilres/document.gif");
 			}
 			
-			thinlet.add(filesList, item);
+			filesList.add(item);
 		}
 	}
 	
@@ -304,13 +303,13 @@ public class FileChooser {
 	 * 
 	 * @param list The list selected from
 	 */
-	public void enterEntry(Object list) {
-		for (int i = thinlet.getCount(filesList) - 1; i >= 0; i--) {
-			Object item = thinlet.getItem(filesList, i);
-			if (thinlet.getBoolean(item, "selected")) {
+	public void enterEntry(Widget list) {
+		for (int i = filesList.getChildrenCount() - 1; i >= 0; i--) {
+			Widget item = filesList.getChild(i);
+			if (item.getBoolean("selected")) {
 				File file = (File) filesListed.get(i);
 				if ((!file.isDirectory() || directorySelectionAllowed)) {
-					thinlet.setString(field, "text", file.getName());
+					field.setText(file.getName());
 				}
 			}
 		}
@@ -325,10 +324,10 @@ public class FileChooser {
 		if (file.isDirectory()) {
 			currentDir = file;
 			populateChooser(pathCombo);
-			thinlet.setString(field, "text", "");
+			field.setText("");
 		} else {
 			selectFile(file);
-			thinlet.setString(field, "text", "");
+			field.setText("");
 		}
 	}
 
@@ -339,8 +338,8 @@ public class FileChooser {
 	 * 
 	 * @param field The field that the text was entered into
 	 */
-	public void enterText(Object field) {
-		String text = thinlet.getString(field, "text");
+	public void enterText(Widget field) {
+		String text = field.getText();
 		if (text.trim().length() == 0) {
 			return;
 		}
@@ -364,8 +363,8 @@ public class FileChooser {
 	 * 
 	 * @param combo The combo to be updated
 	 */
-	public void changeChooser(Object combo) {
-		int index = thinlet.getInteger(combo, "selected");
+	public void changeChooser(Widget combo) {
+		int index = combo.getSelectedIndex(); 
 		currentDir = (File) pathShown.get(index);
 		
 		populateChooser(combo);
@@ -378,11 +377,11 @@ public class FileChooser {
 	 * 
 	 * @param combo The combo to be updated
 	 */
-	public void populateChooser(Object combo) {
+	public void populateChooser(Widget combo) {
 		this.pathCombo = combo;
 		
 		pathShown.clear();
-		thinlet.removeAll(combo);
+		combo.removeChildren();
 		
 		File[] files = view.getRoots();
 		
@@ -403,13 +402,13 @@ public class FileChooser {
 		int index = 0;
 		boolean displayed = false;
 		for (int i=0;i<files.length;i++) {
-			Object item = Thinlet.create("choice");
-			thinlet.setString(item, "text", view.getSystemDisplayName(files[i]));
+			Widget item = page.createWidget("choice");
+			item.setText(view.getSystemDisplayName(files[i]));
 			
-			thinlet.add(combo, item);
+			combo.add(item);
 			pathShown.add(files[i]);
 			if (currentDir.equals(files[i])) {
-				thinlet.setInteger(combo, "selected", index);
+				combo.setInteger("selected", index);
 			}
 			index++;
 
@@ -417,15 +416,15 @@ public class FileChooser {
 				displayed = true;
 				String prefix = "  ";
 				for (int j=1;j<path.size();j++) {
-					item = Thinlet.create("choice");
+					item = page.createWidget("choice");
 					String entry = view.getSystemDisplayName((File) path.get(j));
-					thinlet.setString(item, "text", prefix + entry);
-					thinlet.add(combo, item);
+					item.setText(prefix + entry);
+					combo.add(item);
 					pathShown.add((File) path.get(j));
 					prefix += "  ";
 					
-					thinlet.setInteger(combo, "selected", index);
-					thinlet.setString(combo, "text", entry);
+					combo.setInteger("selected", index);
+					combo.setText(entry);
 					index++;
 				}
 			}
@@ -434,15 +433,15 @@ public class FileChooser {
 		if (!displayed) {
 			String prefix = "  ";
 			for (int j=0;j<path.size();j++) {
-				Object item = Thinlet.create("choice");
+				Widget item = page.createWidget("choice");
 				String entry = view.getSystemDisplayName((File) path.get(j));
-				thinlet.setString(item, "text", prefix + entry);
-				thinlet.add(combo, item);
+				item.setText(prefix + entry);
+				combo.add(item);
 				pathShown.add((File) path.get(j));
 				prefix += "  ";
 				
-				thinlet.setInteger(combo, "selected", index);
-				thinlet.setString(combo, "text", entry);
+				combo.setInteger("selected", index);
+				combo.setText(entry);
 				index++;
 			}
 		}

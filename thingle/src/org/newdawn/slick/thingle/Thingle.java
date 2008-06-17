@@ -1,6 +1,5 @@
 package org.newdawn.slick.thingle;
 
-import org.newdawn.slick.thingle.internal.JavaLocalMethodInvoker;
 import org.newdawn.slick.thingle.spi.MethodInvoker;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleContext;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dialog name="login" text="Login" modal="true" 
-		columns="2" top="4" left="4" bottom="4" right="4" gap="4" init="init(thinlet)">
+		columns="2" top="4" left="4" bottom="4" right="4" gap="4" init="init(page)">
 	<label text="The Next Big Thing Login"/>	
 	<label/>
 	

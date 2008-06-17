@@ -1097,6 +1097,10 @@ public class Skinlet extends Thinlet {
 	 * @return the created combolist
 	 */
 	protected Object popupCombo(Object combobox) {
+		if (!skin.loaded()) {
+			return super.popupCombo(combobox);
+		}
+		
 		// combobox bounds relative to the root desktop
 		int combox = 0, comboy = 0, combowidth = 0, comboheight = 0;
 		for (Object comp = combobox; comp != content; comp = getParent(comp)) {

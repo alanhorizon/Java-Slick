@@ -7,8 +7,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.thingle.LegacyMethodInvoker;
 import org.newdawn.slick.thingle.Page;
-import org.newdawn.slick.thingle.Theme;
 import org.newdawn.slick.thingle.Thingle;
 import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
 import org.newdawn.slick.thingle.spi.ThingleException;
@@ -36,6 +36,7 @@ public class ThingleTest extends BasicGame {
 	 */
 	public void init(GameContainer container) throws SlickException {
 		Thingle.init(new SlickThinletFactory(container));
+		Thingle.setMethodInvoker(new LegacyMethodInvoker());
 		
 		container.setShowFPS(false);
 		//container.setVSync(true);

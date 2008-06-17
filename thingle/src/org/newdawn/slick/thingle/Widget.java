@@ -42,7 +42,7 @@ public class Widget {
 	/** The thinlet instance being configured */
 	private Thinlet thinlet;
 	/** The component handle */
-	private Object component;
+	Object component;
 	
 	/**
 	 * Create a new widget.
