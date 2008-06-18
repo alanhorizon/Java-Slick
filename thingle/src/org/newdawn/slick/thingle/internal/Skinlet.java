@@ -1393,6 +1393,15 @@ public class Skinlet extends Thinlet {
 				left = getInteger(component, "left", 0);
 				int bottom = getInteger(component, "bottom", 0);
 				int right = getInteger(component, "right", 0);
+				
+				ThingleColor back = getThinletColor(component, "background");
+				if ((back == null) || (back.getAlpha() != 0)) {
+					left += skin.panel.insets.left;
+					top += skin.panel.insets.top;
+					bottom += skin.panel.insets.bottom;
+					right += skin.panel.insets.right;
+				}
+				
 				// sums the preferred size of cell widths and heights, gaps
 				contentwidth = left + getSum(grid[0], 0, grid[0].length, gap, false) + right;
 				contentheight = top + getSum(grid[1], 0, grid[1].length, gap, false) + bottom;
