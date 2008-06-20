@@ -1518,7 +1518,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		// set the clip rectangle relative to the component location
 		clipx -= bounds.x; clipy -= bounds.y;
 		g.translate(bounds.x, bounds.y); 
-		setClip(g, 0, 0, bounds.width, bounds.height);
+		//setClip(g, 0, 0, bounds.width, bounds.height);
 		String classname = getClass(component);
 		boolean pressed = (mousepressed == component);
 		boolean inside = (mouseinside == component) &&
@@ -2107,6 +2107,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				}
 			}
 		}
+		
 		int x1 = Math.max(clipx, port.x);
 		int x2 = Math.min(clipx + clipwidth, port.x + port.width);
 		int y1 = Math.max(clipy, port.y);
@@ -2122,6 +2123,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			g.translate(view.x - port.x, (view.y - port.y));
 			setClip(g, clipx, clipy, clipwidth, clipheight);
 		}
+		
 		if (focus && drawfocus) { // draw dotted rectangle around the viewport
 			drawFocus(g, port.x, port.y, port.width - 1, port.height - 1);
 		}
