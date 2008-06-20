@@ -1192,6 +1192,12 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			if (grid != null) { // has components
 				size.width += getSum(grid[0], 0, grid[0].length, gap, false);
 				size.height += getSum(grid[1], 0, grid[1].length, gap, false);
+			} else {
+				WidgetRenderer renderer = (WidgetRenderer) get(component, "renderer");
+				if (renderer != null) {
+					size.width += renderer.getPreferredWidth();
+					size.height += renderer.getPreferredHeight();
+				}
 			}
 			return size;
 		}
@@ -1699,7 +1705,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			} else { // panel
 				WidgetRenderer renderer = (WidgetRenderer) get(component, "renderer");
 				if (renderer != null) {
-					renderer.paint(this, g, component, bounds);
+					renderer.paint(g, Widget.getWidget(this, component), bounds);
 				} else {
 					boolean border = getBoolean(component, "border", false);
 					paint(component, 0, titleheight / 2, bounds.width, bounds.height - (titleheight / 2),

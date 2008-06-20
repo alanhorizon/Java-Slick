@@ -14,7 +14,7 @@ import org.newdawn.slick.thingle.internal.slick.SlickThinletFactory;
 import org.newdawn.slick.thingle.spi.ThingleException;
 
 /**
- * The big test demo that has multiple tabs, sub-dialogs etc
+ * Test using a custom panel renderer
  * 
  * @author kevin
  */

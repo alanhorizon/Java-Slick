@@ -23,6 +23,7 @@ public class Widget {
 	 * 
 	 * @param thinlet The thinlet instnce the widget will be associated with
 	 * @param component The component itself
+	 * @return The widget relating to the given component
 	 */
 	public static Widget getWidget(Thinlet thinlet, Object component) {
     	SoftReference ref = (SoftReference) cache.get(component);
