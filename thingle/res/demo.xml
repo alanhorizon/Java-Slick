@@ -93,19 +93,19 @@
 							<column text="Column" alignment="center" />
 						</header>
 						<row>
-							<cell text="Cell" />
-							<cell text="Cell" />
-							<cell text="Cell" icon="res/icon/library.gif" />
+							<cell text="Cell 1" />
+							<cell text="Cell 2" />
+							<cell text="Cell 3" icon="res/icon/library.gif" />
 						</row>
 						<row selected="true">
-							<cell text="Cell" icon="res/icon/library.gif" />
-							<cell text="Cell" />
-							<cell text="Cell" />
+							<cell text="Cell 4" icon="res/icon/library.gif" />
+							<cell text="Cell 5" />
+							<cell text="Cell 6" />
 						</row>
 						<row>
-							<cell text="Cell" />
-							<cell text="Cell" icon="res/icon/library.gif" enabled="false" />
-							<cell text="Cell" />
+							<cell text="Cell 7" />
+							<cell text="Cell 8" icon="res/icon/library.gif" enabled="false" />
+							<cell text="Cell 9" />
 						</row>
 					</table>
 				</splitpane>

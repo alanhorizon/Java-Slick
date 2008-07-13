@@ -2091,7 +2091,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				if (header != null) {
 					int[] columnwidths = (int []) get(component, ":widths");
 					Object column = get(header, ":comp"); int x = 0;
-					clipRect(g, 0, 0, port.width + 2, port.y); // not 2 and decrease clip area...
+					// used bto be clipRect
+					setClip(g, 0, 0, port.width + 2, port.y); // not 2 and decrease clip area...
 					for (int i = 0; i < columnwidths.length; i++) {
 						if (i != 0) { column = get(column, ":next"); }
 						boolean lastcolumn = (i == columnwidths.length - 1);
@@ -2524,12 +2525,13 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		if ("center" == alignment) { cx += (width - tw - iw) / 2; }
 			else if ("right" == alignment) { cx += width - tw - iw; }
 
-		if (clipped) { clipRect(g, x, y, width, height); }
+		if (clipped) { setClip(g, x, y, width, height); }
 		if (mode == 'x') { g.drawLine(cx, y + height / 2, cx + iw + tw, y + height / 2); }
 		if (icon != null) {
 			g.drawImage(icon, cx, y + ((height - ih) / 2));
 			cx += iw;
 		}
+		
 		if (text != null) { 
 			ThingleColor foreground = (ThingleColor) get(component, "foreground");
 			if (foreground == null) {
