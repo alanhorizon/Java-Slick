@@ -2625,6 +2625,10 @@ public class Skinlet extends Thinlet {
 
 	protected char[] getChars(Object component, String text, boolean wrap,
 			int width, int height) {
+		if (skin == null) {
+			return super.getChars(component, text, wrap, width, height);
+		}
+		
 		char[] chars = (char[]) get(component, ":text");
 		if ((chars == null) || (chars.length != text.length())) {
 			chars = text.toCharArray();
@@ -2635,8 +2639,10 @@ public class Skinlet extends Thinlet {
 		boolean styled = getBoolean(component, "styled", false);
 		if (wrap) {
 			ThingleFont currentfont = (ThingleFont) get(component, "font");
-			if (currentfont == null)
+			if (currentfont == null) {
 				currentfont = skin.fontPool[skin.textField.fonts[0]];
+			}
+			
 			FontMetrics fm = getFontMetrics(currentfont);
 			int lines = (height - 4 + fm.getLeading()) / fm.getHeight();
 			boolean prevletter = false;
