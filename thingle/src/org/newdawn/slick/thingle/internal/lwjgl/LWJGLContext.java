@@ -240,16 +240,27 @@ public class LWJGLContext implements ThingleContext, ThingleUtil {
 		TextureImpl.bindNone();
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);    
+		
+		GL11.glDisable(GL11.GL_TEXTURE_GEN_S);
+		GL11.glDisable(GL11.GL_TEXTURE_GEN_Q);
+		GL11.glDisable(GL11.GL_TEXTURE_GEN_R);
+		GL11.glDisable(GL11.GL_TEXTURE_GEN_T);
+		
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_LIGHTING);    
-		GL11.glDisable(GL11.GL_CULL_FACE);    
+		GL11.glDisable(GL11.GL_ALPHA_TEST);    
+		GL11.glDisable(GL11.GL_CULL_FACE);   
+	    
 		GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glMatrixMode(GL11.GL_TEXTURE);
+		GL11.glLoadIdentity();
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, width, height, 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glLoadIdentity();
 	}
 
 	public ThingleFont createBitmapFont(String ref, String image) {
