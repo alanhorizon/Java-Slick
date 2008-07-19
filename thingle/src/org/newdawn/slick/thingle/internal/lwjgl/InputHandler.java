@@ -30,15 +30,39 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	}
 
 	/**
+	 * Update the modifiers status 
+	 */
+	protected void updateMods() {
+		mods.update();
+	}
+	
+	/**
+	 * Consume the current event
+	 */
+	protected void consumeEvent() {
+		input.consumeEvent();
+	}
+	
+	/**
+	 * Check if the given mouse button is pressed
+	 * 
+	 * @param index The index of the mouse button
+	 * @return True if the mouse button is pressed
+	 */
+	protected boolean isMouseButtonDown(int index) {
+		return input.isMouseButtonDown(index);
+	}
+	
+	/**
 	 * @see org.newdawn.slick.util.InputAdapter#mouseClicked(int, int, int, int)
 	 */
 	public void mouseClicked(int button, int x, int y, int clickCount) {
 		if (clickCount == 2) {
 			if (button == 0) {
-				mods.update();
+				updateMods();
 				mouseMoved(x,y,x,y);
 				if (thinlet.mousePressed(x, y, 2, this)) {
-					input.consumeEvent();
+					consumeEvent();
 				}
 			}
 		}
@@ -48,14 +72,14 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 * @see org.newdawn.slick.util.InputAdapter#mouseMoved(int, int, int, int)
 	 */
 	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-		mods.update();
-		if (input.isMouseButtonDown(0)) {
+		updateMods();
+		if (isMouseButtonDown(0)) {
 			if (thinlet.mouseDragged(newx, newy, this)) {
-				input.consumeEvent();
+				consumeEvent();
 			}
 		} else {
 			if (thinlet.mouseMoved(newx, newy, this)) {
-				input.consumeEvent();
+				consumeEvent();
 			}
 		}
 	}
@@ -65,10 +89,10 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 */
 	public void mousePressed(int button, int x, int y) {
 		if (button == 0) {
-			mods.update();
+			updateMods();
 			mouseMoved(x,y,x,y);
 			if (thinlet.mousePressed(x, y, 1, this)) {
-				input.consumeEvent();
+				consumeEvent();
 			}
 		}
 	}
@@ -78,10 +102,10 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 */
 	public void mouseReleased(int button, int x, int y) {
 		if (button == 0) {
-			mods.update();
+			updateMods();
 			mouseMoved(x,y,x,y);
 			if (thinlet.mouseReleased(x, y, this)) {
-				input.consumeEvent();
+				consumeEvent();
 			}
 		}
 	}
@@ -90,9 +114,9 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 * @see org.newdawn.slick.util.InputAdapter#mouseWheelMoved(int)
 	 */
 	public void mouseWheelMoved(int change) {
-		mods.update();
+		updateMods();
 		if (thinlet.mouseWheelMoved(-change, this)) {
-			input.consumeEvent();
+			consumeEvent();
 		}
 	}
 
@@ -108,9 +132,9 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 * @see org.newdawn.slick.util.InputAdapter#keyPressed(int, char)
 	 */
 	public void keyPressed(int key, char c) {
-		mods.update();
+		updateMods();
 		if (thinlet.keyPressed(c, key, this, false)) {
-			input.consumeEvent();
+			consumeEvent();
 		}
 	}
 
@@ -118,9 +142,8 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 	 * @see org.newdawn.slick.util.InputAdapter#keyReleased(int, char)
 	 */
 	public void keyReleased(int key, char c) {
-		super.keyReleased(key, c);
 		if (thinlet.keyPressed(c, key, this, true)) {
-			input.consumeEvent();
+			consumeEvent();
 		}
 	}
 

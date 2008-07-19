@@ -43,9 +43,9 @@ public class LWJGLContext implements ThingleContext, ThingleUtil {
 	private Graphics graphics;
 	
 	/** The width of the dipslay */
-	private int width;
+	protected int width;
 	/** The height of the display */
-	private int height;
+	protected int height;
 	
 	/**
 	 * Create a new context
