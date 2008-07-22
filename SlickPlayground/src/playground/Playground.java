@@ -16,6 +16,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.util.FastTrig;
 import org.newdawn.slick.util.Log;
 
@@ -354,7 +355,7 @@ public class Playground extends BasicGame implements PodListener {
 	 * @see org.newdawn.slick.BasicGame#render(org.newdawn.slick.GameContainer, org.newdawn.slick.Graphics)
 	 */
 	public void render(GameContainer container, Graphics g) throws SlickException {
-		Texture.bindNone();
+		TextureImpl.bindNone();
 		GL11.glBegin(GL11.GL_QUADS);
 			setThemeColor(0.4f, 0.3f);
 			GL11.glVertex3f(0, 0, 0);
@@ -376,7 +377,7 @@ public class Playground extends BasicGame implements PodListener {
 		
 		alt.draw(container, g);
 
-		Texture.bindNone();
+		TextureImpl.bindNone();
 		GL11.glBegin(GL11.GL_QUADS);
 			setThemeColor(0.2f, 0.2f);
 			GL11.glVertex3f(0, 0, 0);
@@ -423,7 +424,7 @@ public class Playground extends BasicGame implements PodListener {
 					System.exit(0);
 				}
 			} else {
-				Texture.bindNone();
+				TextureImpl.bindNone();
 				GL11.glBegin(GL11.GL_QUADS);
 					GL11.glColor4f(0,0,0,0.8f);
 					GL11.glVertex3f(0, 0, 0);

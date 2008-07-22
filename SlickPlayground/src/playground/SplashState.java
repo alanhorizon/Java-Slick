@@ -7,6 +7,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.util.FastTrig;
 
 /**
@@ -93,7 +94,7 @@ public class SplashState extends State {
 	 * @see playground.State#render(org.newdawn.slick.GameContainer, org.newdawn.slick.Graphics)
 	 */
 	public void render(GameContainer container, Graphics g) {
-		Texture.bindNone();
+		TextureImpl.bindNone();
 		GL11.glBegin(GL11.GL_QUADS);
 			GL11.glColor3f(1f, 1f, 1f);
 			GL11.glVertex3f(0, 0, 0);
