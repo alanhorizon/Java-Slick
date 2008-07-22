@@ -60,6 +60,24 @@
 	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="src" includes="version"/>
 		 
+	<delete dir="lib/${game.name}-tools.jar"/>
+	<javac debug="true" srcdir="src" destdir="${build.dir}/classes" target="1.5" source="1.5">
+		<src path="src"/>
+	    <src path="tools"/>
+	    <classpath>
+		  <pathelement path="${slick.install}/lib/slick.jar"/>
+	      <pathelement path="${slick.install}/lib/lwjgl.jar"/>
+	    </classpath>
+	</javac>
+	<jar destfile="lib/${game.name}-tools.jar" 
+		 basedir="${build.dir}/classes"/>
+	<jar update="true" destfile="lib/${game.name}-tools.jar" 
+		 basedir="." includes="res/**"/>
+	<jar update="true" destfile="lib/${game.name}-tools.jar" 
+		 basedir="." includes="utilres/**"/>
+	<jar update="true" destfile="lib/${game.name}-tools.jar" 
+		 basedir="src" includes="version"/>
+		 
 	<zip destfile="lib/${game.name}-src.zip" 
 		 basedir="src"/>
 	<zip update="true" destfile="lib/${game.name}-src.zip" 
@@ -71,12 +89,10 @@
 </target>
 
 <target name="build-game-webstart" depends="build-game">
-<!--
 	<input message="KeyStore:" addproperty="keystore.alias"/>
 	<input message="KeyStorePW:" addproperty="keystore.password"/>
 	
-	<copyandsign jar="${game.name}.jar"/>
-	-->	 
+	<copyandsign jar="${game.name}-tools.jar"/>
 	
 	<jar destfile="lib/${game.name}.jar" 
 		 basedir="${build.dir}/classes"/>
@@ -94,6 +110,12 @@
 	
 	<scp todir="${username}:${password}@${host}:${dir}" 
 		 file="lib/${game.name}.jar"
+		 trust="true"
+		 port="122"
+		 verbose="true"/>
+		 
+	<scp todir="${username}:${password}@${host}:${dir}" 
+		 file="webstart/${game.name}-tools.jar"
 		 trust="true"
 		 port="122"
 		 verbose="true"/>
