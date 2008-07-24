@@ -58,7 +58,7 @@ public class SlickThinletFactory implements ThingleContext, ThingleUtil {
 	 * @see org.newdawn.slick.thingle.spi.ThingleContext#createFont(java.lang.String, int, int)
 	 */
 	public ThingleFont createFont(String face, int style, int size) {
-		ThingleFont font = createThingleFont(new TrueTypeFont(new java.awt.Font(face, style, size), false));
+		ThingleFont font = createThingleFont(new TrueTypeFont(new java.awt.Font(face, style, size), true));
 		
 		((FontWrapper) font).configure(face, size);
 		return font;
