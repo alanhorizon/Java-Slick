@@ -160,6 +160,16 @@ public class SlickThinletFactory implements ThingleContext, ThingleUtil {
 			throw new ThingleException(e);
 		}
 	}
+	
+	/**
+	 * Create a new thingle image from a slick image
+	 * 
+	 * @param image The image to wrap
+	 * @return The newly created image
+	 */
+	public ThingleImage createImage(Image image) {
+		return new ImageWrapper(image);
+	}
 
 	/**
 	 * @see org.newdawn.slick.thingle.spi.ThingleContext#createImageBuffer(int, int)
