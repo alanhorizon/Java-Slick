@@ -436,6 +436,15 @@ public class Widget {
 	public void setIcon(String iconRef) {
 		thinlet.setIcon(component, "icon", thinlet.getIcon(iconRef));
 	}
+	
+	/**
+	 * Set the icon explicitly on the widget
+	 * 
+	 * @param image The image to apply
+	 */
+	public void setIcon(ThingleImage image) {
+		thinlet.setIcon(component, "icon", image);
+	}
 
 	/**
 	 * Sets an integer attribute.
