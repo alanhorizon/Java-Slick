@@ -40,6 +40,7 @@ public class InputHandler extends InputAdapter implements ThingleInput {
 				if (thinlet.mousePressed(x, y, 2, this)) {
 					input.consumeEvent();
 				}
+				thinlet.mouseReleased(x, y, this);
 			}
 		}
 	}
