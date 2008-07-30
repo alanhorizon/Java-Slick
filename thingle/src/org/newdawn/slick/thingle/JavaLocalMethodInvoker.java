@@ -29,11 +29,11 @@ public class JavaLocalMethodInvoker implements MethodInvoker {
 	/**
 	 * @see org.newdawn.slick.thingle.spi.MethodInvoker#invoke(java.lang.Object, java.lang.Object, java.lang.Object[])
 	 */
-	public void invoke(Object target, Object methodHandle, Object[] values)
+	public void invoke(Object methodHandle, Object target, Object[] values)
 			throws ThingleException {
 
 		try {
-			((Method) target).invoke(methodHandle, values);
+			((Method) methodHandle).invoke(target, values);
 		} catch (InvocationTargetException ite) {
 			throw new ThingleException(ite.getTargetException());
 		} catch (Throwable throwable) {

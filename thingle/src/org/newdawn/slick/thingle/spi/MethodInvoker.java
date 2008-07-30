@@ -30,5 +30,5 @@ public interface MethodInvoker {
 	 * @throws ThingleException Indicates the invocation caused a failure or
 	 * the target is not appropriate to this method invoker
 	 */
-	public void invoke(Object target, Object methodHandle, Object[] values) throws ThingleException;
+	public void invoke(Object methodHandle, Object target, Object[] values) throws ThingleException;
 }
