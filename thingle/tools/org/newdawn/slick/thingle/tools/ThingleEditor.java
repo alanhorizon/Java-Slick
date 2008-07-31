@@ -36,6 +36,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -150,6 +151,18 @@ public class ThingleEditor extends JFrame {
 
 		CanvasGameContainer container = new CanvasGameContainer(game) {
 			private Dimension dimension = new Dimension(1, 1);
+
+			public int getWidth () {
+				int width = super.getWidth();
+				if (width <= 0) width = 1;
+				return width;
+			}
+
+			public int getHeight () {
+				int height = super.getHeight();
+				if (height <= 0) height = 1;
+				return height;
+			}
 
 			public Dimension getMinimumSize () {
 				return dimension;
@@ -431,7 +444,6 @@ public class ThingleEditor extends JFrame {
 						buffer.append('\t');
 					buffer.append('<');
 					if (isEndTag) buffer.append('/');
-					;
 					buffer.append(tag);
 
 					Matcher nextAttributeMatcher = nextAttribute.matcher(attributes);
@@ -460,6 +472,17 @@ public class ThingleEditor extends JFrame {
 						});
 					}
 				}).start();
+			}
+		});
+
+		splitMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed (ActionEvent evt) {
+				if (splitMenuItem.isSelected())
+					splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+				else
+					splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+
+				saveSettings();
 			}
 		});
 	}
@@ -541,6 +564,7 @@ public class ThingleEditor extends JFrame {
 		Properties props = new Properties();
 
 		props.setProperty("divider", String.valueOf(splitPane.getDividerLocation()));
+		props.setProperty("divider.vertical", splitMenuItem.isSelected() ? "true" : "false");
 
 		int extendedState = getExtendedState();
 		if (extendedState == JFrame.ICONIFIED) extendedState = JFrame.NORMAL;
@@ -593,6 +617,11 @@ public class ThingleEditor extends JFrame {
 
 				if (props.getProperty("divider") != null)
 					splitPane.setDividerLocation(Integer.parseInt(props.getProperty("divider")));
+				if (props.getProperty("divider.vertical", "false").equals("true")) {
+					splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+					splitMenuItem.setSelected(true);
+				}
+				doLayout();
 
 				if (props.getProperty("width") != null && props.getProperty("height") != null)
 					setSize(Integer.parseInt(props.getProperty("width")), Integer.parseInt(props.getProperty("height")));
@@ -747,9 +776,20 @@ public class ThingleEditor extends JFrame {
 					formatMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK));
 				}
 			}
+			{
+				JMenu viewMenu = new JMenu();
+				menuBar.add(viewMenu);
+				viewMenu.setText("View");
+				viewMenu.setMnemonic(KeyEvent.VK_V);
+				{
+					splitMenuItem = new JCheckBoxMenuItem("Split vertically");
+					viewMenu.add(splitMenuItem);
+				}
+			}
 		}
 		{
 			splitPane = new JSplitPane();
+			splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 			{
 				JPanel rightPanel = new JPanel();
 				splitPane.add(rightPanel, JSplitPane.RIGHT);
@@ -998,6 +1038,7 @@ public class ThingleEditor extends JFrame {
 	private JCheckBox drawDesktopCheckBox;
 	private JTextField skinTextField;
 	private JMenuItem exitMenuItem, openMenuItem, saveAsMenuItem;
+	private JCheckBoxMenuItem splitMenuItem;
 	private JTextArea xmlTextArea;
 	private JButton recentFilesRemoveButton;
 	private JButton recentFilesOpenButton;
