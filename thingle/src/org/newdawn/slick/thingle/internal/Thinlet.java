@@ -3612,6 +3612,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			hideTip();
 		}
 		if (!getBoolean(component, "enabled", true)) { return; }
+		if (!getBoolean(component, "focusable", true)) { return; }
 		String classname = getClass(component);
 		if (("button" == classname) ||
 				("checkbox" == classname) || ("togglebutton" == classname)) {
@@ -4788,6 +4789,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @return true if focusable, otherwise false
 	 */
 	protected boolean isFocusable(Object component, boolean forced) {
+		if (!getBoolean(component, "focusable", true)) return false;
 		String classname = getClass(component);
 		if ((classname == "button") || (classname == "checkbox") || ("togglebutton" == classname) ||
 				(classname == "combobox") || (classname == "textfield") ||
@@ -6535,6 +6537,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			"component", null, new Object[][] {
 				{ "string", "name", null, null },
 				{ "boolean", "enabled", "paint", Boolean.TRUE },
+				{ "boolean", "focusable", "paint", Boolean.TRUE },
 				{ "boolean", "visible", "parent", Boolean.TRUE },				
 				// rcs: optionally don't paint the component body, see trough it,
 				// save time, use it just as a container, label/multilabel etc.
