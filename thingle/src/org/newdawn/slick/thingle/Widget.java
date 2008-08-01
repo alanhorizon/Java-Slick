@@ -125,11 +125,14 @@ public class Widget {
 	 * 
 	 * @return A list of all all the children of the widget
 	 */
-	public Widget[] getChildren () {
+	public Widget[] getChildren() {
 		Object[] children = thinlet.getItems(component);
 		Widget[] widgets = new Widget[children.length];
-		System.arraycopy(children, 0, widgets, 0, children.length);
-		return widgets;
+	    for (int i = 0; i < children.length; i++) {
+			widgets[i] = getWidget(thinlet, children[i]);
+		}
+		
+	    return widgets;
 	}
 
 	/**
