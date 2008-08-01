@@ -4711,12 +4711,14 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 */
 	protected boolean setNextFocusable(Object current, boolean outgo) {
 		boolean consumed = true;
-		for (Object next = null, component = current; true; component = next) {
-			next = get(component, ":comp"); // check first subcomponent
-			if (next == null) { next = get(component, ":next"); } // check next component
-			while (next == null) { // find the next of the parents, or the topmost
-				component = getParent(component); // current is not on the desktop
-				if (component == null) { return false; }
+	      for (Object next = null, component = current; true; component = next) {
+	         next = get(component, ":comp"); // check first subcomponent
+	         if (next == null) { next = get(component, ":next"); } // check next component
+	         while (next == null) { // find the next of the parents, or the topmost
+	            component = getParent(current); // current is not on the desktop
+	            if (component == null) { return false; }
+	            current = component;
+	    
 				if ((component == content) || ((getClass(component) == "dialog") &&
 						(!outgo || getBoolean(component, "modal", false)))) {
 					consumed = false; // find next focusable but does not consume event
