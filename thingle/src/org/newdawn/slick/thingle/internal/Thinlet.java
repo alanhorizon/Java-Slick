@@ -1088,16 +1088,23 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return getPreferredSize(content);
 	}
 
-	/**
-	 *
-	 * @throws java.lang.IllegalArgumentException
-	 */
 	protected Dimension getPreferredSize(Object component) {
 		int width = getInteger(component, "width", 0);
 		int height = getInteger(component, "height", 0);
 		if ((width > 0) && (height > 0)) {
 			return new Dimension(width, height);
 		}
+		Dimension size = getPreferredSizeHelper(component);
+		if (width > 0) size.width = width;
+		if (height > 0) size.height = height;
+		return size;
+	}
+	
+	/**
+	 *
+	 * @throws java.lang.IllegalArgumentException
+	 */
+	protected Dimension getPreferredSizeHelper(Object component) {
 		String classname = getClass(component);
 		if ("label" == classname) {
 			return getSize(component, 0, 0);
