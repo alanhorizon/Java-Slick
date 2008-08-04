@@ -2625,7 +2625,7 @@ public class Skinlet extends Thinlet {
 
 	protected char[] getChars(Object component, String text, boolean wrap,
 			int width, int height) {
-		if (skin == null) {
+		if (!skin.loaded) {
 			return super.getChars(component, text, wrap, width, height);
 		}
 		
