@@ -5875,7 +5875,15 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			else throw new IllegalArgumentException(value);
 		}
 		else if ("integer" == definition[0]) {
-			set(component, key, Integer.valueOf(value));
+			Object intValue = Integer.valueOf(value);
+			if (key.equals("pad")) {
+				set(component, "top", intValue);
+				set(component, "left", intValue);
+				set(component, "bottom", intValue);
+				set(component, "right", intValue);
+			} else {
+				set(component, key, intValue);
+			}
 		}
 		else if ("icon" == definition[0]) {
 			set(component, key, getIcon(value));
@@ -6631,6 +6639,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				{ "integer", "mnemonic", "paint", integer_1 } },
 			"panel", "component", new Object[][] {
 				{ "integer", "columns", "validate", integer0 },
+				{ "integer", "pad", "validate", integer0 },
 				{ "integer", "top", "validate", integer0 },
 				{ "integer", "left", "validate", integer0 },
 				{ "integer", "bottom", "validate", integer0 },
