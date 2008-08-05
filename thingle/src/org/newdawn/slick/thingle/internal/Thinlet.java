@@ -1642,7 +1642,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			clipx = Math.max(0, clipx); clipy = Math.max(0, clipy);
 			clipwidth = Math.min(bounds.width, pcx + pcw) - clipx;
 			clipheight = Math.min(bounds.height, pcy + pch) - clipy;
-			clipRect(g, clipx, clipy, clipwidth, clipheight); // intersection of clip and bound
+			
+			// used to be clipRect
+			setClip(g, clipx, clipy, clipwidth, clipheight); // intersection of clip and bound
 			for (Object tab = get(component, ":comp"); tab != null; tab = get(tab, ":next")) {
 				Rectangle r = getRectangle(tab, "bounds");
 				if (selected != i) {
