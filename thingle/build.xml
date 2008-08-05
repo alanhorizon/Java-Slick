@@ -99,6 +99,8 @@
 	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="." includes="utilres/**"/>
 	<jar update="true" destfile="lib/${game.name}.jar" 
+		 basedir="." includes="res/**"/>
+	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="src" includes="version"/>
 </target>
 
