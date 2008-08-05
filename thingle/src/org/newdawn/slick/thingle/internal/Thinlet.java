@@ -2196,7 +2196,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				Rectangle r = getRectangle(choice, "bounds");
 				if (clipy + clipheight <= r.y) { break; }
 				if (clipy >= r.y + r.height) { continue; }
-				paint(choice, r.x, r.y, portwidth, r.height,
+				paint(choice, r.x, r.y, r.width, r.height,
 					g, clipx, clipy, clipwidth, clipheight,
 					false, false, false, false, 2, 4, 2, 4, false,
 					getBoolean(choice, "enabled", true) ? ((lead == choice) ? 's' : 't') : 'd',
