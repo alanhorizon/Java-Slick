@@ -42,8 +42,10 @@ public class ClipTest extends BasicGame {
 		image = new Image("res/logo.png");
 		container.getGraphics().setBackground(Color.white);
 		
-		try {
-			page = new Page("res/cliptest.xml", new Login());
+		try {			
+			page = new Page();
+			page.setFont(Thingle.createFont("Arial", 0, 40));
+			page.addWidgets("res/clip1.xml", new Login());
 		} catch (ThingleException e) {
 			e.printStackTrace();
 		}
