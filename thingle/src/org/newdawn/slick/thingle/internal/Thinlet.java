@@ -2643,6 +2643,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	private boolean consumesEvents(Object component) {
 		String classname = getClass(component);
 		
+		if (classname == null) {
+			return false;
+		}
 		if (classname.equals("desktop")) {
 			return false;
 		}
