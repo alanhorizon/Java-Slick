@@ -2639,8 +2639,15 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	}
 
 	private boolean consumesEvents(Object component) {
+		String classname = getClass(component);
+		
+		if (classname.equals("desktop")) {
+			return false;
+		}
+		
 		if (getParent(getParent(component)) != null) {
 			ThingleColor bg = getThinletColor(component,"background");
+			
 			if ((bg == null) || (bg.getAlpha() != 0)) {
 				return true;
 			}
