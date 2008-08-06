@@ -8,8 +8,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -49,7 +47,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -62,9 +59,13 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
+import org.apache.batik.util.gui.xmleditor.XMLEditorKit;
+import org.apache.batik.util.gui.xmleditor.XMLTextEditor;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.Game;
@@ -101,6 +102,7 @@ public class ThingleEditor extends JFrame {
 
 		public void init (GameContainer container) throws SlickException {
 			container.setShowFPS(false);
+			container.setTargetFrameRate(200);
 			thingleContext = new SlickThinletFactory(container);
 			Thingle.init(thingleContext);
 			page = new Page();
@@ -209,10 +211,10 @@ public class ThingleEditor extends JFrame {
 		final ChangeListener xmlChangeListener = new ChangeListener() {
 			void changed () {
 				((TitledBorder)xmlPanel.getBorder()).setTitle("XML");
-				setXmlFileDirty(!xmlTextArea.getText().equals(originalXML));
+				setXmlFileDirty(!xmlEditor.getText().equals(originalXML));
 				try {
-					if (xmlTextArea.getText().length() != 0) {
-						Widget widget = page.parse(xmlTextArea.getText(), null);
+					if (xmlEditor.getText().length() != 0) {
+						Widget widget = page.parse(xmlEditor.getText(), null);
 						page.getDesktop().removeChildren();
 						page.add(widget);
 						page.layout();
@@ -224,7 +226,7 @@ public class ThingleEditor extends JFrame {
 				xmlPanel.repaint();
 			}
 		};
-		xmlTextArea.getDocument().addDocumentListener(xmlChangeListener);
+		xmlEditor.getDocument().addDocumentListener(xmlChangeListener);
 
 		drawDesktopCheckBox.addChangeListener(new javax.swing.event.ChangeListener() {
 			public void stateChanged (ChangeEvent evt) {
@@ -347,6 +349,23 @@ public class ThingleEditor extends JFrame {
 			}
 		});
 
+		newMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed (ActionEvent evt) {
+				if (isXmlFileDirty) {
+					int result = JOptionPane.showConfirmDialog(ThingleEditor.this,
+						"The current XML has been modified.\nDo you want to save the changes?", "Save XML",
+						JOptionPane.YES_NO_CANCEL_OPTION);
+					if (result == JOptionPane.YES_OPTION)
+						saveFile(currentFile);
+					else if (result != JOptionPane.NO_OPTION) return;
+				}
+				originalXML = "";
+				xmlEditor.setText("");
+				currentFile = null;
+				setXmlFileDirty(false);
+			}
+		});
+
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed (ActionEvent evt) {
 				if (currentFile == null) {
@@ -395,7 +414,7 @@ public class ThingleEditor extends JFrame {
 			}
 		});
 
-		xmlTextArea.addKeyListener(new KeyListener() {
+		xmlEditor.addKeyListener(new KeyListener() {
 			public void keyTyped (KeyEvent e) {
 			}
 
@@ -404,23 +423,30 @@ public class ThingleEditor extends JFrame {
 
 			public void keyPressed (KeyEvent evt) {
 				if (evt.getKeyCode() != 9) return; // tab
-				if (xmlTextArea.getSelectedText() == null) return;
+				if (xmlEditor.getSelectedText() == null) return;
 				evt.consume();
-				String xml = xmlTextArea.getText();
-				int start = xml.lastIndexOf('\n', xmlTextArea.getSelectionStart());
-				int end = xmlTextArea.getSelectionEnd();
-				if (xml.charAt(end - 1) == '\n')
-					end--;
-				else
-					end = xml.indexOf('\n', end);
-				xml = xml.substring(start, end);
-				if (evt.isShiftDown())
-					xml = xml.replaceAll("\n\t", "\n");
-				else
-					xml = xml.replaceAll("\n", "\n\t");
-				xmlTextArea.replaceRange(xml, start, end);
-				xmlTextArea.setSelectionStart(start);
-				xmlTextArea.setSelectionEnd(start + xml.length());
+				try {
+					String xml = xmlEditor.getDocument().getText(0, xmlEditor.getDocument().getLength());
+					int start = xml.lastIndexOf('\n', xmlEditor.getSelectionStart());
+					if (start == -1) start = 0;
+					int end = xmlEditor.getSelectionEnd();
+					if (xml.charAt(end - 1) == '\n')
+						end--;
+					else {
+						end = xml.indexOf('\n', end);
+						if (end == -1) end = xmlEditor.getDocument().getLength();
+					}
+					xml = xml.substring(start, end);
+					if (evt.isShiftDown())
+						xml = xml.replaceAll("\n\t", "\n");
+					else
+						xml = xml.replaceAll("\n", "\n\t");
+					((AbstractDocument)xmlEditor.getDocument()).replace(start, end - start, xml, null);
+					xmlEditor.setSelectionStart(start);
+					xmlEditor.setSelectionEnd(start + xml.length());
+				} catch (BadLocationException ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 
@@ -428,7 +454,7 @@ public class ThingleEditor extends JFrame {
 			public void actionPerformed (ActionEvent evt) {
 				// Good enough for thinlet XML!
 				final int scrollPosition = xmlScrollPane.getVerticalScrollBar().getValue();
-				String xml = xmlTextArea.getText();
+				String xml = xmlEditor.getText();
 				StringBuilder buffer = new StringBuilder(xml.length() + 256);
 				int indent = 0;
 				Matcher nextTag = Pattern.compile("<\\/?\\s*([^>\\s]+)\\s*([^>]*)>").matcher(xml);
@@ -436,12 +462,20 @@ public class ThingleEditor extends JFrame {
 				while (nextTag.find()) {
 					String match = nextTag.group();
 					String tag = nextTag.group(1).replaceAll("[\\/\\\\]", "").trim();
+
 					String attributes = nextTag.group(2);
 					boolean isEndTag = match.startsWith("</");
 					boolean isClosedTag = match.endsWith("/>");
 					if (isEndTag) indent--;
 					for (int i = 0; i < indent; i++)
 						buffer.append('\t');
+
+					if (tag.startsWith("!--")) {
+						buffer.append(match);
+						buffer.append('\n');
+						continue;
+					}
+
 					buffer.append('<');
 					if (isEndTag) buffer.append('/');
 					buffer.append(tag);
@@ -461,7 +495,7 @@ public class ThingleEditor extends JFrame {
 					buffer.append('\n');
 					if (!isEndTag && !isClosedTag && !match.startsWith("<?")) indent++;
 				}
-				xmlTextArea.setText(buffer.toString());
+				xmlEditor.setText(buffer.toString());
 				// Swing sucks.
 				new Thread(new Runnable() {
 					public void run () {
@@ -504,11 +538,16 @@ public class ThingleEditor extends JFrame {
 	void saveFile (File file) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			String xml = xmlTextArea.getText();
+			String xml = xmlEditor.getText();
 			writer.write(xml);
 			originalXML = xml;
 			currentFile = file;
 			setXmlFileDirty(false);
+			RecentFile recentFile = new RecentFile(file);
+			recentFilesListModel.removeElement(recentFile);
+			recentFilesListModel.add(0, recentFile);
+			recentFilesList.setSelectedValue(recentFile, true);
+			saveSettings();
 			writer.close();
 		} catch (IOException ex) {
 			System.out.println("Error writing file: " + file);
@@ -533,10 +572,10 @@ public class ThingleEditor extends JFrame {
 				buffer.append(System.getProperty("line.separator"));
 			}
 			originalXML = buffer.toString();
-			xmlTextArea.setText(originalXML);
-			RecentFile recentFile = new RecentFile(file);
+			xmlEditor.setText(originalXML);
 			currentFile = file;
 			setXmlFileDirty(false);
+			RecentFile recentFile = new RecentFile(file);
 			recentFilesListModel.removeElement(recentFile);
 			recentFilesListModel.add(0, recentFile);
 			recentFilesList.setSelectedValue(recentFile, true);
@@ -620,7 +659,8 @@ public class ThingleEditor extends JFrame {
 				if (props.getProperty("divider.vertical", "false").equals("true")) {
 					splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 					splitMenuItem.setSelected(true);
-				}
+				} else
+					splitMenuItem.setSelected(false);
 				doLayout();
 
 				if (props.getProperty("width") != null && props.getProperty("height") != null)
@@ -733,6 +773,11 @@ public class ThingleEditor extends JFrame {
 				fileMenu.setText("File");
 				fileMenu.setMnemonic(KeyEvent.VK_F);
 				{
+					newMenuItem = new JMenuItem("New XML File", KeyEvent.VK_N);
+					fileMenu.add(newMenuItem);
+					newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK));
+				}
+				{
 					openMenuItem = new JMenuItem("Open XML File...", KeyEvent.VK_O);
 					fileMenu.add(openMenuItem);
 					openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
@@ -789,7 +834,7 @@ public class ThingleEditor extends JFrame {
 		}
 		{
 			splitPane = new JSplitPane();
-			splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 			{
 				JPanel rightPanel = new JPanel();
 				splitPane.add(rightPanel, JSplitPane.RIGHT);
@@ -817,11 +862,9 @@ public class ThingleEditor extends JFrame {
 						xmlPanel.add(xmlScrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
 							GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 						{
-							xmlTextArea = new JTextArea();
-							xmlTextArea.getDocument().addUndoableEditListener(new ThingleEditorUndoEditListener());
-							xmlTextArea.setFont(Font.decode("Courier New-11"));
-							xmlTextArea.setTabSize(3);
-							xmlScrollPane.setViewportView(xmlTextArea);
+							xmlEditor = new XMLTextEditor();
+							xmlEditor.getDocument().addUndoableEditListener(new ThingleEditorUndoEditListener());
+							xmlScrollPane.setViewportView(xmlEditor);
 						}
 					}
 				}
@@ -1037,9 +1080,9 @@ public class ThingleEditor extends JFrame {
 	private JTextField fontTextField;
 	private JCheckBox drawDesktopCheckBox;
 	private JTextField skinTextField;
-	private JMenuItem exitMenuItem, openMenuItem, saveAsMenuItem;
+	private JMenuItem exitMenuItem, openMenuItem, newMenuItem, saveAsMenuItem;
 	private JCheckBoxMenuItem splitMenuItem;
-	private JTextArea xmlTextArea;
+	private XMLTextEditor xmlEditor;
 	private JButton recentFilesRemoveButton;
 	private JButton recentFilesOpenButton;
 	private JMenuItem saveMenuItem;
