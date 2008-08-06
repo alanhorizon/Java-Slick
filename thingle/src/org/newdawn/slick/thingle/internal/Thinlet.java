@@ -1587,9 +1587,10 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 					(selected && (!inside || !pressed))) {
 				g.setColor(enabled ? c_text : c_disable);
 				if (group == null) {
-					g.fillRect(3, dy + block - 9, 2 + evm, 6 + evm);
-					g.drawLine(3, dy + block - 4, block - 4, dy + 3);
+					int checkHeight = Math.max(3, block / 4);
+					g.fillRect(3, dy + block - 3 - checkHeight, 2 + evm, checkHeight + evm);
 					g.drawLine(4, dy + block - 4, block - 4, dy + 4);
+					g.drawLine(5, dy + block - 4, block - 4, dy + 5);
 				} else {
 					g.fillOval(5, dy + 5, block - 10 + evm, block - 10 + evm);
 					g.drawOval(4, dy + 4, block - 9, block - 9);
