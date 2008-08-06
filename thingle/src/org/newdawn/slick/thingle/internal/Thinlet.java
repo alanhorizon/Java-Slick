@@ -1951,7 +1951,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		paintRect(g, 0, 0, width, height, enabled ? c_border : c_disable,
 			editable ? getThinletColor(component, "background", c_textbg) : c_bg,
 			true, true, true, true, true);
-		clipRect(g, 1 + left, 1, width - left - 2, height - 2);
+//		clipRect(g, 1 + left, 1, width - left - 2, height - 2);
+		setClip(g, 1 + left, 1, width - left - 2, height - 2);
 
 		String text = getString(component, "text", "");
 		int offset = getInteger(component, ":offset", 0);
