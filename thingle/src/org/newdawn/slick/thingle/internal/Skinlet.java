@@ -352,7 +352,11 @@ public class Skinlet extends Thinlet {
 			super.paint(g, clipx, clipy, clipwidth, clipheight, component, enabled);
 			return;
 		}
-		
+
+		if (!getBoolean(component, "skin", true)) {
+			super.paint(g, clipx, clipy, clipwidth, clipheight, component, enabled);
+			return;
+		}
 		if (!getBoolean(component, "visible", true)) {
 			return;
 		}

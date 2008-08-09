@@ -6568,6 +6568,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			"component", null, new Object[][] {
 				{ "string", "name", null, null },
 				{ "boolean", "enabled", "paint", Boolean.TRUE },
+				{ "boolean", "skin", "paint", Boolean.TRUE },
 				{ "boolean", "focusable", "paint", Boolean.TRUE },
 				{ "boolean", "visible", "parent", Boolean.TRUE },				
 				// rcs: optionally don't paint the component body, see trough it,
