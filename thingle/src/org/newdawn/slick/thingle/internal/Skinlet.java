@@ -364,6 +364,7 @@ public class Skinlet extends Thinlet {
 		if (bounds == null) {
 			return;
 		}
+		
 		// negative component width indicates invalid component layout
 		if (bounds.width < 0) {
 			bounds.width = Math.abs(bounds.width);

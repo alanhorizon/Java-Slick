@@ -471,11 +471,18 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				String iclass = getClass(comp);
 				if (iclass == "dialog") {
 					Dimension d = getPreferredSize(comp);
-					if (get(comp, "bounds") == null)
-					setRectangle(comp, "bounds",
-						Math.max(0, (bounds.width - d.width) / 2),
-						Math.max(0, (bounds.height - d.height) / 2),
-						Math.min(d.width, bounds.width), Math.min(d.height, bounds.height));
+					if (get(comp, "bounds") == null) {
+						int xp = Math.max(0,(bounds.width - d.width) / 2);
+						int yp = Math.max(0, (bounds.height - d.height) / 2);
+						if (getInteger(comp, "x") != -1) {
+							xp = getInteger(comp, "x");
+						}
+						if (getInteger(comp, "y") != -1) {
+							yp = getInteger(comp, "y");
+						}
+						setRectangle(comp, "bounds", xp, yp,
+							Math.min(d.width, bounds.width), Math.min(d.height, bounds.height));
+					}
 				} else if ((iclass != ":combolist") && (iclass != ":popup")) {
 					setRectangle(comp, "bounds", 0, 0, bounds.width, bounds.height);
 				}
@@ -6432,6 +6439,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 
 	protected void setRectangle(Object component,
 			String key, int x, int y, int width, int height) {
+		Thread.dumpStack();
 		Rectangle rectangle = getRectangle(component, key);
 		if (rectangle != null) {
 			rectangle.x = x; rectangle.y = y;
@@ -6581,6 +6589,8 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				{ "font", "font", "validate", null },
 				{ "color", "foreground", "paint", null },
 				{ "color", "background", "paint", null },
+				{ "integer", "x", "validate", integer_1 },
+				{ "integer", "y", "validate", integer_1 },
 				{ "integer", "width", "validate", integer0 },
 				{ "integer", "height", "validate", integer0 },
 				{ "integer", "colspan", "validate", integer1 },
