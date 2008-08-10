@@ -3972,16 +3972,18 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 					}
 				}
 				else if (id == MouseEvent.MOUSE_DRAGGED) {
-					Rectangle bounds = getRectangle(component, "bounds");
-					Rectangle parents = getRectangle(getParent(component), "bounds");
-					int mx = Math.max(0, Math.min(x - referencex, parents.width - bounds.width));
-					int my = Math.max(0, Math.min(y - referencey, parents.height - bounds.height));
-					if ((bounds.x != mx) || (bounds.y != my)) {
-						// repaint the union of the previous and next bounds
-						repaint(component, Math.min(bounds.x, mx), Math.min(bounds.y, my),
-							bounds.width + Math.abs(mx - bounds.x), bounds.height + Math.abs(my - bounds.y));
-						bounds.x = mx; bounds.y = my;
-						doLayout(component);
+					if (getBoolean(component, "dragable")) {
+						Rectangle bounds = getRectangle(component, "bounds");
+						Rectangle parents = getRectangle(getParent(component), "bounds");
+						int mx = Math.max(0, Math.min(x - referencex, parents.width - bounds.width));
+						int my = Math.max(0, Math.min(y - referencey, parents.height - bounds.height));
+						if ((bounds.x != mx) || (bounds.y != my)) {
+							// repaint the union of the previous and next bounds
+							repaint(component, Math.min(bounds.x, mx), Math.min(bounds.y, my),
+								bounds.width + Math.abs(mx - bounds.x), bounds.height + Math.abs(my - bounds.y));
+							bounds.x = mx; bounds.y = my;
+							doLayout(component);
+						}
 					}
 				}
 			}
@@ -6439,7 +6441,6 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 
 	protected void setRectangle(Object component,
 			String key, int x, int y, int width, int height) {
-		Thread.dumpStack();
 		Rectangle rectangle = getRectangle(component, key);
 		if (rectangle != null) {
 			rectangle.x = x; rectangle.y = y;
@@ -6682,6 +6683,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				{ "method", "close", "", null}, // rcs: executes on dialog close
 				{ "boolean", "modal", null, Boolean.FALSE },
 				{ "boolean", "resizable", null, Boolean.FALSE },
+				{ "boolean", "dragable", null, Boolean.TRUE },
 				{ "boolean", "closable", "paint", Boolean.FALSE },
 				{ "boolean", "maximizable", "paint", Boolean.FALSE },
 				{ "boolean", "iconifiable", "paint", Boolean.FALSE } },
