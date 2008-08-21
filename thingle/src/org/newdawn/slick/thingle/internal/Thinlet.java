@@ -4715,7 +4715,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 * @param component a focusable component
 	 * @return true if the focusowner was changed, otherwise false
 	 */
-	protected boolean setFocus(Object component) { // TODO change protected?
+	public boolean setFocus(Object component) { // TODO change protected?
 		if (!focusinside) { // request focus for the thinlet component
 			requestFocus();
 		}

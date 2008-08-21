@@ -306,4 +306,11 @@ public class Page {
 	public void remove(Widget widget) {
 		widget.removeFromTopLevel();
 	}
+	
+	/**
+	 * Clears the focus from any widgets.
+	 */
+	public void clearFocus () {
+		thinlet.setFocus(null);
+	}
 }
