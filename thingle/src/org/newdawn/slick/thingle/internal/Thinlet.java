@@ -2205,6 +2205,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			for (Object choice = get(get(component, "combobox"), ":comp");
 					choice != null; choice = get(choice, ":next")) {
 				Rectangle r = getRectangle(choice, "bounds");
+				r.width = viewwidth;
 				if (clipy + clipheight <= r.y) { break; }
 				if (clipy >= r.y + r.height) { continue; }
 				paint(choice, r.x, r.y, r.width, r.height,
