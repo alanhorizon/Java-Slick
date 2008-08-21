@@ -2202,6 +2202,11 @@ public class Skinlet extends Thinlet {
 	}
 
 	protected void showTip() {
+		if (!skin.loaded()) {
+			super.showTip();
+			return;
+		}
+		
 		String text = null;
 		tooltipowner = null;
 		String classname = getClass(mouseinside);
