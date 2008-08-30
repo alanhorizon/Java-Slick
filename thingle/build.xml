@@ -38,10 +38,10 @@
  Build the java source to the Slick Demo Platformer
 -->
 <target name="build-game" depends="init">
-	<propertyfile file="src/version">
-		<entry key="build" type="int" operation="+" value="1"/>
+	<propertyfile file="src/thingle_version">
+		<entry key="thingle.build" type="int" operation="+" value="1"/>
     </propertyfile>
-    <property file="src/version" prefix="version"/>
+    <property file="src/thingle_version" prefix="version"/>
     
 	<delete dir="lib/${game.name}.jar"/>
 	<javac debug="true" srcdir="src" destdir="${build.dir}/classes" target="1.5" source="1.5">
@@ -58,7 +58,7 @@
 	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="." includes="utilres/**"/>
 	<jar update="true" destfile="lib/${game.name}.jar" 
-		 basedir="src" includes="version"/>
+		 basedir="src" includes="thingle_version"/>
 		 
 	<delete dir="lib/${game.name}-tools.jar"/>
 	<javac debug="true" srcdir="src" destdir="${build.dir}/classes" target="1.5" source="1.5">
@@ -76,7 +76,7 @@
 	<jar update="true" destfile="lib/${game.name}-tools.jar" 
 		 basedir="." includes="utilres/**"/>
 	<jar update="true" destfile="lib/${game.name}-tools.jar" 
-		 basedir="src" includes="version"/>
+		 basedir="src" includes="thingle_version"/>
 		 
 	<zip destfile="lib/${game.name}-src.zip" 
 		 basedir="src"/>
@@ -101,7 +101,7 @@
 	<jar update="true" destfile="lib/${game.name}.jar" 
 		 basedir="." includes="res/**"/>
 	<jar update="true" destfile="lib/${game.name}.jar" 
-		 basedir="src" includes="version"/>
+		 basedir="src" includes="thingle_version"/>
 </target>
 
 <!--
