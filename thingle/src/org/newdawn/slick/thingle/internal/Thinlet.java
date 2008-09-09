@@ -1665,13 +1665,14 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 						1, 3, 1, 3, false, tabenabled ? (hover ? 'h' : 'g') : 'd', "left", true, false);
 				} else {
 					selectedtab = tab;
-					// paint tabbedpane border
+					// paint tabbedpane border and background
+					ThingleColor background = (ThingleColor) get(component, "background");
 					paint(tab, (placement == "left") ? r.width - 1 : 0,
 						stacked ? (r.y + r.height - 1) : (placement == "top") ? r.height - 1 : 0,
 						(horizontal || stacked) ? bounds.width : (bounds.width - r.width + 1),
 						stacked ? (bounds.height - r.y - r.height + 1) :
 						horizontal ? (bounds.height - r.height + 1) : bounds.height,
-						g, true, true, true, true, enabled ? 'e' : 'd');
+						g, true, true, true, true, enabled ? (background != null ? 'b' : 'e') : 'd');
 					Object comp = get(selectedtab, ":comp");
 					if ((comp != null) && getBoolean(comp, "visible", true)) {
 						clipx -= r.x; clipy -= r.y; g.translate(r.x, r.y); // relative to tab
