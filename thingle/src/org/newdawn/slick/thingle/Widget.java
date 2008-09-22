@@ -3,6 +3,8 @@ package org.newdawn.slick.thingle;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
+import org.newdawn.slick.thingle.internal.Dimension;
+import org.newdawn.slick.thingle.internal.Rectangle;
 import org.newdawn.slick.thingle.internal.Thinlet;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleFont;
@@ -273,6 +275,15 @@ public class Widget {
 		return thinlet.getInteger(component, key);
 	}
 
+	/**
+	 * Gets the preffered size of the widget
+	 * 
+	 * @return the preffered size
+	 */
+	public Dimension getPreferredSize () {
+		return thinlet.getPreferredSize(component);
+	}
+	
 	/**
 	 * Gets a font attribute.
 	 * 

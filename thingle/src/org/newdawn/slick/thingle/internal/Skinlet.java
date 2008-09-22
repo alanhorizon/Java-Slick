@@ -117,7 +117,7 @@ public class Skinlet extends Thinlet {
 	 * @param component -
 	 * @return -
 	 */
-	protected Dimension getPreferredSize(Object component) {
+	public Dimension getPreferredSize(Object component) {
 		if (!skin.loaded()) {
 			return super.getPreferredSize(component);
 		}

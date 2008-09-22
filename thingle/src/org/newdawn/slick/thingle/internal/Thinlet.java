@@ -1095,7 +1095,12 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return getPreferredSize(content);
 	}
 
-	protected Dimension getPreferredSize(Object component) {
+	/**
+	 * Gets the preferred size of the component
+	 *
+	 * @return a dimension object indicating the component's preferred size 
+	 */
+	public Dimension getPreferredSize(Object component) {
 		int width = getInteger(component, "width", 0);
 		int height = getInteger(component, "height", 0);
 		if ((width > 0) && (height > 0)) {
