@@ -2712,6 +2712,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		Object previnside = mouseinside;
 		Object prevpart = insidepart;
 		findComponent(content, x, y);
+		
 		if ((previnside == mouseinside) && (prevpart == insidepart)) {
 			handleMouseEvent(x, y, 0, mods.isShiftDown(), mods.isControlDown(), mods.isPopupTrigger(),
 				MouseEvent.MOUSE_MOVED, mouseinside, insidepart);
@@ -4500,9 +4501,17 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 					Rectangle view = getRectangle(component, ":view");
 					x += view.x - port.x; y += view.y - port.y;
 				}
+				
 				for (Object comp = get(component, ":comp");
 						comp != null; comp = get(comp, ":next")) {
-					if (findComponent(comp, x, y)) { break; }
+					findComponent(comp,x,y);
+					if (mouseinside != null) {
+						if (!getClass(mouseinside).equals("panel")) {
+							break;
+						}
+					}
+					//if (findComponent(comp, x, y)) { break; }
+					
 					if (("desktop" == classname) &&
 							getBoolean(comp, "modal", false)) { insidepart = "modal"; break; } // && dialog
 				}
@@ -5116,7 +5125,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	public void add(Object component) {
 		add(content, component, 0);
 	}
-
+	
 	/**
 	 * Adds the specified component to the end of the specified container
 	 *
