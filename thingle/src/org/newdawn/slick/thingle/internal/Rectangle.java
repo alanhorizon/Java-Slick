@@ -96,4 +96,11 @@ public class Rectangle {
 		
 		return new Rectangle(x1,y1,(x2-x1),(y2-y1));
 	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return x+","+y+" "+width+","+height;
+	}
 }
