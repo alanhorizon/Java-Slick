@@ -503,6 +503,10 @@ public class Widget {
 	void removeFromTopLevel() {
 		thinlet.remove(component);
 	}
+
+	public void setRenderer (WidgetRenderer renderer) {
+		Thinlet.set(component, "renderer", renderer);
+	}
 	
 	/**
 	 * @see java.lang.Object#toString()

@@ -1,6 +1,7 @@
 package org.newdawn.slick.thingle.internal.lwjgl;
 
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.thingle.internal.Dimension;
 import org.newdawn.slick.thingle.internal.Rectangle;
 import org.newdawn.slick.thingle.spi.ThingleColor;
 import org.newdawn.slick.thingle.spi.ThingleFont;
@@ -17,6 +18,7 @@ public class SlickGraphics implements ThingleGraphics {
 	private Graphics g;
 	/** The font currently set */
 	private ThingleFont currentFont;
+	private int translationX, translationY;
 	
 	/**
 	 * Create a new slick binding
@@ -146,6 +148,16 @@ public class SlickGraphics implements ThingleGraphics {
 	 * @see org.newdawn.slick.thingle.spi.ThingleGraphics#translate(int, int)
 	 */
 	public void translate(int x, int y) {
+		translationX += x;
+		translationY += y;
 		g.translate(x, y);
+	}
+
+	public int getTranslationY () {
+		return translationY;
+	}
+
+	public int getTranslationX () {
+		return translationX;
 	}
 }

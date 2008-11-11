@@ -137,4 +137,8 @@ public interface ThingleGraphics {
 	 * @param y The y factor to translate by
 	 */
 	public void translate(int x, int y);
+
+	public int getTranslationY ();
+
+	public int getTranslationX ();
 }

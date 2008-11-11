@@ -1478,7 +1478,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	 */
 	public void paint(ThingleGraphics g, int width, int height) {
 		if (dirty) {
-			layout(width,height);
+			// layout(width,height);
 			dirty = false;
 		}
 		
@@ -1802,7 +1802,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 			boolean horizontal = ("vertical" != get(component, "orientation"));
 			int length = (value - minimum) *
 				((horizontal ? bounds.width : bounds.height) - block) /
-				(maximum - minimum);
+				 Math.max(1, maximum - minimum);
 			paintRect(g, horizontal ? 0 : 3, horizontal ? 3 : 0,
 				horizontal ? length : (bounds.width - 6),
 				horizontal ? (bounds.height - 6) : length,
@@ -4504,14 +4504,13 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				
 				for (Object comp = get(component, ":comp");
 						comp != null; comp = get(comp, ":next")) {
-					findComponent(comp,x,y);
-					if (mouseinside != null) {
-						if (!getClass(mouseinside).equals("panel")) {
-							break;
-						}
-					}
-					//if (findComponent(comp, x, y)) { break; }
-					
+					if (findComponent(comp, x, y)) { break; }
+//					findComponent(comp,x,y);
+//					if (mouseinside != null) {
+//						if (!getClass(mouseinside).equals("panel")) {
+//							break;
+//						}
+//					}
 					if (("desktop" == classname) &&
 							getBoolean(comp, "modal", false)) { insidepart = "modal"; break; } // && dialog
 				}
@@ -4902,7 +4901,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		return new Object[] { ":class", classname, null };
 	}
 	
-	protected static boolean set(Object component, Object key, Object value) {
+	public static boolean set(Object component, Object key, Object value) {
 		Object[] previous = (Object[]) component;
 		for (Object[] entry = previous; entry != null;
 				entry = (Object[]) entry[2]) {
