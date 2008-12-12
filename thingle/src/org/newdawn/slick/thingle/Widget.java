@@ -283,7 +283,17 @@ public class Widget {
 	public Dimension getPreferredSize () {
 		return thinlet.getPreferredSize(component);
 	}
-	
+
+	/**
+	 * Gets a color attribute.
+	 * 
+	 * @param attribute The name of the attribute to get
+	 * @return The value of the attribute requested
+	 */
+	public ThingleColor getColor(String attribute) {
+		return thinlet.getThinletColor(component, attribute);
+	}
+
 	/**
 	 * Gets a font attribute.
 	 * 
