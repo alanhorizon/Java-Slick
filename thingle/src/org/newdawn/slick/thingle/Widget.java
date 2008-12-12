@@ -514,8 +514,23 @@ public class Widget {
 		thinlet.remove(component);
 	}
 
-	public void setRenderer (WidgetRenderer renderer) {
+	/**
+	 * Set the renderer that will be used to produce the content of this widget
+	 * 
+	 * @param renderer The renderer to produce the content of this widget
+	 */
+	public void setRenderer(WidgetRenderer renderer) {
 		Thinlet.set(component, "renderer", renderer);
+	}
+
+	/**
+	 * Sets the amount scrolled in both directions.
+	 * 
+	 * @param hpercent The amount scrolled horizontally.
+	 * @param vpercent The amount scrolled vertically.
+	 */
+	public void setScroll (float hpercent, float vpercent) {
+		thinlet.setScroll(component, hpercent, vpercent);
 	}
 	
 	/**

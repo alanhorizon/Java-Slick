@@ -4331,6 +4331,22 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 				(view.y < view.height - port.height));
 	}
 
+	public void setScroll (Object component, float hpercent, float vpercent) {
+		Rectangle view = getRectangle(component, ":view");
+		Rectangle port = getRectangle(component, ":port");
+		if (hpercent != -1) {
+			int x = Math.round(view.width * hpercent);
+			x = Math.min(x, view.width - port.width);
+			view.x = x;
+		}
+		if (vpercent != -1) {
+			int y = Math.round(view.height * vpercent);
+			y = Math.min(y, view.height - port.height);
+			view.y = y;
+		}
+		repaint(component);
+	}
+
 	protected boolean processSpin(Object component, Object part) {
 		String text = getString(component, "text", "");
 		try {
