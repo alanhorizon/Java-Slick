@@ -4332,18 +4332,26 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 	}
 
 	public void setScroll (Object component, float hpercent, float vpercent) {
-		Rectangle view = getRectangle(component, ":view");
 		Rectangle port = getRectangle(component, ":port");
-		if (hpercent != -1) {
-			int x = Math.round(view.width * hpercent);
-			x = Math.min(x, view.width - port.width);
-			view.x = x;
+		if (port == null)
+			return; // not scrollable
+		
+		Rectangle view = getRectangle(component, ":view");
+		Rectangle bounds = getRectangle(component, "bounds");
+		if (port.y + port.height < bounds.height) { // has horizontal scrollbar
+			if (hpercent != -1) {
+				int x = Math.round(view.width * hpercent);
+				x = Math.min(x, view.width - port.width);
+				view.x = x;
+			}
 		}
-		if (vpercent != -1) {
-			int y = Math.round(view.height * vpercent);
-			y = Math.min(y, view.height - port.height);
-			view.y = y;
-		}
+		if (port.x + port.width < bounds.width) { // has vertical scrollbar
+			if (vpercent != -1) {
+				int y = Math.round(view.height * vpercent);
+				y = Math.min(y, view.height - port.height);
+				view.y = y;
+			}
+		} 
 		repaint(component);
 	}
 
