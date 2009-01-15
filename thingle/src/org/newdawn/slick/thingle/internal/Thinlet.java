@@ -4354,7 +4354,17 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		} 
 		repaint(component);
 	}
+	
+	public void setSelection(Object component, int start, int end){
+		String text = getString(component, "text");
 
+		start = Math.max(0, start);
+		end = Math.min(text.length(), end);
+
+		setInteger(component, "start", start);
+		setInteger(component, "end", end);
+	}
+	
 	protected boolean processSpin(Object component, Object part) {
 		String text = getString(component, "text", "");
 		try {
