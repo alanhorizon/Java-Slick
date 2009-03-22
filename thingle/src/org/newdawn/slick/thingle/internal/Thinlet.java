@@ -485,6 +485,9 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 					}
 				} else if ((iclass != ":combolist") && (iclass != ":popup")) {
 					setRectangle(comp, "bounds", 0, 0, bounds.width, bounds.height);
+					if (getInteger(comp, "x") >= 0) {
+						setRectangle(comp, "bounds", getInteger(comp, "x"), getInteger(comp, "y"), getInteger(comp, "width"), getInteger(comp, "height"));
+					}
 				}
 				doLayout(comp);
 			}
@@ -4452,6 +4455,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 		}
 		if (!getBoolean(component, "visible", true)) { return false; }
 		Rectangle bounds = getRectangle(component, "bounds");
+		
 		if ((bounds == null) || !(bounds.contains(x, y))) { return false; }
 		mouseinside = component;
 		x -= bounds.x; y -= bounds.y;
@@ -4592,7 +4596,7 @@ public class Thinlet implements Runnable, Serializable, ThinletInputListener {
 					insidepart = menu; break;
 				}
 			}
-		}
+		} 
 		
 		return true;
 	}
