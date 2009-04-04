@@ -6,6 +6,7 @@ import java.net.URL;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GLContext;
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
@@ -238,7 +239,10 @@ public class LWJGLContext implements ThingleContext, ThingleUtil {
 		GL11.glPushClientAttrib(GL11.GL_ALL_CLIENT_ATTRIB_BITS);
 		
 		TextureImpl.bindNone();
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		if (GLContext.getCapabilities().OpenGL13) {
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		}
+		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);    
 		
 		GL11.glDisable(GL11.GL_TEXTURE_GEN_S);
