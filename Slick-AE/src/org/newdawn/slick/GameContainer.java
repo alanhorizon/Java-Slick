@@ -512,9 +512,9 @@ public abstract class GameContainer implements GUIContext {
 			}
 		}
 		
-		input.poll(width, height);
-		
-		Music.poll(delta);
+//		input.poll(width, height);
+//		
+//		Music.poll(delta);
 		if (!paused) {
 			storedDelta += delta;
 			
