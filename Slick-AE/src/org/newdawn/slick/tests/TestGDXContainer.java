@@ -12,6 +12,8 @@ import org.newdawn.slick.particles.ParticleSystem;
 import org.newdawn.slick.particles.effects.FireEmitter;
 import org.newdawn.slick.renderer.GDXRenderer;
 
+import android.util.Log;
+
 public class TestGDXContainer extends BasicGame {
 	private Image test;
 	private AngelCodeFont font;
@@ -25,9 +27,9 @@ public class TestGDXContainer extends BasicGame {
 		Image image = new Image("testdata/particle.tga", true);
 		system = new ParticleSystem(image);
 		
-		system.addEmitter(new FireEmitter(400,300,45));
+		system.addEmitter(new FireEmitter(100,300,45));
 		system.addEmitter(new FireEmitter(200,300,60));
-		system.addEmitter(new FireEmitter(600,300,30));
+		system.addEmitter(new FireEmitter(300,300,30));
 		
 		test = new Image("testdata/logo.png");
 		font = new AngelCodeFont("testdata/demo2.fnt","testdata/demo2_00.tga",false);
@@ -48,7 +50,7 @@ public class TestGDXContainer extends BasicGame {
 	public static void main(String[] argv) {
 		try {
 			Renderer.setRenderer(new GDXRenderer());
-			GDXGameContainer container = new GDXGameContainer(new TestGDXContainer(), 800, 480);
+			GDXGameContainer container = new GDXGameContainer(new TestGDXContainer(), 480, 320);
 			container.start();
 		} catch (SlickException e) {
 			e.printStackTrace();

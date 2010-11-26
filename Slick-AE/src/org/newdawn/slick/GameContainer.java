@@ -1,13 +1,10 @@
 package org.newdawn.slick;
 
-import java.util.Properties;
-
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.opengl.renderer.SGL;
 import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.ResourceLoader;
 
 /**
  * A generic game container that handles the game loop, fps recording and
@@ -511,13 +508,12 @@ public abstract class GameContainer implements GUIContext {
 				delta = 1000 / getFPS();
 			}
 		}
-		
+
 //		input.poll(width, height);
 //		
 //		Music.poll(delta);
 		if (!paused) {
 			storedDelta += delta;
-			
 			if (storedDelta >= minimumLogicInterval) {
 				try {
 					if (maximumLogicInterval != 0) {

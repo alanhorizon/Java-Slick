@@ -2,11 +2,7 @@ package org.newdawn.slick;
 
 import org.lwjgl.input.Cursor;
 import org.newdawn.slick.opengl.ImageData;
-import org.newdawn.slick.opengl.renderer.Renderer;
-import org.newdawn.slick.opengl.renderer.SGL;
-import org.newdawn.slick.renderer.GDXRenderer;
 import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.ResourceLoader;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -21,6 +17,7 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 		this.game = game;
 		this.width = width;
 		this.height = height;
+		lastUpdate = System.currentTimeMillis();
 	}
 	
 	public void start() {
