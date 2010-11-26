@@ -25,7 +25,7 @@ public class SlickTestActivity extends AndroidApplication {
 			
 			ResourceLoader.removeAllResourceLocations();
 			ResourceLoader.addResourceLocation(new AndroidResourceLocation(getAssets()));
-        	GDXGameContainer container = new GDXGameContainer(new TestGDXContainer(), 800, 480);        
+        	GDXGameContainer container = new GDXGameContainer(new TestGDXContainer(), 640, 320);        
         	initialize(container, false);
         } catch (SlickException e) {
         	Log.e("SLICK", "Failed to create container", e);
