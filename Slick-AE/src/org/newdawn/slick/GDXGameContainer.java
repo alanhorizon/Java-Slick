@@ -91,6 +91,7 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 		
 		try {
 			updateAndRender(delta);
+			updateFPS();
 		} catch (SlickException e) {
 			Log.error("Failed to render/update", e);
 			throw new RuntimeException(e);
