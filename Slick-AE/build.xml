@@ -33,6 +33,7 @@
 		    <classpath>
 			  <pathelement path="lib/gdx.jar"/>
 			  <pathelement path="lib/gdx-backend-lwjgl-cut.jar"/>
+			  <pathelement path="lib/android.jar"/>
 		      <pathelement path="${slick.install}/lib/lwjgl.jar"/>
 		      <pathelement path="${slick.install}/lib/lwjgl_util_applet.jar"/>
 		      <pathelement path="${slick.install}/lib/ibxm.jar"/>
@@ -43,10 +44,12 @@
 		</javac>
 		
 		<jar destfile="${build.dir}/slick-ae.jar" 
-			 basedir="${build.dir}/classes" includes="org/newdawn/slick/**"/>
+			 basedir="${build.dir}/classes" includes="**"/>
 		
 		<jar update="true" destfile="${build.dir}/slick-ae.jar" 
 			 basedir="src" includes="${slick.install}/org/newdawn/slick/data/*"/>
+			 
+		<copy file="${build.dir}/slick-ae.jar" toDir="../Slick-Android-Test/libs"/>
 	</target>
 	
 </project>
