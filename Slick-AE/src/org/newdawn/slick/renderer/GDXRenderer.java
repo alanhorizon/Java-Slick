@@ -550,4 +550,22 @@ public class GDXRenderer implements SGL {
 	private void fail(String message) {
 		System.err.println("Fail: "+message);
 	}
+
+	@Override
+	public void glGenTextures(IntBuffer ids) {
+		gl.glGenTextures(ids.position(), ids);
+	}
+
+	@Override
+	public void glGetError() {
+		gl.glGetError();
+	}
+
+	@Override
+	public void glTexImage2D(int target, int i, int dstPixelFormat,
+			int width, int height, int j, int srcPixelFormat,
+			int glUnsignedByte, ByteBuffer textureBuffer) {
+		gl.glTexImage2D(target, i, dstPixelFormat, width, height, j, srcPixelFormat,
+				glUnsignedByte, textureBuffer);
+	}
 }
