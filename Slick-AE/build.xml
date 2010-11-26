@@ -1,0 +1,44 @@
+<project name="slick-ae" default="build" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+
+	<target name="init">
+		<property name="slick.install" value="../Slick"/>
+		<property name="build.dir" value="target"/>
+		
+		<mkdir dir="${build.dir}\classes"/>
+	</target>
+	
+	<target name="build" depends="init">
+		<delete dir="slick-ae.jar"/>
+		
+		<javac includes="org/newdawn/slick/**" srcdir="${slick.install}/src" debug="true" destdir="${build.dir}/classes" target="1.4" source="1.4">
+		    <classpath>
+		      <pathelement path="${slick.install}/lib/lwjgl.jar"/>
+		      <pathelement path="${slick.install}/lib/lwjgl_util_applet.jar"/>
+		      <pathelement path="${slick.install}/lib/ibxm.jar"/>
+		      <pathelement path="${slick.install}/lib/jnlp.jar"/>
+		      <pathelement path="${slick.install}/lib/jogg-0.0.7.jar"/>
+		      <pathelement path="${slick.install}/lib/jorbis-0.0.15.jar"/>
+		    </classpath>
+		</javac>
+
+		<javac includes="org/newdawn/slick/**" debug="true" srcdir="src" destdir="${build.dir}/classes" target="1.4" source="1.4">
+		    <classpath>
+			  <pathelement path="lib/gdx.jar"/>
+			  <pathelement path="lib/gdx-backend-lwjgl-cut.jar"/>
+		      <pathelement path="${slick.install}/lib/lwjgl.jar"/>
+		      <pathelement path="${slick.install}/lib/lwjgl_util_applet.jar"/>
+		      <pathelement path="${slick.install}/lib/ibxm.jar"/>
+		      <pathelement path="${slick.install}/lib/jnlp.jar"/>
+		      <pathelement path="${slick.install}/lib/jogg-0.0.7.jar"/>
+		      <pathelement path="${slick.install}/lib/jorbis-0.0.15.jar"/>
+		    </classpath>
+		</javac>
+		
+		<jar destfile="${build.dir}/slick-ae.jar" 
+			 basedir="${build.dir}/classes" includes="$org/newdawn/slick/**"/>
+		
+		<jar update="true" destfile="${build.dir}/slick-ae.jar" 
+			 basedir="src" includes="${slick.install}/org/newdawn/slick/data/*"/>
+	</target>
+	
+</project>
