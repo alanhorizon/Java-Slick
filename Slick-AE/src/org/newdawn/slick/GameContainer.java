@@ -608,17 +608,17 @@ public abstract class GameContainer implements GUIContext {
 	protected void initGL() {
 		Log.info("Starting display "+width+"x"+height);
 		GL.initDisplay(width, height);
-		
-		if (input == null) {
-			input = new Input(height);
-		}
-		input.init(height);
-		// no need to remove listeners?
-		//input.removeAllListeners();
-		if (game instanceof InputListener) {
-			input.removeListener((InputListener) game);
-			input.addListener((InputListener) game);
-		}
+//		
+//		if (input == null) {
+//			input = new Input(height);
+//		}
+//		input.init(height);
+//		// no need to remove listeners?
+//		//input.removeAllListeners();
+//		if (game instanceof InputListener) {
+//			input.removeListener((InputListener) game);
+//			input.addListener((InputListener) game);
+//		}
 
 		if (graphics != null) {
 			graphics.setDimensions(getWidth(), getHeight());
@@ -633,9 +633,14 @@ public abstract class GameContainer implements GUIContext {
 	 */
 	protected void initSystem() throws SlickException {
 		initGL();
-		setMusicVolume(1.0f);
-		setSoundVolume(1.0f);
-		
+//		setMusicVolume(1.0f);
+//		setSoundVolume(1.0f);
+
+		try {
+			Graphics.DEFAULT_FONT = new AngelCodeFont("defaultfont.fnt", "defaultfont.png");
+		} catch (SlickException e) {
+			Log.error(e);
+		}
 		graphics = new Graphics(width, height);
 		defaultFont = graphics.getFont();
 	}
