@@ -21,7 +21,6 @@ public class TestGDXContainer extends BasicGame {
 	public void init(GameContainer container) throws SlickException {
 		test = new Image("testdata/logo.png");
 		font = new AngelCodeFont("testdata/demo2.fnt","testdata/demo2_00.tga",false);
-		System.out.println("LOAD IMAGE COMPLETE");
 	}
 
 	public void update(GameContainer container, int delta)
