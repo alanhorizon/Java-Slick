@@ -11,7 +11,7 @@
 	<target name="build" depends="init">
 		<delete dir="slick-ae.jar"/>
 		
-		<javac includes="org/newdawn/slick/**" srcdir="${slick.install}/src" debug="true" destdir="${build.dir}/classes" target="1.4" source="1.4">
+		<javac includes="org/newdawn/slick/**" srcdir="${slick.install}/src" debug="true" destdir="${build.dir}/classes">
 		    <classpath>
 		      <pathelement path="${slick.install}/lib/lwjgl.jar"/>
 		      <pathelement path="${slick.install}/lib/lwjgl_util_applet.jar"/>
@@ -21,8 +21,15 @@
 		      <pathelement path="${slick.install}/lib/jorbis-0.0.15.jar"/>
 		    </classpath>
 		</javac>
-
-		<javac includes="org/newdawn/slick/**" debug="true" srcdir="src" destdir="${build.dir}/classes" target="1.4" source="1.4">
+		
+		<echo>Removing Replaced Classes</echo>
+		<delete verbose="true">
+			<fileset dir="${build.dir}/classes">
+			  	<include name="org/newdawn/slick/GameContainer.class"/>			
+			</fileset>
+		</delete>
+		
+		<javac includes="org/newdawn/slick/**" debug="true" srcdir="src" destdir="${build.dir}/classes">
 		    <classpath>
 			  <pathelement path="lib/gdx.jar"/>
 			  <pathelement path="lib/gdx-backend-lwjgl-cut.jar"/>
