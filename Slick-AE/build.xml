@@ -35,7 +35,7 @@
 		</javac>
 		
 		<jar destfile="${build.dir}/slick-ae.jar" 
-			 basedir="${build.dir}/classes" includes="$org/newdawn/slick/**"/>
+			 basedir="${build.dir}/classes" includes="org/newdawn/slick/**"/>
 		
 		<jar update="true" destfile="${build.dir}/slick-ae.jar" 
 			 basedir="src" includes="${slick.install}/org/newdawn/slick/data/*"/>
