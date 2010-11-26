@@ -25,7 +25,8 @@
 		<echo>Removing Replaced Classes</echo>
 		<delete verbose="true">
 			<fileset dir="${build.dir}/classes">
-			  	<include name="org/newdawn/slick/GameContainer.class"/>			
+			  	<include name="org/newdawn/slick/GameContainer.class"/>		
+			  	<include name="org/newdawn/slick/opengl/ImageDataFactory.class"/>			
 			</fileset>
 		</delete>
 		

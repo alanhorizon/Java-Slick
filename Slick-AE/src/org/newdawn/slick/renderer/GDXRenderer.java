@@ -461,7 +461,7 @@ public class GDXRenderer implements SGL {
 	 * @see org.newdawn.slick.opengl.renderer.SGL#glDeleteTextures(java.nio.IntBuffer)
 	 */
 	public void glDeleteTextures(IntBuffer buffer) {
-		gl.glDeleteTextures(buffer.position(), buffer);
+		gl.glDeleteTextures(buffer.remaining(), buffer);
 	}
 
 	/**
@@ -553,7 +553,7 @@ public class GDXRenderer implements SGL {
 
 	@Override
 	public void glGenTextures(IntBuffer ids) {
-		gl.glGenTextures(ids.position(), ids);
+		gl.glGenTextures(ids.remaining(), ids);
 	}
 
 	@Override
