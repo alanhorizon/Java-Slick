@@ -6,6 +6,7 @@ import org.newdawn.slick.renderer.GDXRenderer;
 import org.newdawn.slick.util.ResourceLoader;
 
 import android.util.Log;
+import android.view.Display;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 
@@ -16,6 +17,20 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
  */
 public class SlickActivity extends AndroidApplication {
 	private GDXGameContainer container;
+
+	
+	/**
+	 * Start the game. Should be called from onCreate.
+	 * 
+	 * @param game The game to be hosted
+	 */
+	public void start(Game game) {
+		Display display = getWindowManager().getDefaultDisplay(); 
+		int width = display.getWidth();
+		int height = display.getHeight();
+		
+		start(game,width,height);
+	}
 	
 	/**
 	 * Start the game. Should be called from onCreate.
@@ -36,7 +51,11 @@ public class SlickActivity extends AndroidApplication {
 			ResourceLoader.removeAllResourceLocations();
 			ResourceLoader.addResourceLocation(new AndroidResourceLocation(getAssets()));
 			
-	    	container = new GDXGameContainer(game, width, height); 
+			Display display = getWindowManager().getDefaultDisplay(); 
+			int realWidth = display.getWidth();
+			int realHeight = display.getHeight();
+			
+	    	container = new GDXGameContainer(game, width, height, realWidth, realHeight); 
 	    	container.setAndroidApplication(this);
 	    	initialize(container, false);
 	    } catch (SlickException e) {

@@ -19,6 +19,10 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 	private long lastUpdate;
 	/** The application hosting the GDX listener */
 	private Application app;
+	/** The screen width */
+	private int realWidth;
+	/** The screen height */
+	private int realHeight;
 	
 	/**
 	 * Create a new game container
@@ -26,14 +30,18 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 	 * @param game The game that will be hosted 
 	 * @param width The width of the game container
 	 * @param height The height of the game container
+	 * @param realWidth The width of the screen
+	 * @param realHeight The height of the screen
 	 * @throws SlickException 
 	 */
-	public GDXGameContainer(Game game,int width,int height) throws SlickException {
+	public GDXGameContainer(Game game,int width,int height,int realWidth, int realHeight) throws SlickException {
 		super(game);
 
 		this.game = game;
 		this.width = width;
 		this.height = height;
+		this.realHeight = realHeight;
+		this.realWidth = realWidth;
 		lastUpdate = System.currentTimeMillis();
 	}
 	
@@ -203,4 +211,28 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 	public void pause() {
 	}
 
+	
+	/**
+	 * Initialise the GL context
+	 */
+	protected void initGL() {
+		Log.error("Starting display "+width+"x"+height+" "+realWidth+"x"+realHeight);
+		GL.initDisplay(realWidth, realHeight);
+		
+		if (input == null) {
+			input = new Input(realHeight);
+			input.setScale(width / ((float) realWidth), height / ((float) realHeight));
+		}
+		input.init(realHeight);
+		
+		if (game instanceof InputListener) {
+			input.removeListener((InputListener) game);
+			input.addListener((InputListener) game);
+		}
+
+		if (graphics != null) {
+			graphics.setDimensions(getWidth(), getHeight());
+		}
+		lastGame = game;
+	}
 }

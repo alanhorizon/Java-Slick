@@ -93,7 +93,8 @@ public class GDXRenderer implements SGL {
         
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        
+
+		Log.error("ViewPort: "+width+","+height);
 		gl.glViewport(0,0,width,height);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 
@@ -103,6 +104,20 @@ public class GDXRenderer implements SGL {
 		gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 	}
 
+	/**
+	 * @see org.newdawn.slick.opengl.renderer.SGL#enterOrtho(int, int)
+	 */
+	public void enterOrtho(int xsize, int ysize) {
+		Log.error("Enter Ortho: "+xsize+","+ysize);
+		gl.glMatrixMode(GL10.GL_PROJECTION);
+		gl.glLoadIdentity();
+		gl.glOrthof(0, width, height, 0, 1, -1);
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		
+		gl.glTranslatef((width-xsize)/2,
+						  (height-ysize)/2,0);
+	}
+	
 	/**
 	 * Start a new buffer for a vertex array 
 	 */
@@ -439,19 +454,6 @@ public class GDXRenderer implements SGL {
 	public void glLoadMatrix(FloatBuffer buffer) {
 		flushBuffer();
 		gl.glLoadMatrixf(buffer);
-	}
-	
-	/**
-	 * @see org.newdawn.slick.opengl.renderer.SGL#enterOrtho(int, int)
-	 */
-	public void enterOrtho(int xsize, int ysize) {
-		gl.glMatrixMode(GL10.GL_PROJECTION);
-		gl.glLoadIdentity();
-		gl.glOrthof(0, width, height, 0, 1, -1);
-		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		
-		gl.glTranslatef((width-xsize)/2,
-						  (height-ysize)/2,0);
 	}
 
 	/**

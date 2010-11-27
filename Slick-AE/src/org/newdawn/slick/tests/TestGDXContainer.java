@@ -97,7 +97,7 @@ public class TestGDXContainer extends BasicGame {
 	public static void main(String[] argv) {
 		try {
 			Renderer.setRenderer(new GDXRenderer());
-			GDXGameContainer container = new GDXGameContainer(new TestGDXContainer(), 800, 480);
+			GDXGameContainer container = new GDXGameContainer(new TestGDXContainer(), 800, 480, 800, 480);
 			container.start();
 		} catch (SlickException e) {
 			e.printStackTrace();

@@ -37,7 +37,7 @@ public abstract class GameContainer {
 	/** The default font to use in the graphics context */
 	private Font defaultFont;
 	/** The graphics context to be passed to the game */
-	private Graphics graphics;
+	protected Graphics graphics;
 	
 	/** The input system to pass to the game */
 	protected Input input;
@@ -589,25 +589,7 @@ public abstract class GameContainer {
 	/**
 	 * Initialise the GL context
 	 */
-	protected void initGL() {
-		Log.info("Starting display "+width+"x"+height);
-		GL.initDisplay(width, height);
-		
-		if (input == null) {
-			input = new Input(height);
-		}
-		input.init(height);
-		
-		if (game instanceof InputListener) {
-			input.removeListener((InputListener) game);
-			input.addListener((InputListener) game);
-		}
-
-		if (graphics != null) {
-			graphics.setDimensions(getWidth(), getHeight());
-		}
-		lastGame = game;
-	}
+	protected abstract void initGL();
 	
 	/**
 	 * Initialise the system components, OpenGL and OpenAL.
