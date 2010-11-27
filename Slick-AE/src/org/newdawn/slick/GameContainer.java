@@ -12,7 +12,7 @@ import org.newdawn.slick.util.Log;
  *
  * @author kevin
  */
-public abstract class GameContainer implements GUIContext {
+public abstract class GameContainer {
 	/** The renderer to use for all GL operations */
 	protected static SGL GL = Renderer.get();
 	

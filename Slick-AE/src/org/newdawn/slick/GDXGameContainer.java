@@ -1,6 +1,5 @@
 package org.newdawn.slick;
 
-import org.lwjgl.input.Cursor;
 import org.newdawn.slick.opengl.ImageData;
 import org.newdawn.slick.opengl.InternalTextureLoader;
 import org.newdawn.slick.util.Log;
@@ -120,13 +119,6 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 	 *  Not implemented for android
 	 */
 	public void setMouseCursor(Image image, int hotSpotX, int hotSpotY)
-			throws SlickException {
-	}
-
-	/**
-	 *  Not implemented for android
-	 */
-	public void setMouseCursor(Cursor cursor, int hotSpotX, int hotSpotY)
 			throws SlickException {
 	}
 
