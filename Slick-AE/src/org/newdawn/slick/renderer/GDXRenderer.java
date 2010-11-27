@@ -6,8 +6,8 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.newdawn.slick.opengl.renderer.SGL;
+import org.newdawn.slick.util.Log;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
@@ -21,6 +21,12 @@ import com.badlogic.gdx.graphics.GL10;
  * @author kevin
  */
 public class GDXRenderer implements SGL {
+	/**
+	 * Allocate a simple float buffer
+	 * 
+	 * @param numFloats The number of floats to allocate
+	 * @return The buffer created
+	 */
     private static FloatBuffer allocateBuffer (int numFloats) {
         ByteBuffer buffer = ByteBuffer.allocateDirect(numFloats * 4);
         buffer.order(ByteOrder.nativeOrder());
@@ -63,8 +69,13 @@ public class GDXRenderer implements SGL {
 	/** The height of the context */
 	private int height;
 	
+	/** The offset into a quad used to index the triangles */
 	private int quadOffset;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.opengl.renderer.SGL#initDisplay(int, int)
+	 */
 	public void initDisplay(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -547,20 +558,37 @@ public class GDXRenderer implements SGL {
 	public void setGlobalAlphaScale(float alphaScale) {
 	}
 
+	/**
+	 * Log a failure message
+	 * 
+	 * @param message The message to log
+	 */
 	private void fail(String message) {
-		System.err.println("Fail: "+message);
+		Log.error("Fail: "+message);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.opengl.renderer.SGL#glGenTextures(java.nio.IntBuffer)
+	 */
 	@Override
 	public void glGenTextures(IntBuffer ids) {
 		gl.glGenTextures(ids.remaining(), ids);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.opengl.renderer.SGL#glGetError()
+	 */
 	@Override
 	public void glGetError() {
 		gl.glGetError();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.opengl.renderer.SGL#glTexImage2D(int, int, int, int, int, int, int, int, java.nio.ByteBuffer)
+	 */
 	@Override
 	public void glTexImage2D(int target, int i, int dstPixelFormat,
 			int width, int height, int j, int srcPixelFormat,

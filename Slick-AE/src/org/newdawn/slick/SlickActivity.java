@@ -9,9 +9,21 @@ import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 
+/**
+ * An activity extended to host a Slick Game in an android application
+ * 
+ * @author kevin
+ */
 public class SlickActivity extends AndroidApplication {
 	private GDXGameContainer container;
 	
+	/**
+	 * Start the game. Should be called from onCreate.
+	 * 
+	 * @param game The game to be hosted
+	 * @param width The width to use for the game
+	 * @param height The height to use for the game
+	 */
 	public void start(Game game, int width, int height) {
 	    try {
 	    	org.newdawn.slick.util.Log.setLogSystem(new AndroidLogSystem());
@@ -23,7 +35,9 @@ public class SlickActivity extends AndroidApplication {
 			
 			ResourceLoader.removeAllResourceLocations();
 			ResourceLoader.addResourceLocation(new AndroidResourceLocation(getAssets()));
-	    	container = new GDXGameContainer(game, width, height);        
+			
+	    	container = new GDXGameContainer(game, width, height); 
+	    	container.setAndroidApplication(this);
 	    	initialize(container, false);
 	    } catch (SlickException e) {
 	    	Log.e("SLICK", "Failed to create container", e);

@@ -493,8 +493,8 @@ public abstract class GameContainer implements GUIContext {
 			}
 		}
 
-//		input.poll(width, height);
-//		
+		input.poll(width, height);
+		
 //		Music.poll(delta);
 		if (!paused) {
 			storedDelta += delta;
@@ -577,17 +577,16 @@ public abstract class GameContainer implements GUIContext {
 	protected void initGL() {
 		Log.info("Starting display "+width+"x"+height);
 		GL.initDisplay(width, height);
-//		
-//		if (input == null) {
-//			input = new Input(height);
-//		}
-//		input.init(height);
-//		// no need to remove listeners?
-//		//input.removeAllListeners();
-//		if (game instanceof InputListener) {
-//			input.removeListener((InputListener) game);
-//			input.addListener((InputListener) game);
-//		}
+		
+		if (input == null) {
+			input = new Input(height);
+		}
+		input.init(height);
+		
+		if (game instanceof InputListener) {
+			input.removeListener((InputListener) game);
+			input.addListener((InputListener) game);
+		}
 
 		if (graphics != null) {
 			graphics.setDimensions(getWidth(), getHeight());
