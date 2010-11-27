@@ -32,7 +32,7 @@
 			</fileset>
 		</delete>
 		
-		<javac includes="org/newdawn/slick/**" debug="true" srcdir="src" destdir="${build.dir}/classes">
+		<javac includes="**" debug="true" srcdir="src" destdir="${build.dir}/classes">
 		    <classpath>
 			  <pathelement path="lib/gdx.jar"/>
 			  <pathelement path="lib/gdx-backend-lwjgl-cut.jar"/>

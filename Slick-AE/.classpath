@@ -4,6 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/gdx-backend-lwjgl-cut.jar"/>
 	<classpathentry kind="lib" path="lib/gdx.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-backend-android.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Slick"/>
 	<classpathentry kind="lib" path="lib/android.jar"/>
 	<classpathentry kind="output" path="bin"/>
