@@ -14,11 +14,16 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 public class AndroidResourceLocation implements ResourceLocation, URLStreamHandlerFactory {
+	private static boolean handlerSet = false;
+	
 	private AssetManager manager;
 	
 	public AndroidResourceLocation(AssetManager manager) {
 		this.manager = manager;
-		URL.setURLStreamHandlerFactory(this);
+		if (!handlerSet) {
+			handlerSet = true;
+			URL.setURLStreamHandlerFactory(this);
+		}
 	}
 	
 	@Override
