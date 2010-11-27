@@ -1,8 +1,8 @@
 package org.newdawn.slick.android;
 
 import org.newdawn.slick.SlickActivity;
-import org.newdawn.slick.tests.TestGDXContainer;
 
+import puzzle.Puzzle;
 import android.os.Bundle;
 
 /**
@@ -20,6 +20,7 @@ public class SlickTestActivity extends SlickActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        start(new TestGDXContainer(), 800, 480);
+        //start(new TestGDXContainer(), 800, 480);
+        start(new Puzzle(), 640, 480);
     }
 }
