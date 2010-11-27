@@ -34,6 +34,7 @@
 		    <classpath>
 			  <pathelement path="lib/gdx.jar"/>
 			  <pathelement path="lib/gdx-backend-lwjgl-cut.jar"/>
+			  <pathelement path="lib/gdx-backend-android.jar"/>
 			  <pathelement path="lib/android.jar"/>
 		      <pathelement path="${slick.install}/lib/lwjgl.jar"/>
 		      <pathelement path="${slick.install}/lib/lwjgl_util_applet.jar"/>
