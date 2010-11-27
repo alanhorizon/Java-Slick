@@ -197,22 +197,6 @@ public abstract class GameContainer implements GUIContext {
 	}
 	
 	/**
-	 * Pause the game - i.e. suspend updates
-	 */
-	public void pause()
-	{
-		setPaused(true);
-	}
-	
-	/**
-	 * Resumt the game - i.e. continue updates
-	 */
-	public void resume()
-	{
-		setPaused(false);
-	}
-	
-	/**
 	 * Check if the container is currently paused.
 	 * 
 	 * @return True if the container is paused

@@ -2,6 +2,7 @@ package org.newdawn.slick;
 
 import org.lwjgl.input.Cursor;
 import org.newdawn.slick.opengl.ImageData;
+import org.newdawn.slick.opengl.InternalTextureLoader;
 import org.newdawn.slick.util.Log;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -97,6 +98,22 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 	}
 
 	public void resize(int width, int height) {
+	}
+
+	@Override
+	public void resume() {
+		try {
+			initSystem();
+			enterOrtho();
+			
+			InternalTextureLoader.get().reload();
+		} catch (SlickException e) {
+			Log.error("Failed to init", e);
+		}
+	}
+
+	@Override
+	public void pause() {
 	}
 
 }

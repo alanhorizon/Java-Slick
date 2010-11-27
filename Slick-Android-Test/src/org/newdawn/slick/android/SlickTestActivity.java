@@ -11,6 +11,6 @@ public class SlickTestActivity extends SlickActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        start(new TestGDXContainer(), 640, 320);
+        start(new TestGDXContainer(), 800, 480);
     }
 }
