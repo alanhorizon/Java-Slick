@@ -571,6 +571,21 @@ public abstract class GameContainer implements GUIContext {
 		return true;
 	}
 	
+	/** 
+	 * Not implemented for android
+	 */
+	public void setVSync(boolean sync) {
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.gui.GUIContext#setMouseCursor(java.lang.String, int, int)
+	 */
+	public void setMouseCursor(String ref, int x, int y) {
+		
+	}
+	
 	/**
 	 * Initialise the GL context
 	 */

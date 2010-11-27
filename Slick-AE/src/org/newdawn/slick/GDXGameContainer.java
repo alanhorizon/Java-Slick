@@ -106,8 +106,7 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 	/**
 	 *  Not implemented for android
 	 */
-	public void setMouseCursor(String ref, int hotSpotX, int hotSpotY)
-			throws SlickException {
+	public void setMouseCursor(String ref, int hotSpotX, int hotSpotY) {
 	}
 
 	/**
