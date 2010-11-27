@@ -49,8 +49,6 @@
 		
 		<jar update="true" destfile="${build.dir}/slick-ae.jar" 
 			 basedir="src" includes="${slick.install}/org/newdawn/slick/data/*"/>
-			 
-		<copy file="${build.dir}/slick-ae.jar" toDir="../Slick-Android-Test/libs"/>
 	</target>
 	
 </project>
