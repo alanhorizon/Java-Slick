@@ -15,4 +15,5 @@
     </application>
 
 
+<uses-sdk android:targetSdkVersion="4"></uses-sdk>
 </manifest> 
