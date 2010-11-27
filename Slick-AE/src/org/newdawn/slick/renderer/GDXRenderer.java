@@ -94,7 +94,6 @@ public class GDXRenderer implements SGL {
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
-		Log.error("ViewPort: "+width+","+height);
 		gl.glViewport(0,0,width,height);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 
@@ -108,10 +107,9 @@ public class GDXRenderer implements SGL {
 	 * @see org.newdawn.slick.opengl.renderer.SGL#enterOrtho(int, int)
 	 */
 	public void enterOrtho(int xsize, int ysize) {
-		Log.error("Enter Ortho: "+xsize+","+ysize);
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		gl.glOrthof(0, width, height, 0, 1, -1);
+		gl.glOrthof(0, xsize, ysize, 0, 1, -1);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		
 		gl.glTranslatef((width-xsize)/2,
