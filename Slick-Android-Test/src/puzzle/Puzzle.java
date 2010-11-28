@@ -133,6 +133,13 @@ public class Puzzle extends BasicGame {
 	private int gameOverCounter;
 	/** The number of possible moves left */
 	private int movesLeft;
+	/** The sound effect for meowing cats */
+	private Sound meow;
+	/** The sound effect for cliking on place where a move cannot be made */
+	private Sound nope;
+	/** The sound effect for starting a game */
+	private Sound gong;
+	
 	
 	/**
 	 * Create a new example puzzle game instance
@@ -171,6 +178,10 @@ public class Puzzle extends BasicGame {
 		container.setIcon("res/icon.png");
 		container.setMouseCursor("res/cursor.png", 5, 2);
 		
+		meow = new Sound("res/meeow.wav");
+		nope = new Sound("res/thud.ogg");
+		gong = new Sound("res/gong.wav");
+	
 		font = new AngelCodeFont("res/puzzle.fnt","res/puzzle_00.tga");
 		numbers = new AngelCodeFont("res/numbers.fnt","res/numbers_00.tga");
 		
@@ -229,6 +240,7 @@ public class Puzzle extends BasicGame {
 	 */
 	private void start() {
 		gameOverCounter = 0;
+		gong.play(1.0f,0.6f);
 		
 		start = container.getTime();
 		starting = false;
@@ -812,6 +824,7 @@ public class Puzzle extends BasicGame {
 			container.setVSync(!showFPS);
 		}
 	}
+
 	
 	/**
 	 * @see org.newdawn.slick.BasicGame#mousePressed(int, int, int)
@@ -845,18 +858,24 @@ public class Puzzle extends BasicGame {
 						selected = true;
 						selectedx = x;
 						selectedy = y;
+						meow.play((float) (0.9f + (Math.random()*0.3f)), (float) (0.5f));
 					} else {
 						int xd = Math.abs(x - selectedx);
 						int yd = Math.abs(y - selectedy);
 						
 						if ((xd == 0) && (yd == 0)) {
 							selected = false;
+							meow.play(0.1f,0.1f);
 						} else if (xd+yd == 1) {
 							tappedx = x;
 							tappedy = y;
 							selected = false;
+							meow.play((float) (0.9f + (Math.random()*0.3f)), (float) (0.4f + (Math.random()*0.3f)));
+						
 							swap();
-						} 
+						} else {
+							nope.play(1.0f, 0.8f);
+						}
 					}
 				} else {
 					selected = false;
