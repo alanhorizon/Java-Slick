@@ -27,6 +27,8 @@
 			<fileset dir="${build.dir}/classes">
 			  	<include name="org/newdawn/slick/GameContainer.class"/>		
 			  	<include name="org/newdawn/slick/Input.class"/>		
+			  	<include name="org/newdawn/slick/Sound.class"/>		
+			  	<include name="org/newdawn/slick/Music.class"/>		
 			  	<include name="org/newdawn/slick/Input$*.class"/>		
 			  	<include name="org/newdawn/slick/opengl/ImageDataFactory.class"/>			
 			</fileset>
