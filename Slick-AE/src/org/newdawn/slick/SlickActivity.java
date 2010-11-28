@@ -46,6 +46,7 @@ public class SlickActivity extends AndroidApplication {
 
 			Renderer.setRenderer(new GDXRenderer());
 			Renderer.setLineStripRenderer(Renderer.QUAD_BASED_LINE_STRIP_RENDERER);
+			InternalTextureLoader.get().clear();
 			InternalTextureLoader.get().setHoldTextureData(true);
 			
 			ResourceLoader.removeAllResourceLocations();
