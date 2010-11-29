@@ -30,11 +30,12 @@
 			  	<include name="org/newdawn/slick/Sound.class"/>		
 			  	<include name="org/newdawn/slick/Music.class"/>		
 			  	<include name="org/newdawn/slick/Input$*.class"/>		
-			  	<include name="org/newdawn/slick/opengl/ImageDataFactory.class"/>			
+			  	<include name="org/newdawn/slick/opengl/ImageDataFactory.class"/>	
+			  	<include name="org/newdawn/slick/opengl/renderer/Renderer.class"/>			
 			</fileset>
 		</delete>
 		
-		<javac includes="**" debug="true" srcdir="src" destdir="${build.dir}/classes">
+		<javac includes="**" debug="true" srcdir="src" destdir="${build.dir}/classes" listfiles="true">
 		    <classpath>
 			  <pathelement path="lib/gdx.jar"/>
 			  <pathelement path="lib/gdx-backend-lwjgl-cut.jar"/>

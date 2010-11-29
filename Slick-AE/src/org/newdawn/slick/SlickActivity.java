@@ -1,8 +1,8 @@
 package org.newdawn.slick;
 
 import org.newdawn.slick.opengl.InternalTextureLoader;
+import org.newdawn.slick.opengl.renderer.GDXRenderer;
 import org.newdawn.slick.opengl.renderer.Renderer;
-import org.newdawn.slick.renderer.GDXRenderer;
 import org.newdawn.slick.util.ResourceLoader;
 
 import android.os.Bundle;
@@ -25,9 +25,7 @@ public class SlickActivity extends AndroidApplication {
     	
     	org.newdawn.slick.util.Log.setLogSystem(new AndroidLogSystem());
     	org.newdawn.slick.util.Log.error("Slick-AE 0");
-
-		Renderer.setRenderer(new GDXRenderer());
-		Renderer.setLineStripRenderer(Renderer.QUAD_BASED_LINE_STRIP_RENDERER);
+    	
 		InternalTextureLoader.get().clear();
 		InternalTextureLoader.get().setHoldTextureData(true);
 		

@@ -7,10 +7,10 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.renderer.GDXRenderer;
 import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.particles.ParticleSystem;
 import org.newdawn.slick.particles.effects.FireEmitter;
-import org.newdawn.slick.renderer.GDXRenderer;
 
 /**
  * A simple test game for the GDX/Android based container

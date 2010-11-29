@@ -1,4 +1,4 @@
-package org.newdawn.slick.renderer;
+package org.newdawn.slick.opengl.renderer;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -11,6 +11,7 @@ import org.newdawn.slick.util.Log;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.utils.BufferUtils;
 
 /**
  * A renderer that caches all operations into an array, creates an opengl vertex array when
@@ -138,9 +139,9 @@ public class GDXRenderer implements SGL {
 		colors.clear();
 		textures.clear();
 		
-		vertices.put(verts,0,vertIndex*3);
-		colors.put(cols,0,vertIndex*4);
-		textures.put(texs,0,vertIndex*2);
+		BufferUtils.copy(verts, vertices, vertIndex*3, 0);
+		BufferUtils.copy(cols, colors, vertIndex*4, 0);
+		BufferUtils.copy(texs, textures, vertIndex*2, 0);
 		
 		vertices.flip(); 
 		colors.flip(); 
