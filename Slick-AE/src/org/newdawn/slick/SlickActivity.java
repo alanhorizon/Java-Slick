@@ -5,6 +5,7 @@ import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.renderer.GDXRenderer;
 import org.newdawn.slick.util.ResourceLoader;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 
@@ -18,6 +19,21 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 public class SlickActivity extends AndroidApplication {
 	private GDXGameContainer container;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	
+    	org.newdawn.slick.util.Log.setLogSystem(new AndroidLogSystem());
+    	org.newdawn.slick.util.Log.error("Slick-AE 0");
+
+		Renderer.setRenderer(new GDXRenderer());
+		Renderer.setLineStripRenderer(Renderer.QUAD_BASED_LINE_STRIP_RENDERER);
+		InternalTextureLoader.get().clear();
+		InternalTextureLoader.get().setHoldTextureData(true);
+		
+		ResourceLoader.removeAllResourceLocations();
+		ResourceLoader.addResourceLocation(new AndroidResourceLocation(getAssets()));	
+    }
 	
 	/**
 	 * Start the game. Should be called from onCreate.
@@ -41,17 +57,6 @@ public class SlickActivity extends AndroidApplication {
 	 */
 	public void start(Game game, int width, int height) {
 	    try {
-	    	org.newdawn.slick.util.Log.setLogSystem(new AndroidLogSystem());
-	    	org.newdawn.slick.util.Log.error("Slick-AE 0");
-
-			Renderer.setRenderer(new GDXRenderer());
-			Renderer.setLineStripRenderer(Renderer.QUAD_BASED_LINE_STRIP_RENDERER);
-			InternalTextureLoader.get().clear();
-			InternalTextureLoader.get().setHoldTextureData(true);
-			
-			ResourceLoader.removeAllResourceLocations();
-			ResourceLoader.addResourceLocation(new AndroidResourceLocation(getAssets()));
-			
 			Display display = getWindowManager().getDefaultDisplay(); 
 			int realWidth = display.getWidth();
 			int realHeight = display.getHeight();
