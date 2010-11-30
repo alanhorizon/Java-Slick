@@ -597,4 +597,30 @@ public class GDXRenderer implements SGL {
 		gl.glTexImage2D(target, i, dstPixelFormat, width, height, j, srcPixelFormat,
 				glUnsignedByte, textureBuffer);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.opengl.renderer.SGL#canSecondaryColor()
+	 */
+	@Override
+	public boolean canSecondaryColor() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.opengl.renderer.SGL#canTextureMirrorClamp()
+	 */
+	@Override
+	public boolean canTextureMirrorClamp() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.opengl.renderer.SGL#glSecondaryColor3ubEXT(byte, byte, byte)
+	 */
+	@Override
+	public void glSecondaryColor3ubEXT(byte b, byte c, byte d) {
+	}
 }
