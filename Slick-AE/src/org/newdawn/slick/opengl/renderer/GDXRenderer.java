@@ -135,17 +135,9 @@ public class GDXRenderer implements SGL {
 			return;
 		}
 		
-		vertices.clear();
-		colors.clear();
-		textures.clear();
-		
 		BufferUtils.copy(verts, vertices, vertIndex*3, 0);
 		BufferUtils.copy(cols, colors, vertIndex*4, 0);
 		BufferUtils.copy(texs, textures, vertIndex*2, 0);
-		
-		vertices.flip(); 
-		colors.flip(); 
-		textures.flip(); 
 		
 		gl.glVertexPointer(3,GL10.GL_FLOAT,0,vertices);     
 		gl.glColorPointer(4,GL10.GL_FLOAT,0,colors);     
