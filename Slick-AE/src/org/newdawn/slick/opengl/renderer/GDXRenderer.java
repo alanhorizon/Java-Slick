@@ -615,4 +615,15 @@ public class GDXRenderer implements SGL {
 	@Override
 	public void glSecondaryColor3ubEXT(byte b, byte c, byte d) {
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.newdawn.slick.opengl.renderer.SGL#glTexSubImage2D(int, int, int, int, int, int, int, int, java.nio.ByteBuffer)
+	 */
+	@Override
+	public void glTexSubImage2D(int glTexture2d, int i, int pageX, int pageY,
+			int width, int height, int glBgra, int glUnsignedByte,
+			ByteBuffer scratchByteBuffer) {
+		gl.glTexSubImage2D(glTexture2d,i,pageX,pageY,width,height,glBgra,glUnsignedByte,scratchByteBuffer);
+	}
 }
