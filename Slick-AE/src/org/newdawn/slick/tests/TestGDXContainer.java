@@ -1,8 +1,8 @@
 package org.newdawn.slick.tests;
 
 import org.newdawn.slick.AngelCodeFont;
+import org.newdawn.slick.ApplicationGDXContainer;
 import org.newdawn.slick.BasicGame;
-import org.newdawn.slick.GDXGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -97,7 +97,7 @@ public class TestGDXContainer extends BasicGame {
 	public static void main(String[] argv) {
 		try {
 			Renderer.setRenderer(new GDXRenderer());
-			GDXGameContainer container = new GDXGameContainer(new TestGDXContainer(), 800, 480, 800, 480);
+			ApplicationGDXContainer container = new ApplicationGDXContainer(new TestGDXContainer(), 800, 480, 800, 480);
 			container.start();
 		} catch (SlickException e) {
 			e.printStackTrace();

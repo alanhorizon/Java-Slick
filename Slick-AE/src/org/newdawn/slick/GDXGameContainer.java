@@ -6,23 +6,21 @@ import org.newdawn.slick.util.Log;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.backends.android.AndroidApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 
 /**
  * A container that uses GDX to render everything
  * 
  * @author kevin
  */
-public class GDXGameContainer extends GameContainer implements ApplicationListener {
+public abstract class GDXGameContainer extends GameContainer implements ApplicationListener {
 	/** The time of the last update */
-	private long lastUpdate;
+	protected long lastUpdate;
 	/** The application hosting the GDX listener */
-	private Application app;
+	protected Application app;
 	/** The screen width */
-	private int realWidth;
+	protected int realWidth;
 	/** The screen height */
-	private int realHeight;
+	protected int realHeight;
 	
 	/**
 	 * Create a new game container
@@ -45,23 +43,6 @@ public class GDXGameContainer extends GameContainer implements ApplicationListen
 		lastUpdate = System.currentTimeMillis();
 	}
 	
-	/**
-	 * Set the android application being used when running on the handset
-	 * 
-	 * @param android The android application being used when running on the handset
-	 */
-	void setAndroidApplication(AndroidApplication android) {
-		app = android;
-	}
-
-	/**
-	 * Start the game container as a desktop application
-	 */
-	public void start() {
-		lastUpdate = System.currentTimeMillis();
-        app = new LwjglApplication(this, game.getTitle(), width, height, false);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see org.newdawn.slick.GameContainer#getScreenHeight()

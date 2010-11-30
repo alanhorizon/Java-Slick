@@ -1,8 +1,6 @@
 package org.newdawn.slick;
 
 import org.newdawn.slick.opengl.InternalTextureLoader;
-import org.newdawn.slick.opengl.renderer.GDXRenderer;
-import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.util.ResourceLoader;
 
 import android.os.Bundle;
@@ -17,7 +15,7 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
  * @author kevin
  */
 public class SlickActivity extends AndroidApplication {
-	private GDXGameContainer container;
+	private AndroidGDXContainer container;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +57,7 @@ public class SlickActivity extends AndroidApplication {
 			int realWidth = display.getWidth();
 			int realHeight = display.getHeight();
 			
-	    	container = new GDXGameContainer(game, width, height, realWidth, realHeight); 
+	    	container = new AndroidGDXContainer(game, width, height, realWidth, realHeight); 
 	    	container.setAndroidApplication(this);
 	    	initialize(container, false);
 	    } catch (SlickException e) {
